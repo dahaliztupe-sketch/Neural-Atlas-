@@ -1,0 +1,378 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Explicit owner allowlist check (authorized verified owner account)
+    // Authorized owner email: abdalrahman32008@gmail.com
+    function isOwner() {
+      return isSignedIn() &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'abdalrahman32008@gmail.com';
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOptionalString(data, field, maxLen) {
+      return !(field in data) || (data[field] is string && data[field].size() <= maxLen);
+    }
+
+    function isOptionalBool(data, field) {
+      return !(field in data) || (data[field] is bool);
+    }
+
+    function isOptionalHttpUrl(data, field, maxLen) {
+      return !(field in data) || (
+        data[field] is string &&
+        data[field].size() <= maxLen &&
+        (data[field] == '' || data[field].matches('^https?://.*'))
+      );
+    }
+
+    function isOptionalList(data, field, maxLen) {
+      return !(field in data) || (
+        data[field] is list &&
+        data[field].size() <= maxLen &&
+        (data[field].size() == 0 || (data[field][0] is string && data[field][0].size() <= 500))
+      );
+    }
+
+    function isOptionalTrackItemMap(item) {
+      return item is map &&
+        item.keys().hasAll(['id', 'titleEn', 'titleAr', 'status']) &&
+        item.keys().hasOnly([
+          'id', 'titleEn', 'titleAr', 'status',
+          'statusLabelEn', 'statusLabelAr', 'cadenceNoteEn', 'cadenceNoteAr',
+          'summaryEn', 'summaryAr', 'highlightsEn', 'highlightsAr',
+          'showInActiveHighlights'
+        ]) &&
+        isValidId(item.id) &&
+        item.titleEn is string && item.titleEn.size() > 0 && item.titleEn.size() <= 200 &&
+        item.titleAr is string && item.titleAr.size() > 0 && item.titleAr.size() <= 200 &&
+        item.status in ['active', 'in_progress', 'completed', 'paused', 'submitted', 'needs_confirmation'] &&
+        isOptionalString(item, 'statusLabelEn', 120) &&
+        isOptionalString(item, 'statusLabelAr', 120) &&
+        isOptionalString(item, 'cadenceNoteEn', 300) &&
+        isOptionalString(item, 'cadenceNoteAr', 300) &&
+        isOptionalString(item, 'summaryEn', 1000) &&
+        isOptionalString(item, 'summaryAr', 1000) &&
+        isOptionalList(item, 'highlightsEn', 10) &&
+        isOptionalList(item, 'highlightsAr', 10) &&
+        isOptionalBool(item, 'showInActiveHighlights');
+    }
+
+    function isOptionalLearningTracks(data) {
+      return !('learningTracks' in data) || (
+        data.learningTracks is list &&
+        data.learningTracks.size() <= 10 &&
+        (data.learningTracks.size() == 0 || isOptionalTrackItemMap(data.learningTracks[0]))
+      );
+    }
+
+    function isOptionalPracticalExperience(data) {
+      return !('practicalExperience' in data) || (
+        data.practicalExperience is map &&
+        data.practicalExperience.keys().hasAll(['sectionTitleEn', 'sectionTitleAr']) &&
+        data.practicalExperience.keys().hasOnly([
+          'sectionTitleEn', 'sectionTitleAr', 'contextSummaryEn', 'contextSummaryAr',
+          'activitiesEn', 'activitiesAr'
+        ]) &&
+        data.practicalExperience.sectionTitleEn is string &&
+        data.practicalExperience.sectionTitleEn.size() > 0 &&
+        data.practicalExperience.sectionTitleEn.size() <= 200 &&
+        data.practicalExperience.sectionTitleAr is string &&
+        data.practicalExperience.sectionTitleAr.size() > 0 &&
+        data.practicalExperience.sectionTitleAr.size() <= 200 &&
+        isOptionalString(data.practicalExperience, 'contextSummaryEn', 1500) &&
+        isOptionalString(data.practicalExperience, 'contextSummaryAr', 1500) &&
+        isOptionalList(data.practicalExperience, 'activitiesEn', 12) &&
+        isOptionalList(data.practicalExperience, 'activitiesAr', 12)
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Validation blueprints synchronized strictly with firebase-blueprint.json
+    function isValidProject(data) {
+      return data.keys().hasAll([
+          'id', 'slug', 'titleEn', 'titleAr', 'statusType', 'publicationStatus', 'visibility'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'slug', 'titleEn', 'titleAr', 'statusEn', 'statusAr', 'statusType',
+          'publicationStatus', 'visibility', 'archiveGroup', 'featuredOnHome',
+          'summaryEn', 'summaryAr', 'descriptionEn', 'descriptionAr',
+          'technologies', 'url', 'repoUrl', 'coverImageUrl', 'coverImageAltEn', 'coverImageAltAr',
+          'roleEn', 'roleAr', 'problemEn', 'problemAr', 'approachEn', 'approachAr',
+          'outcomeEn', 'outcomeAr', 'fullOverviewEn', 'fullOverviewAr',
+          'seoTitleEn', 'seoTitleAr', 'seoDescriptionEn', 'seoDescriptionAr',
+          'createdAt', 'updatedAt', 'publishedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.slug) &&
+        data.titleEn is string && data.titleEn.size() > 0 && data.titleEn.size() <= 200 &&
+        data.titleAr is string && data.titleAr.size() > 0 && data.titleAr.size() <= 200 &&
+        data.publicationStatus in ['draft', 'published'] &&
+        data.visibility in ['public', 'internal_archive'] &&
+        (!('archiveGroup' in data) || data.archiveGroup in ['showcase', 'experiments_discontinued']) &&
+        isOptionalBool(data, 'featuredOnHome') &&
+        data.statusType in [
+          'practicing', 'in_development', 'completed',
+          'experimental', 'paused', 'discontinued', 'archived', 'needs_confirmation'
+        ] &&
+        isOptionalString(data, 'statusEn', 100) &&
+        isOptionalString(data, 'statusAr', 100) &&
+        isOptionalString(data, 'summaryEn', 500) &&
+        isOptionalString(data, 'summaryAr', 500) &&
+        isOptionalString(data, 'descriptionEn', 5000) &&
+        isOptionalString(data, 'descriptionAr', 5000) &&
+        isOptionalHttpUrl(data, 'url', 500) &&
+        isOptionalHttpUrl(data, 'repoUrl', 500) &&
+        isOptionalHttpUrl(data, 'coverImageUrl', 1000) &&
+        isOptionalString(data, 'coverImageAltEn', 300) &&
+        isOptionalString(data, 'coverImageAltAr', 300) &&
+        isOptionalString(data, 'roleEn', 300) &&
+        isOptionalString(data, 'roleAr', 300) &&
+        isOptionalString(data, 'problemEn', 1500) &&
+        isOptionalString(data, 'problemAr', 1500) &&
+        isOptionalString(data, 'approachEn', 1500) &&
+        isOptionalString(data, 'approachAr', 1500) &&
+        isOptionalString(data, 'outcomeEn', 1500) &&
+        isOptionalString(data, 'outcomeAr', 1500) &&
+        isOptionalList(data, 'technologies', 30) &&
+        isOptionalList(data, 'fullOverviewEn', 30) &&
+        isOptionalList(data, 'fullOverviewAr', 30) &&
+        isOptionalString(data, 'seoTitleEn', 200) &&
+        isOptionalString(data, 'seoTitleAr', 200) &&
+        isOptionalString(data, 'seoDescriptionEn', 500) &&
+        isOptionalString(data, 'seoDescriptionAr', 500) &&
+        isOptionalString(data, 'createdAt', 64) &&
+        isOptionalString(data, 'updatedAt', 64) &&
+        isOptionalString(data, 'publishedAt', 64);
+    }
+
+    function isValidNote(data) {
+      return data.keys().hasAll([
+          'id', 'slug', 'titleEn', 'titleAr', 'publicationStatus'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'slug', 'titleEn', 'titleAr', 'summaryEn', 'summaryAr',
+          'contentEn', 'contentAr', 'topicLabels', 'publicationStatus',
+          'seoTitleEn', 'seoTitleAr', 'seoDescriptionEn', 'seoDescriptionAr',
+          'createdAt', 'updatedAt', 'publishedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.slug) &&
+        data.titleEn is string && data.titleEn.size() > 0 && data.titleEn.size() <= 200 &&
+        data.titleAr is string && data.titleAr.size() > 0 && data.titleAr.size() <= 200 &&
+        data.publicationStatus in ['draft', 'published'] &&
+        isOptionalString(data, 'summaryEn', 500) &&
+        isOptionalString(data, 'summaryAr', 500) &&
+        isOptionalString(data, 'contentEn', 20000) &&
+        isOptionalString(data, 'contentAr', 20000) &&
+        isOptionalList(data, 'topicLabels', 20) &&
+        isOptionalString(data, 'seoTitleEn', 200) &&
+        isOptionalString(data, 'seoTitleAr', 200) &&
+        isOptionalString(data, 'seoDescriptionEn', 500) &&
+        isOptionalString(data, 'seoDescriptionAr', 500) &&
+        isOptionalString(data, 'createdAt', 64) &&
+        isOptionalString(data, 'updatedAt', 64) &&
+        isOptionalString(data, 'publishedAt', 64);
+    }
+
+    function isValidMilestone(data) {
+      return data.keys().hasAll([
+          'id', 'titleEn', 'titleAr', 'category', 'publicationStatus'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'titleEn', 'titleAr', 'descriptionEn', 'descriptionAr',
+          'dateEn', 'dateAr', 'category', 'externalReference',
+          'publicationStatus', 'createdAt', 'updatedAt', 'publishedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.titleEn is string && data.titleEn.size() > 0 && data.titleEn.size() <= 200 &&
+        data.titleAr is string && data.titleAr.size() > 0 && data.titleAr.size() <= 200 &&
+        data.category in ['academic', 'technical'] &&
+        data.publicationStatus in ['draft', 'published'] &&
+        isOptionalString(data, 'descriptionEn', 1000) &&
+        isOptionalString(data, 'descriptionAr', 1000) &&
+        isOptionalString(data, 'dateEn', 100) &&
+        isOptionalString(data, 'dateAr', 100) &&
+        isOptionalHttpUrl(data, 'externalReference', 500) &&
+        isOptionalString(data, 'createdAt', 64) &&
+        isOptionalString(data, 'updatedAt', 64) &&
+        isOptionalString(data, 'publishedAt', 64);
+    }
+
+    // Public profile explicitly excludes contactEmail and administrative/private PII
+    function isValidProfile(data) {
+      return data.keys().hasAll(['nameEn', 'nameAr']) &&
+        data.keys().hasOnly([
+          'nameEn', 'nameAr', 'titleEn', 'titleAr', 'facultyEn', 'facultyAr',
+          'universityEn', 'universityAr', 'departmentEn', 'departmentAr',
+          'academicYearEn', 'academicYearAr', 'currentSemesterEn', 'currentSemesterAr',
+          'bioEn', 'bioAr', 'currentFocusEn', 'currentFocusAr',
+          'futureFocusEn', 'futureFocusAr',
+          'learningTracks', 'practicalExperience',
+          'githubUrl', 'linkedinUrl', 'updatedAt'
+        ]) &&
+        data.nameEn is string && data.nameEn.size() > 0 && data.nameEn.size() <= 128 &&
+        data.nameAr is string && data.nameAr.size() > 0 && data.nameAr.size() <= 128 &&
+        isOptionalString(data, 'titleEn', 200) &&
+        isOptionalString(data, 'titleAr', 200) &&
+        isOptionalString(data, 'facultyEn', 200) &&
+        isOptionalString(data, 'facultyAr', 200) &&
+        isOptionalString(data, 'universityEn', 200) &&
+        isOptionalString(data, 'universityAr', 200) &&
+        isOptionalString(data, 'departmentEn', 200) &&
+        isOptionalString(data, 'departmentAr', 200) &&
+        isOptionalString(data, 'academicYearEn', 120) &&
+        isOptionalString(data, 'academicYearAr', 120) &&
+        isOptionalString(data, 'currentSemesterEn', 120) &&
+        isOptionalString(data, 'currentSemesterAr', 120) &&
+        isOptionalString(data, 'bioEn', 1500) &&
+        isOptionalString(data, 'bioAr', 1500) &&
+        isOptionalString(data, 'currentFocusEn', 500) &&
+        isOptionalString(data, 'currentFocusAr', 500) &&
+        isOptionalString(data, 'futureFocusEn', 500) &&
+        isOptionalString(data, 'futureFocusAr', 500) &&
+        isOptionalLearningTracks(data) &&
+        isOptionalPracticalExperience(data) &&
+        isOptionalHttpUrl(data, 'githubUrl', 500) &&
+        isOptionalHttpUrl(data, 'linkedinUrl', 500) &&
+        isOptionalString(data, 'updatedAt', 64);
+    }
+
+    function isValidCourse(data) {
+      return data.keys().hasAll([
+          'id', 'slug', 'nameEn', 'nameAr', 'semesterEn', 'semesterAr',
+          'yearEn', 'yearAr', 'category', 'latticeNodeIndex', 'publicationStatus'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'slug', 'nameEn', 'nameAr', 'semesterEn', 'semesterAr',
+          'yearEn', 'yearAr', 'category', 'latticeNodeIndex',
+          'termTag', 'verificationStatus',
+          'descriptionEn', 'descriptionAr', 'publicationStatus',
+          'createdAt', 'updatedAt', 'publishedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.slug) &&
+        data.nameEn is string && data.nameEn.size() > 0 && data.nameEn.size() <= 200 &&
+        data.nameAr is string && data.nameAr.size() > 0 && data.nameAr.size() <= 200 &&
+        data.semesterEn is string && data.semesterEn.size() > 0 && data.semesterEn.size() <= 100 &&
+        data.semesterAr is string && data.semesterAr.size() > 0 && data.semesterAr.size() <= 100 &&
+        data.yearEn is string && data.yearEn.size() > 0 && data.yearEn.size() <= 100 &&
+        data.yearAr is string && data.yearAr.size() > 0 && data.yearAr.size() <= 100 &&
+        data.category in ['computational', 'mathematical', 'humanities'] &&
+        data.latticeNodeIndex is int && data.latticeNodeIndex >= 0 && data.latticeNodeIndex <= 100 &&
+        data.publicationStatus in ['draft', 'published'] &&
+        isOptionalString(data, 'termTag', 64) &&
+        (!('verificationStatus' in data) || data.verificationStatus in ['unverified-syllabus', 'verified']) &&
+        isOptionalString(data, 'descriptionEn', 2000) &&
+        isOptionalString(data, 'descriptionAr', 2000) &&
+        isOptionalString(data, 'createdAt', 64) &&
+        isOptionalString(data, 'updatedAt', 64) &&
+        isOptionalString(data, 'publishedAt', 64);
+    }
+
+    function isValidContactMessage(data) {
+      return data.keys().hasAll([
+          'id', 'senderName', 'subject', 'message', 'language', 'status', 'createdAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'senderName', 'senderContact', 'subject', 'message',
+          'language', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.senderName is string && data.senderName.size() >= 2 && data.senderName.size() <= 120 &&
+        isOptionalString(data, 'senderContact', 200) &&
+        data.subject is string && data.subject.size() >= 2 && data.subject.size() <= 160 &&
+        data.message is string && data.message.size() >= 10 && data.message.size() <= 2500 &&
+        data.language in ['en', 'ar'] &&
+        data.status in ['unread', 'read', 'archived'] &&
+        data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 64 &&
+        isOptionalString(data, 'updatedAt', 64);
+    }
+
+    // Projects collection (requires BOTH publicationStatus=='published' AND visibility=='public' for public reads)
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId) && (
+        isOwner() ||
+        (resource != null && resource.data.publicationStatus == 'published' && resource.data.visibility == 'public')
+      );
+      allow list: if isOwner() || (
+        resource.data.publicationStatus == 'published' &&
+        resource.data.visibility == 'public'
+      );
+      allow create: if isOwner() && isValidId(projectId) && incoming().id == projectId && isValidProject(incoming());
+      allow update: if isOwner() && isValidId(projectId) && incoming().id == projectId && (!('createdAt' in resource.data) || incoming().createdAt == resource.data.createdAt) && isValidProject(incoming());
+      allow delete: if isOwner() && isValidId(projectId);
+    }
+
+    // Learning notes collection
+    match /notes/{noteId} {
+      allow get: if isValidId(noteId) && (resource == null || resource.data.publicationStatus == 'published' || isOwner());
+      allow list: if resource.data.publicationStatus == 'published' || isOwner();
+      allow create: if isOwner() && isValidId(noteId) && incoming().id == noteId && isValidNote(incoming());
+      allow update: if isOwner() && isValidId(noteId) && incoming().id == noteId && (!('createdAt' in resource.data) || incoming().createdAt == resource.data.createdAt) && isValidNote(incoming());
+      allow delete: if isOwner() && isValidId(noteId);
+    }
+
+    // Milestones collection
+    match /milestones/{milestoneId} {
+      allow get: if isValidId(milestoneId) && (resource == null || resource.data.publicationStatus == 'published' || isOwner());
+      allow list: if resource.data.publicationStatus == 'published' || isOwner();
+      allow create: if isOwner() && isValidId(milestoneId) && incoming().id == milestoneId && isValidMilestone(incoming());
+      allow update: if isOwner() && isValidId(milestoneId) && incoming().id == milestoneId && (!('createdAt' in resource.data) || incoming().createdAt == resource.data.createdAt) && isValidMilestone(incoming());
+      allow delete: if isOwner() && isValidId(milestoneId);
+    }
+
+    // Academic courses collection (owner-managed CMS, published entries readable publicly)
+    match /courses/{courseId} {
+      allow get: if isValidId(courseId) && (resource == null || resource.data.publicationStatus == 'published' || isOwner());
+      allow list: if resource.data.publicationStatus == 'published' || isOwner();
+      allow create: if isOwner() && isValidId(courseId) && incoming().id == courseId && isValidCourse(incoming());
+      allow update: if isOwner() && isValidId(courseId) && incoming().id == courseId && (!('createdAt' in resource.data) || incoming().createdAt == resource.data.createdAt) && isValidCourse(incoming());
+      allow delete: if isOwner() && isValidId(courseId);
+    }
+
+    // Visitor contact messages (write-only public dropbox; zero public read/list/update/delete)
+    match /contactMessages/{messageId} {
+      allow get: if isOwner() && isValidId(messageId);
+      allow list: if isOwner();
+      allow create: if isValidId(messageId) &&
+        incoming().id == messageId &&
+        incoming().status == 'unread' &&
+        isValidContactMessage(incoming());
+      allow update: if isOwner() &&
+        isValidId(messageId) &&
+        incoming().id == messageId &&
+        incoming().createdAt == resource.data.createdAt &&
+        incoming().diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']) &&
+        isValidContactMessage(incoming());
+      allow delete: if isOwner() && isValidId(messageId);
+    }
+
+    // Settings collection (public get restricted specifically to non-PII profile document)
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId) && (settingId == 'profile' || isOwner());
+      allow list: if isOwner();
+      allow create: if isOwner() && isValidId(settingId) && settingId == 'profile' && isValidProfile(incoming());
+      allow update: if isOwner() && isValidId(settingId) && settingId == 'profile' && isValidProfile(incoming());
+      allow delete: if false;
+    }
+  }
+}

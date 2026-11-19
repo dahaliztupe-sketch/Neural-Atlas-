@@ -1,0 +1,222 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A portfolio project, learning track, or archived experiment with explicit public vs internal visibility",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleEn": { "type": "string", "maxLength": 200 },
+        "titleAr": { "type": "string", "maxLength": 200 },
+        "statusEn": { "type": "string", "maxLength": 100 },
+        "statusAr": { "type": "string", "maxLength": 100 },
+        "summaryEn": { "type": "string", "maxLength": 500 },
+        "summaryAr": { "type": "string", "maxLength": 500 },
+        "descriptionEn": { "type": "string", "maxLength": 5000 },
+        "descriptionAr": { "type": "string", "maxLength": 5000 },
+        "technologies": { "type": "array" },
+        "url": { "type": "string", "maxLength": 500 },
+        "repoUrl": { "type": "string", "maxLength": 500 },
+        "coverImageUrl": { "type": "string", "maxLength": 1000 },
+        "coverImageAltEn": { "type": "string", "maxLength": 300 },
+        "coverImageAltAr": { "type": "string", "maxLength": 300 },
+        "roleEn": { "type": "string", "maxLength": 300 },
+        "roleAr": { "type": "string", "maxLength": 300 },
+        "problemEn": { "type": "string", "maxLength": 1500 },
+        "problemAr": { "type": "string", "maxLength": 1500 },
+        "approachEn": { "type": "string", "maxLength": 1500 },
+        "approachAr": { "type": "string", "maxLength": 1500 },
+        "outcomeEn": { "type": "string", "maxLength": 1500 },
+        "outcomeAr": { "type": "string", "maxLength": 1500 },
+        "statusType": {
+          "type": "string",
+          "enum": [
+            "practicing",
+            "in_development",
+            "completed",
+            "experimental",
+            "paused",
+            "discontinued",
+            "archived",
+            "needs_confirmation"
+          ]
+        },
+        "publicationStatus": { "type": "string", "enum": ["draft", "published"] },
+        "visibility": { "type": "string", "enum": ["public", "internal_archive"] },
+        "archiveGroup": { "type": "string", "enum": ["showcase", "experiments_discontinued"] },
+        "featuredOnHome": { "type": "boolean" },
+        "fullOverviewEn": { "type": "array" },
+        "fullOverviewAr": { "type": "array" },
+        "seoTitleEn": { "type": "string", "maxLength": 200 },
+        "seoTitleAr": { "type": "string", "maxLength": 200 },
+        "seoDescriptionEn": { "type": "string", "maxLength": 500 },
+        "seoDescriptionAr": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "publishedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "slug", "titleEn", "titleAr", "statusType", "publicationStatus", "visibility"]
+    },
+    "LearningNote": {
+      "title": "LearningNote",
+      "description": "A study reflection, concept breakdown, or learning log entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleEn": { "type": "string", "maxLength": 200 },
+        "titleAr": { "type": "string", "maxLength": 200 },
+        "summaryEn": { "type": "string", "maxLength": 500 },
+        "summaryAr": { "type": "string", "maxLength": 500 },
+        "contentEn": { "type": "string", "maxLength": 20000 },
+        "contentAr": { "type": "string", "maxLength": 20000 },
+        "topicLabels": { "type": "array" },
+        "publicationStatus": { "type": "string", "enum": ["draft", "published"] },
+        "seoTitleEn": { "type": "string", "maxLength": 200 },
+        "seoTitleAr": { "type": "string", "maxLength": 200 },
+        "seoDescriptionEn": { "type": "string", "maxLength": 500 },
+        "seoDescriptionAr": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "publishedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "slug", "titleEn", "titleAr", "publicationStatus"]
+    },
+    "Milestone": {
+      "title": "Milestone",
+      "description": "A verified academic or technical timeline milestone",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "titleEn": { "type": "string", "maxLength": 200 },
+        "titleAr": { "type": "string", "maxLength": 200 },
+        "descriptionEn": { "type": "string", "maxLength": 1000 },
+        "descriptionAr": { "type": "string", "maxLength": 1000 },
+        "dateEn": { "type": "string", "maxLength": 100 },
+        "dateAr": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["academic", "technical"] },
+        "externalReference": { "type": "string", "maxLength": 500 },
+        "publicationStatus": { "type": "string", "enum": ["draft", "published"] },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "publishedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "titleEn", "titleAr", "category", "publicationStatus"]
+    },
+    "ProfileSettings": {
+      "title": "ProfileSettings",
+      "description": "Public profile texts, academic term context, verified learning tracks, practical experience, and social links (zero PII)",
+      "type": "object",
+      "properties": {
+        "nameEn": { "type": "string", "maxLength": 128 },
+        "nameAr": { "type": "string", "maxLength": 128 },
+        "titleEn": { "type": "string", "maxLength": 200 },
+        "titleAr": { "type": "string", "maxLength": 200 },
+        "facultyEn": { "type": "string", "maxLength": 200 },
+        "facultyAr": { "type": "string", "maxLength": 200 },
+        "universityEn": { "type": "string", "maxLength": 200 },
+        "universityAr": { "type": "string", "maxLength": 200 },
+        "departmentEn": { "type": "string", "maxLength": 200 },
+        "departmentAr": { "type": "string", "maxLength": 200 },
+        "academicYearEn": { "type": "string", "maxLength": 120 },
+        "academicYearAr": { "type": "string", "maxLength": 120 },
+        "currentSemesterEn": { "type": "string", "maxLength": 120 },
+        "currentSemesterAr": { "type": "string", "maxLength": 120 },
+        "bioEn": { "type": "string", "maxLength": 1500 },
+        "bioAr": { "type": "string", "maxLength": 1500 },
+        "currentFocusEn": { "type": "string", "maxLength": 500 },
+        "currentFocusAr": { "type": "string", "maxLength": 500 },
+        "futureFocusEn": { "type": "string", "maxLength": 500 },
+        "futureFocusAr": { "type": "string", "maxLength": 500 },
+        "learningTracks": { "type": "array" },
+        "practicalExperience": { "type": "object" },
+        "githubUrl": { "type": "string", "maxLength": 500 },
+        "linkedinUrl": { "type": "string", "maxLength": 500 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["nameEn", "nameAr"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "An academic coursework entry editable through the owner CMS",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "nameEn": { "type": "string", "maxLength": 200 },
+        "nameAr": { "type": "string", "maxLength": 200 },
+        "semesterEn": { "type": "string", "maxLength": 100 },
+        "semesterAr": { "type": "string", "maxLength": 100 },
+        "yearEn": { "type": "string", "maxLength": 100 },
+        "yearAr": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["computational", "mathematical", "humanities"] },
+        "latticeNodeIndex": { "type": "integer" },
+        "termTag": { "type": "string", "maxLength": 64 },
+        "verificationStatus": { "type": "string", "enum": ["unverified-syllabus", "verified"] },
+        "descriptionEn": { "type": "string", "maxLength": 2000 },
+        "descriptionAr": { "type": "string", "maxLength": 2000 },
+        "publicationStatus": { "type": "string", "enum": ["draft", "published"] },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "publishedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": [
+        "id",
+        "slug",
+        "nameEn",
+        "nameAr",
+        "semesterEn",
+        "semesterAr",
+        "yearEn",
+        "yearAr",
+        "category",
+        "latticeNodeIndex",
+        "publicationStatus"
+      ]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "A visitor contact inquiry written to Firestore and moderated exclusively by the owner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "senderName": { "type": "string", "maxLength": 120, "minLength": 2 },
+        "senderContact": { "type": "string", "maxLength": 200 },
+        "subject": { "type": "string", "maxLength": 160, "minLength": 2 },
+        "message": { "type": "string", "maxLength": 2500, "minLength": 10 },
+        "language": { "type": "string", "enum": ["en", "ar"] },
+        "status": { "type": "string", "enum": ["unread", "read", "archived"] },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "senderName", "subject", "message", "language", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "Collection of projects, experiments archive, and internal_archive records"
+    },
+    "/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/LearningNote" },
+      "description": "Collection of learning notes and reflections"
+    },
+    "/milestones/{milestoneId}": {
+      "schema": { "$ref": "#/entities/Milestone" },
+      "description": "Collection of verified milestones and achievements"
+    },
+    "/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/Course" },
+      "description": "Collection of owner-managed academic coursework entries"
+    },
+    "/contactMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Write-only public inquiry dropbox readable and moderated solely by the portfolio owner"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/ProfileSettings" },
+      "description": "Public profile configuration, academic metadata, learning tracks, and social links"
+    }
+  }
+}
