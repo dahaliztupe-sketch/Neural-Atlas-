@@ -1,0 +1,42 @@
+name: Feature Request
+description: Propose a thoughtful improvement to accessibility, performance, DX, or documentation
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Motivation
+      description: Explain what user or developer need this improvement addresses.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the suggested design, UX, or technical approach.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Target Scope
+      options:
+        - Accessibility & Bilingual UX (EN / AR)
+        - Performance & Bundle Size
+        - Developer Experience & Testing
+        - Documentation
+        - Security & Validation
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Alignment Checklist
+      options:
+        - label: Preserves bilingual EN/AR and RTL/LTR parity
+          required: false
+        - label: Does not weaken Firestore security rules or privacy boundaries
+          required: false
+        - label: Does not alter or fabricate personal academic/portfolio records
+          required: false

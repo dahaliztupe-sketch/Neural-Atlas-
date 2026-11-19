@@ -1,0 +1,55 @@
+name: Bug Report
+description: Report a reproducible bug in Neural Atlas (UI, RTL/LTR, 3D Astrolabe, PWA, or Firestore rules)
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue. Please avoid posting any personal credentials, tokens, or private user data.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Provide a clear and concise summary of the bug.
+      placeholder: Describe the unexpected behavior...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Exact route, language/theme state, and steps to reproduce.
+      value: |
+        1. Navigate to '...'
+        2. Toggle language / theme '...'
+        3. Observe '...'
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      options:
+        - Public UI / Layout (EN LTR)
+        - Public UI / Layout (AR RTL)
+        - 3D Astrolabe / WebGL (Home)
+        - Admin Studio (/admin)
+        - Markdown / KaTeX Rendering
+        - Firebase / Firestore Rules
+        - Build / PWA / SEO
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser & Viewport
+      description: e.g., Chromium 130 on Linux (1440x900) or Safari iOS (390x844)
+      placeholder: Browser, OS, and viewport dimensions

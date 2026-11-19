@@ -1,13 +1,28 @@
+# Dependencies & build artifacts
 node_modules/
 build/
 dist/
 dev-dist/
 coverage/
+*.tsbuildinfo
+
+# OS & editor files
 .DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Logs & temp artifacts
 *.log
-.env*
-!.env.example
-.aistudio/
-.playwright-cli/
 firebase-debug.log*
 firestore-debug.log*
+tmp/
+
+# Local environment secrets (never commit .env files)
+.env*
+!.env.example
+
+# AI Studio & browser test artifacts
+.aistudio/
+.playwright-cli/
