@@ -16,6 +16,7 @@
     <img src="https://img.shields.io/badge/Three.js-Astrolabe-0f172a?style=flat-square&logo=threedotjs&logoColor=f8fafc" alt="Three.js" />
     <img src="https://img.shields.io/badge/Firebase-Firestore_%26_Auth-0f172a?style=flat-square&logo=firebase&logoColor=fbbf24" alt="Firebase" />
     <img src="https://img.shields.io/badge/PWA-Offline_Ready-0f172a?style=flat-square&logo=pwa&logoColor=22d3ee" alt="PWA" />
+    <a href="https://github.com/dahaliztupe-sketch/neural-atlas/actions/workflows/ci.yml"><img src="https://github.com/dahaliztupe-sketch/neural-atlas/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-0f172a?style=flat-square" alt="License: MIT" /></a>
   </p>
 
@@ -120,7 +121,7 @@ For deeper technical details (SWR cache invariants, KaTeX/Markdown security, and
 
 ```text
 .
-├── .github/                  # Issue/PR templates, CI workflow, Dependabot, social preview
+├── .github/                  # Issue/PR templates, CODEOWNERS, CI workflow, Dependabot, social preview
 ├── docs/                     # Architecture, deployment, security spec, live screenshots, historical archive
 ├── public/                   # Static icons, PWA icons, robots.txt, sitemap.xml, og-preview.png
 ├── src/
@@ -137,7 +138,9 @@ For deeper technical details (SWR cache invariants, KaTeX/Markdown security, and
 ├── firestore.rules           # Server-side Firestore Security Rules
 ├── firestore.indexes.json    # Required Firestore composite indexes
 ├── firestore.rules.test.ts   # Rules-blueprint parity & adversarial payload test suite
+├── vercel.json               # Vercel SPA rewrites, PWA cache headers & popup-safe COOP headers
 ├── vite.config.ts            # Vite + PWA + SEO build plugin + vendor chunk splitting
+├── package-lock.json         # Deterministic npm lockfile for CI & Vercel builds
 └── package.json              # Scripts and dependencies
 ```
 

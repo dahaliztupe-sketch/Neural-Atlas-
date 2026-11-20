@@ -47,6 +47,18 @@ body:
         - Build / PWA / SEO
     validations:
       required: true
+  - type: dropdown
+    id: locale_theme
+    attributes:
+      label: Language & Theme
+      options:
+        - English (LTR) · Dark (Obsidian)
+        - English (LTR) · Light (Mineral Alabaster)
+        - Arabic (RTL) · Dark (Obsidian)
+        - Arabic (RTL) · Light (Mineral Alabaster)
+        - Both / Not applicable
+    validations:
+      required: true
   - type: input
     id: environment
     attributes:

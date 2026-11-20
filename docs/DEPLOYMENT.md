@@ -38,6 +38,7 @@ VITE_SITE_URL="https://your-domain.example" npm run build
 
 All routes (`/`, `/about`, `/academic`, `/projects/:slug`, `/notes/:slug`, `/milestones`, `/connect`, `/admin`) use HTML5 History API navigation. Configure your static host or reverse proxy to rewrite unknown non-asset paths to `/index.html`:
 
+- **Vercel (`vercel.json`)**: Preconfigured in [`vercel.json`](../vercel.json) with SPA fallback rewrites to `/index.html`, PWA service worker revalidation headers (`/sw.js`, `/registerSW.js`, `/index.html`), immutable caching on `/assets/*`, and `Cross-Origin-Opener-Policy: same-origin-allow-popups` for Firebase Google Sign-In.
 - **Firebase Hosting (`firebase.json`)**:
   ```json
   {
@@ -47,7 +48,7 @@ All routes (`/`, `/about`, `/academic`, `/projects/:slug`, `/notes/:slug`, `/mil
     }
   }
   ```
-- **Cloudflare Pages / Netlify / Vercel**: Enable single-page app fallback (`/* /index.html 200`).
+- **Cloudflare Pages / Netlify**: Enable single-page app fallback (`/* /index.html 200`).
 
 ---
 
