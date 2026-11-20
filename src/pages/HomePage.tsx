@@ -4,7 +4,8 @@ import { CourseCard, CourseDisplayItem } from '../components/CourseCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { EmptyState } from '../components/EmptyState';
 import { useWorldScene } from '../components/world/WorldSceneContext';
-import { LEARNING_TRACKS } from '../data/portfolioData';
+import { KNOWLEDGE_CATEGORIES, LEARNING_TRACKS } from '../data/portfolioData';
+import { resolveNoteCategoryAndTags } from '../lib/validation';
 import {
   AstrolabeNodeId,
   resolveAstrolabeNode,
@@ -134,6 +135,8 @@ export const HomePage: React.FC = () => {
     return projects.filter((p) => {
       if (p.visibility === 'internal_archive') return false;
       if (p.archiveGroup === 'experiments_discontinued') return false;
+      if (p.featuredOnHome === false) return false;
+      if (p.archiveGroup === 'showcase') return true;
       if (
         p.statusType === 'experimental' ||
         p.statusType === 'discontinued' ||
@@ -143,7 +146,6 @@ export const HomePage: React.FC = () => {
       ) {
         return false;
       }
-      if (p.featuredOnHome === false) return false;
       return true;
     });
   }, [projects]);
@@ -275,6 +277,8 @@ export const HomePage: React.FC = () => {
               <span className="text-[var(--color-text-muted)]">
                 {isRtl ? publicProfile.facultyAr : publicProfile.facultyEn}
               </span>
+              <span aria-hidden="true" className="text-[var(--color-text-subtle)]">·</span>
+              <span className="text-[var(--color-text-subtle)]">{t('aboutLocationBadge')}</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-[3.3rem] font-bold tracking-[-0.03em] text-[var(--color-text)] leading-[1.1] text-balance">
@@ -321,8 +325,8 @@ export const HomePage: React.FC = () => {
                 {projectsLoading
                   ? t('projectsLoading')
                   : isRtl
-                  ? `${featuredProjects.length} ممارسة نشطة · ${projects.length} في الأرشيف`
-                  : `${featuredProjects.length} Active Showcase · ${projects.length} Archive Entries`}
+                  ? `${featuredProjects.length} مشاريع رئيسية · ${projects.length} إجمالي الإدخالات`
+                  : `${featuredProjects.length} Active Showcase · ${projects.length} Total Entries`}
               </span>
               <span aria-hidden="true">·</span>
               <span>{termDisplay}</span>
@@ -478,9 +482,9 @@ export const HomePage: React.FC = () => {
           {highlightedTracks.map((track) => {
             const statusClass =
               track.status === 'completed'
-                ? 'text-emerald-400'
+                ? 'text-[var(--color-status-success)]'
                 : track.status === 'paused' || track.status === 'needs_confirmation'
-                ? 'text-amber-400'
+                ? 'text-[var(--color-status-warning)]'
                 : 'text-[var(--color-secondary)]';
             return (
               <div
@@ -635,10 +639,31 @@ export const HomePage: React.FC = () => {
               onAction={() => navigate('/projects')}
             />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredProjects.slice(0, 4).map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {featuredProjects.slice(0, 4).map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+
+              <div className="na-mineral-card px-5 py-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-[var(--color-border-subtle)]">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--color-text-subtle)]">
+                    {t('homeArchiveContextEyebrow')}
+                  </span>
+                  <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+                    {t('homeArchiveContextDesc')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/projects/local-ai-agent')}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+                >
+                  <span>{t('homeArchiveContextAction')}</span>
+                  <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -681,10 +706,22 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {!archiveLoading && (notes.length > 0 || milestones.length > 0) ? (
+          {notes.length > 0 || milestones.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {notes.slice(0, 2).map((note) => {
-                const date = formatLocalizedDate(note.publishedAt, language);
+                const date = formatLocalizedDate(note.publishedAt || note.createdAt, language);
+                const validKeys = KNOWLEDGE_CATEGORIES.map((c) => c.topicMatchKey);
+                const { categoryKey } = resolveNoteCategoryAndTags(note.topicLabels, validKeys);
+                const catObj = categoryKey
+                  ? KNOWLEDGE_CATEGORIES.find(
+                      (c) => c.topicMatchKey.toLowerCase() === categoryKey.toLowerCase()
+                    )
+                  : undefined;
+                const catTitle = catObj
+                  ? isRtl
+                    ? catObj.titleAr
+                    : catObj.titleEn
+                  : categoryKey;
                 return (
                   <button
                     key={note.id}
@@ -693,7 +730,7 @@ export const HomePage: React.FC = () => {
                     className="na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start space-y-2 cursor-pointer"
                   >
                     <div className="text-xs font-mono text-[var(--color-secondary)]">
-                      {date || t('navNotes')}
+                      {[catTitle, date].filter(Boolean).join(' · ') || t('navNotes')}
                     </div>
                     <h3 className="text-base font-semibold text-[var(--color-text)]">
                       {isRtl ? note.titleAr : note.titleEn}
@@ -722,6 +759,11 @@ export const HomePage: React.FC = () => {
                   </p>
                 </div>
               ))}
+            </div>
+          ) : archiveLoading ? (
+            <div className="py-8 flex items-center justify-center gap-2 text-xs font-mono text-[var(--color-text-muted)]" role="status">
+              <RefreshCw className="w-4 h-4 text-[var(--color-primary)] animate-spin" aria-hidden="true" />
+              <span>{t('notesLoading')}</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

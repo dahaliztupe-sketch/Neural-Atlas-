@@ -69,8 +69,26 @@ export function buildStructuredDataJsonLd(input: StructuredSeoInput): Record<str
     },
     knowsAbout:
       language === 'ar'
-        ? ['علوم الحاسب', 'الحوسبة الذكية', 'لغة C++', 'الخوارزميات وهياكل البيانات', 'حل المشكلات البرمجية']
-        : ['Computer Science', 'Intelligent Computing', 'C++', 'Algorithms & Data Structures', 'Problem Solving'],
+        ? [
+            'علوم الحاسب',
+            'الحوسبة الذكية',
+            'الذكاء الاصطناعي',
+            'أنظمة الذكاء الاصطناعي المحلية',
+            'لغة C++',
+            'لغة بايثون',
+            'الخوارزميات وهياكل البيانات',
+            'تطوير البرمجيات',
+          ]
+        : [
+            'Computer Science',
+            'Intelligent Computing',
+            'Artificial Intelligence',
+            'Local AI Systems',
+            'C++',
+            'Python',
+            'Algorithms & Data Structures',
+            'Software Development',
+          ],
     ...(sameAs.length > 0 ? { sameAs } : {}),
   };
 

@@ -11,6 +11,7 @@
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true });\"",
     "lint": "tsc --noEmit",
     "lint:rules": "eslint firestore.rules",
+    "sync:github": "bash scripts/sync-github.sh",
     "test": "tsx --test src/data/data.test.ts src/router/router.test.ts src/services/contentRepository.test.ts src/services/cacheService.test.ts src/services/backupService.test.ts src/lib/validation.test.ts src/lib/markdown.test.ts src/lib/katex.test.ts src/lib/seo.test.ts src/components/world/world.test.ts firestore.rules.test.ts"
   },
   "dependencies": {

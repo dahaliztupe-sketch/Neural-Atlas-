@@ -9,6 +9,9 @@ import {
   ACADEMIC_PROGRAM,
   LEARNING_TRACKS,
   PRACTICAL_EXPERIENCE,
+  SKILLS_CATALOG,
+  KNOWLEDGE_CATEGORIES,
+  INITIAL_LEARNING_NOTES,
 } from './portfolioData';
 import { TRANSLATIONS } from './translations';
 
@@ -71,15 +74,34 @@ test('academic program contains owner-provided Al-Azhar context and Semester 1 a
   assert.ok(ACADEMIC_PROGRAM.verificationDisclaimerAr.includes('مُدخلة من قِبل صاحب الموقع'));
 });
 
-test('projects strictly enforce visibility split between public showcase, public archive, and internal_archive', () => {
-  assert.equal(PROJECTS.length, 7, 'Must have 6 public entries + 1 internal_archive entry');
+test('projects expose 3 main showcase entries plus 6 archive entries with LOCAL AI AGENT discontinued and separated from J.A.R.V.I.S.', () => {
+  assert.equal(PROJECTS.length, 9, 'Must have 3 main showcase entries + 6 archive entries');
 
   const publicProjects = PROJECTS.filter((p) => p.visibility === 'public');
-  const internalProjects = PROJECTS.filter((p) => p.visibility === 'internal_archive');
-  assert.equal(publicProjects.length, 6);
-  assert.equal(internalProjects.length, 1);
-  assert.equal(internalProjects[0].id, 'local-ai-agent');
-  assert.equal(internalProjects[0].featuredOnHome, false);
+  const showcaseProjects = PROJECTS.filter((p) => p.archiveGroup === 'showcase');
+  const archiveProjects = PROJECTS.filter((p) => p.archiveGroup === 'experiments_discontinued');
+  assert.equal(publicProjects.length, 9);
+  assert.equal(showcaseProjects.length, 3);
+  assert.equal(archiveProjects.length, 6);
+
+  assert.deepEqual(
+    showcaseProjects.map((p) => p.id),
+    ['neural-atlas', 'jarvis-ai-assistant', 'cpp-problem-solving']
+  );
+
+  const jarvis = PROJECTS.find((p) => p.id === 'jarvis-ai-assistant');
+  const localAi = PROJECTS.find((p) => p.id === 'local-ai-agent');
+  assert.ok(jarvis && localAi, 'Both J.A.R.V.I.S. and LOCAL AI AGENT must exist');
+  assert.equal(jarvis.featuredOnHome, true);
+  assert.equal(jarvis.technologies.includes('Python'), false, 'Python is a planned next step, not yet active stack');
+  assert.equal(localAi.featuredOnHome, false);
+  assert.equal(localAi.archiveGroup, 'experiments_discontinued');
+  assert.equal(localAi.statusType, 'discontinued');
+  assert.equal(localAi.statusEn, 'Discontinued / Archived');
+  assert.equal(localAi.statusAr, 'متوقف / مؤرشف');
+  assert.ok(localAi.titleEn.includes('Discontinued / Archived'));
+  assert.ok(jarvis.descriptionEn.includes('LOCAL AI AGENT'));
+  assert.ok(localAi.descriptionEn.includes('J.A.R.V.I.S.'));
 
   const cppProject = PROJECTS.find((p) => p.id === 'cpp-problem-solving');
   assert.ok(cppProject, 'C++ project must exist');
@@ -117,23 +139,87 @@ test('projects strictly enforce visibility split between public showcase, public
   }
 });
 
-test('milestones list contains the 4 factual timeline records without fabricated awards or certificates', () => {
-  assert.equal(INITIAL_MILESTONES.length, 4);
+test('milestones list contains the 6 factual timeline records without fabricated awards or certificates', () => {
+  assert.equal(INITIAL_MILESTONES.length, 6);
   const gks = INITIAL_MILESTONES.find((m) => m.id === 'gks-u-2027-application-submitted');
   assert.ok(gks);
   assert.ok(gks.titleEn.includes('Application Submitted'));
   assert.ok(!gks.descriptionEn.toLowerCase().includes('awarded'));
   assert.ok(!gks.descriptionEn.toLowerCase().includes('selected'));
+
+  const earlyRoots = INITIAL_MILESTONES.find((m) => m.id === 'early-self-learning-age-12');
+  assert.ok(earlyRoots);
+  assert.ok(earlyRoots.descriptionEn.includes('12'));
+});
+
+test('skills catalog, 9 knowledge categories, and 8 learning notes obey quality, schema bounds, and author honesty', () => {
+  assert.equal(SKILLS_CATALOG.filter((s) => s.domain === 'programming').length, 4);
+  assert.equal(SKILLS_CATALOG.filter((s) => s.domain === 'technical_interest').length, 5);
+  assert.equal(
+    SKILLS_CATALOG.some((s) => JSON.stringify(s).includes('%')),
+    false,
+    'Skills catalog must NEVER contain artificial percentage scores'
+  );
+  const pythonSkill = SKILLS_CATALOG.find((s) => s.id === 'skill-python');
+  assert.ok(pythonSkill);
+  assert.equal(pythonSkill.tier, 'exploring', 'Python must be represented honestly as planned next step');
+
+  assert.deepEqual(
+    KNOWLEDGE_CATEGORIES.map((c) => c.titleEn),
+    [
+      'Programming',
+      'Computer Science',
+      'Artificial Intelligence',
+      'Problem Solving',
+      'University Studies',
+      'Learning Journey',
+      'Business & Technology',
+      'Personal Insights',
+      'Experiments',
+    ]
+  );
+
+  const validCategoryKeys = new Set(KNOWLEDGE_CATEGORIES.map((c) => c.topicMatchKey));
+  assert.equal(INITIAL_LEARNING_NOTES.length, 8);
+  const seenSlugs = new Set<string>();
+
+  for (const note of INITIAL_LEARNING_NOTES) {
+    assert.equal(note.publicationStatus, 'published', `Note "${note.id}" must be published`);
+    assert.match(note.id, /^[a-zA-Z0-9_\-]{1,128}$/, 'ID must match firestore.rules isValidId');
+    assert.match(note.slug, /^[a-zA-Z0-9_\-]{1,128}$/, 'Slug must match firestore.rules regex');
+    assert.equal(seenSlugs.has(note.slug), false, `Duplicate slug found: ${note.slug}`);
+    seenSlugs.add(note.slug);
+
+    assert.ok(note.titleEn.length > 0 && note.titleEn.length <= 200);
+    assert.ok(note.titleAr.length > 0 && note.titleAr.length <= 200);
+    assert.ok((note.summaryEn || '').length > 0 && (note.summaryEn || '').length <= 500);
+    assert.ok((note.summaryAr || '').length > 0 && (note.summaryAr || '').length <= 500);
+    assert.ok(note.contentEn.length >= 800 && note.contentEn.length <= 20000);
+    assert.ok(note.contentAr.length >= 800 && note.contentAr.length <= 20000);
+    const topicLabels = note.topicLabels ?? [];
+    assert.ok(topicLabels.length >= 2 && topicLabels.length <= 20);
+    assert.ok(
+      validCategoryKeys.has(topicLabels[0]),
+      `Note "${note.id}" primary category topicLabels[0]="${topicLabels[0]}" must match KNOWLEDGE_CATEGORIES`
+    );
+    assert.ok(note.createdAt && !Number.isNaN(Date.parse(note.createdAt)));
+    assert.ok(note.updatedAt && !Number.isNaN(Date.parse(note.updatedAt)));
+    assert.ok(note.publishedAt && !Number.isNaN(Date.parse(note.publishedAt)));
+  }
+
+  assert.equal(
+    INITIAL_LEARNING_NOTES.some((n) => (n.topicLabels ?? [])[0] === 'University Studies'),
+    false,
+    'University Studies must have 0 notes rather than fabricated lectures/dates/grades'
+  );
 });
 
 test('learning tracks and practical experience obey factual constraints without exaggerations', () => {
   const cs50x = LEARNING_TRACKS.find((t) => t.id === 'harvard-cs50x');
   assert.ok(cs50x);
-  assert.equal(
-    cs50x.titleEn,
-    'Harvard CS50x — Independent Study / In Progress (Foundational Computer Science).'
-  );
-  assert.equal(cs50x.status, 'paused');
+  assert.equal(cs50x.titleEn, 'Harvard CS50x — Independent Study (CS50x: Week 3)');
+  assert.ok(cs50x.statusLabelEn.includes('CS50x: Week 3'));
+  assert.equal(cs50x.status, 'in_progress');
   assert.equal(cs50x.showInActiveHighlights, true);
 
   const korean = LEARNING_TRACKS.find((t) => t.id === 'korean-language-paused');
@@ -155,6 +241,7 @@ test('public data and translations contain zero banned claims or exposed owner e
     LEARNING_TRACKS,
     PRACTICAL_EXPERIENCE,
     INITIAL_MILESTONES,
+    INITIAL_LEARNING_NOTES,
     publicProjects: PROJECTS.filter((p) => p.visibility === 'public'),
     TRANSLATIONS,
   });
@@ -163,15 +250,16 @@ test('public data and translations contain zero banned claims or exposed owner e
     'Build with AI',
     'NASA Space Apps',
     'ICDL',
-    'Week 3',
+    'CS50x certificate',
+    'completed CS50x',
+    "In today's rapidly evolving world",
+    'delve into',
     'abdalrahman32008@gmail.com',
-    'Local AI Agent',
-    'وكيل ذكاء اصطناعي محلي',
   ];
 
   for (const phrase of bannedPhrases) {
     assert.equal(
-      publicDataBlob.includes(phrase),
+      publicDataBlob.toLowerCase().includes(phrase.toLowerCase()),
       false,
       `Public data & translations must NOT contain banned phrase: ${phrase}`
     );

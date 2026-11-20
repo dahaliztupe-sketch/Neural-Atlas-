@@ -4,6 +4,8 @@ import { LearningNoteRecord } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { computeReadingStats } from '../../lib/markdown';
 import { sanitizeSlug } from '../../services/contentRepository';
+import { resolveNoteCategoryAndTags } from '../../lib/validation';
+import { KNOWLEDGE_CATEGORIES } from '../../data/portfolioData';
 import { ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from './AdminShared';
 import { MarkdownEditorField } from './MarkdownEditorField';
 import { useModalFocusTrap } from '../../hooks/useModalFocusTrap';
@@ -37,6 +39,16 @@ export const AdminNoteModal: React.FC<AdminNoteModalProps> = ({
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useModalFocusTrap(dialogRef, true);
+
+  const validCategoryKeys = KNOWLEDGE_CATEGORIES.map((c) => c.topicMatchKey);
+  const { categoryKey, tags } = resolveNoteCategoryAndTags(note.topicLabels, validCategoryKeys);
+  const composeTopicLabels = (nextCategory: string, nextTags: string[]): string[] => {
+    const cleanCat = nextCategory.trim();
+    const filteredTags = nextTags
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0 && item.toLowerCase() !== cleanCat.toLowerCase());
+    return cleanCat ? [cleanCat, ...filteredTags] : filteredTags;
+  };
 
   const resolvedSlug = sanitizeSlug(note.slug || note.titleEn || '');
   const hasSlugCollision = Boolean(!note.id && resolvedSlug && existingSlugs.includes(resolvedSlug));
@@ -215,7 +227,7 @@ export const AdminNoteModal: React.FC<AdminNoteModalProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label htmlFor="note-slug" className={ADMIN_LABEL_CLASS}>URL Slug</label>
                 <input
@@ -235,22 +247,6 @@ export const AdminNoteModal: React.FC<AdminNoteModalProps> = ({
                 )}
               </div>
               <div className="space-y-1">
-                <label htmlFor="note-topics" className={ADMIN_LABEL_CLASS}>Topic Labels (comma-separated)</label>
-                <input
-                  id="note-topics"
-                  type="text"
-                  value={note.topicLabels?.join(', ') || ''}
-                  onChange={(e) =>
-                    onChange({
-                      ...note,
-                      topicLabels: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
-                    })
-                  }
-                  placeholder="C++, Algorithms"
-                  className={ADMIN_INPUT_CLASS}
-                />
-              </div>
-              <div className="space-y-1">
                 <label htmlFor="note-pub-status" className={ADMIN_LABEL_CLASS}>Publication Status</label>
                 <select
                   id="note-pub-status"
@@ -261,6 +257,53 @@ export const AdminNoteModal: React.FC<AdminNoteModalProps> = ({
                   <option value="draft">{t('adminStatusDraft')}</option>
                   <option value="published">{t('adminStatusPublished')}</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label htmlFor="note-primary-category" className={ADMIN_LABEL_CLASS}>
+                  {t('notesPrimaryCategorySelect')}
+                </label>
+                <select
+                  id="note-primary-category"
+                  value={categoryKey || ''}
+                  onChange={(e) =>
+                    onChange({
+                      ...note,
+                      topicLabels: composeTopicLabels(e.target.value, tags),
+                    })
+                  }
+                  className={ADMIN_INPUT_CLASS}
+                >
+                  <option value="">—</option>
+                  {KNOWLEDGE_CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={cat.topicMatchKey}>
+                      {isRtl ? cat.titleAr : cat.titleEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="note-topics" className={ADMIN_LABEL_CLASS}>
+                  {t('notesSecondaryTagsLabel')}
+                </label>
+                <input
+                  id="note-topics"
+                  type="text"
+                  value={tags.join(', ')}
+                  onChange={(e) =>
+                    onChange({
+                      ...note,
+                      topicLabels: composeTopicLabels(
+                        categoryKey || '',
+                        e.target.value.split(',').map((s) => s.trim())
+                      ),
+                    })
+                  }
+                  placeholder="C++, CS50x, Algorithms"
+                  className={ADMIN_INPUT_CLASS}
+                />
               </div>
             </div>
 

@@ -91,8 +91,14 @@ export const AcademicJourneyPage: React.FC = () => {
           </span>
           <span className="text-[var(--color-text-subtle)]" aria-hidden="true">·</span>
           <span className="text-[var(--color-text-subtle)]">{facultyName}</span>
+          {!facultyName.includes(isRtl ? 'الأزهر' : 'Al-Azhar') && (
+            <>
+              <span className="text-[var(--color-text-subtle)]" aria-hidden="true">·</span>
+              <span className="text-[var(--color-text-subtle)]">{institutionName}</span>
+            </>
+          )}
           <span className="text-[var(--color-text-subtle)]" aria-hidden="true">·</span>
-          <span className="text-[var(--color-text-subtle)]">{institutionName}</span>
+          <span className="text-[var(--color-text-subtle)]">{t('aboutLocationBadge')}</span>
           <span className="text-[var(--color-text-subtle)]" aria-hidden="true">·</span>
           <span className="text-[var(--color-text-muted)]">
             {academicYearLabel} · {currentSemesterLabel}

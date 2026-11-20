@@ -14,8 +14,17 @@ import {
   getImportPreview,
   isFirebaseConfigured,
   getProjectBySlugResult,
+  getNoteBySlugResult,
   classifyPublicError,
   resolvePublicCoursesCatchResult,
+  getLocalPublicProjectsBaseline,
+  getLocalPublicCoursesBaseline,
+  getLocalPublicMilestonesBaseline,
+  getLocalPublicNotesBaseline,
+  reconcileLearningTracks,
+  reconcileProfileForBaselineSync,
+  buildBaselineProjectSyncPayload,
+  buildDefaultProfileSettings,
 } from './contentRepository';
 import { isConfiguredOwner, isPlaceholderEmailConfigured } from '../lib/adminConfig';
 import { COURSES, PROJECTS, SOCIAL_LINKS } from '../data/portfolioData';
@@ -94,12 +103,12 @@ test('stripUndefined removes undefined keys so Firestore setDoc draft saves do n
   assert.deepEqual(payload.technologies, ['C++']);
 });
 
-test('getImportPreview accurately counts existing real items without fabrication', () => {
+test('getImportPreview accurately counts existing real items and 8 learning notes', () => {
   const preview = getImportPreview();
-  assert.equal(preview.projectsCount, 7, 'Should reflect 6 public projects + 1 internal_archive project');
-  assert.equal(preview.coursesCount, 7, 'Should reflect the 7 owner-provided courses');
-  assert.equal(preview.notesCount, 0, 'No fabricated notes should exist');
-  assert.equal(preview.milestonesCount, 4, 'Should reflect the 4 factual timeline milestones');
+  assert.equal(preview.projectsCount, 9, 'Should reflect 3 showcase + 6 archive projects');
+  assert.equal(preview.coursesCount, 7, 'Should reflect the 7 owner-provided first-year subjects');
+  assert.equal(preview.notesCount, 8, 'Should reflect the 8 published learning notes');
+  assert.equal(preview.milestonesCount, 6, 'Should reflect the 6 factual timeline milestones');
   assert.equal(preview.hasProfileData, true, 'Verified profile data must be present');
 });
 
@@ -107,12 +116,17 @@ test('REGRESSION: isFirebaseConfigured correctly identifies active configuration
   assert.equal(isFirebaseConfigured(), true, 'Active Firebase project ID should return true');
 });
 
-test('REGRESSION: Configured Firestore queries do not replace empty or missing results with local fallback', async () => {
+test('REGRESSION: Configured Firestore queries do not replace unknown slugs with local fallback', async () => {
   // 1. Querying a non-existent project slug when Firebase is configured returns not_found, NOT local project data
   const res = await getProjectBySlugResult('non-existent-project-12345', false);
   assert.equal(res.source, 'firestore', 'Source must be firestore when configured');
   assert.equal(res.item, null, 'Must return null item when missing from configured database');
   assert.equal(res.status === 'not_found' || res.status === 'error', true, 'Status must be not_found or error');
+
+  const noteRes = await getNoteBySlugResult('non-existent-note-12345', false);
+  assert.equal(noteRes.source, 'firestore', 'Note lookup source must be firestore when configured');
+  assert.equal(noteRes.item, null, 'Must return null item for unknown note slug');
+  assert.equal(noteRes.status === 'not_found' || noteRes.status === 'error', true);
 });
 
 test('REGRESSION: Remote draft is never exposed to unauthenticated public requests', async () => {
@@ -188,10 +202,19 @@ test('REGRESSION: Local Firestore rules harden read, write schema, URL protocol,
   );
 });
 
-test('REGRESSION: Owner provided course data and social links remain factual', () => {
-  assert.equal(COURSES.length, 7, 'Must maintain exactly 7 owner-provided first-semester course titles');
-  assert.equal(PROJECTS.length, 7, 'Must maintain 6 public entries + 1 internal_archive entry');
-  assert.equal(PROJECTS.filter((p) => p.visibility === 'public').length, 6);
+test('REGRESSION: Owner provided course data, 9 public projects, 8 notes, baseline fallbacks, and social links remain factual', () => {
+  assert.equal(COURSES.length, 7, 'Must maintain exactly 7 owner-provided first-year course titles');
+  assert.equal(PROJECTS.length, 9, 'Must maintain 3 main showcase entries + 6 archive entries');
+  assert.equal(PROJECTS.filter((p) => p.visibility === 'public').length, 9);
+
+  const baselineProjects = getLocalPublicProjectsBaseline();
+  const baselineCourses = getLocalPublicCoursesBaseline();
+  const baselineMilestones = getLocalPublicMilestonesBaseline();
+  const baselineNotes = getLocalPublicNotesBaseline();
+  assert.equal(baselineProjects.length, 9);
+  assert.equal(baselineCourses.length, 7);
+  assert.equal(baselineMilestones.length, 6);
+  assert.equal(baselineNotes.length, 8);
 
   const github = SOCIAL_LINKS.find((s) => s.platform === 'GitHub');
   const linkedin = SOCIAL_LINKS.find((s) => s.platform === 'LinkedIn');
@@ -232,4 +255,84 @@ test('REGRESSION: resolvePublicCoursesCatchResult never falls back to local COUR
   assert.equal(offline.errorCode, 'firestore_unavailable');
   assert.deepEqual(offline.items, []);
 });
+
+test('Baseline sync reconciles CS50x Week 3 and LOCAL AI AGENT while preserving createdAt and owner customizations', () => {
+  const localAi = PROJECTS.find((p) => p.id === 'local-ai-agent');
+  assert.ok(localAi);
+
+  const legacyRemoteLocalAi = {
+    id: 'local-ai-agent',
+    slug: 'local-ai-agent',
+    titleEn: 'LOCAL AI AGENT (Old)',
+    titleAr: 'قديم',
+    statusEn: 'Discontinued',
+    statusAr: 'متوقف',
+    statusType: 'discontinued' as const,
+    publicationStatus: 'published' as const,
+    visibility: 'internal_archive' as const,
+    archiveGroup: 'showcase' as const,
+    featuredOnHome: true,
+    descriptionEn: 'Old description',
+    descriptionAr: 'وصف قديم',
+    technologies: ['Old'],
+    coverImageUrl: 'https://example.com/custom-cover.png',
+    createdAt: '2025-11-15T10:00:00.000Z',
+    publishedAt: '2025-11-16T10:00:00.000Z',
+  };
+
+  const syncedProject = buildBaselineProjectSyncPayload(
+    localAi,
+    legacyRemoteLocalAi,
+    '2026-11-20T12:00:00.000Z'
+  );
+  assert.equal(syncedProject.createdAt, '2025-11-15T10:00:00.000Z', 'Must preserve immutable createdAt');
+  assert.equal(syncedProject.publishedAt, '2025-11-16T10:00:00.000Z', 'Must preserve existing publishedAt');
+  assert.equal(syncedProject.coverImageUrl, 'https://example.com/custom-cover.png', 'Must keep owner cover media');
+  assert.equal(syncedProject.visibility, 'public');
+  assert.equal(syncedProject.archiveGroup, 'experiments_discontinued');
+  assert.equal(syncedProject.featuredOnHome, false);
+  assert.equal(syncedProject.statusEn, 'Discontinued / Archived');
+  assert.equal(syncedProject.statusAr, 'متوقف / مؤرشف');
+
+  const defaults = buildDefaultProfileSettings();
+  const customTrack = {
+    id: 'custom-track-robotics',
+    titleEn: 'Custom Track',
+    titleAr: 'مسار مخصص',
+    status: 'active' as const,
+    statusLabelEn: 'Active',
+    statusLabelAr: 'نشط',
+    cadenceNoteEn: 'Custom',
+    cadenceNoteAr: 'مخصص',
+    summaryEn: 'Custom summary',
+    summaryAr: 'ملخص',
+    highlightsEn: ['H1'],
+    highlightsAr: ['م1'],
+    showInActiveHighlights: true,
+  };
+  const oldProfile = {
+    ...defaults,
+    githubUrl: 'https://github.com/custom-handle',
+    learningTracks: [
+      {
+        ...defaults.learningTracks![0],
+        status: 'paused' as const,
+        statusLabelEn: 'Paused / Needs Review',
+      },
+      customTrack,
+    ],
+  };
+
+  const reconciledTracks = reconcileLearningTracks(oldProfile.learningTracks);
+  const cs50x = reconciledTracks.find((tr) => tr.id === 'harvard-cs50x');
+  assert.ok(cs50x);
+  assert.equal(cs50x.status, 'in_progress');
+  assert.ok(cs50x.statusLabelEn.includes('CS50x: Week 3'));
+  assert.ok(reconciledTracks.some((tr) => tr.id === 'custom-track-robotics'), 'Must preserve owner custom track');
+
+  const syncedProfile = reconcileProfileForBaselineSync(oldProfile, '2026-11-20T12:00:00.000Z');
+  assert.equal(syncedProfile.githubUrl, 'https://github.com/custom-handle', 'Must preserve custom profile URL');
+  assert.ok(syncedProfile.learningTracks?.find((tr) => tr.id === 'harvard-cs50x')?.statusLabelEn.includes('CS50x: Week 3'));
+});
+
 

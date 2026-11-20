@@ -23,6 +23,6 @@
 ## 3. Initial Live Data Seeding & Admin Studio Verification
 
 - [ ] Sign in at `/admin` with verified `abdalrahman32008@gmail.com`.
-- [ ] Check **Overview** tab: run **Import Existing Site Content** once to seed/migrate live Firestore documents (7 project records: 6 public showcase/archive + 1 `internal_archive`, 7 Semester 1 Archive courses, 4 verified milestones, and the public `settings/profile` with learning tracks & practical Excel experience).
-- [ ] Review existing legacy documents in `/admin` -> **Projects** to ensure every public project explicitly has `visibility: 'public'`, `archiveGroup`, and `featuredOnHome` saved, and that `local-ai-agent` stays `internal_archive`.
+- [ ] Check **Overview** tab: run **Import Existing Site Content** on a fresh database (or **Sync Baseline Updates** on an already-seeded database) to reconcile `9` public project records (`3` showcase + `6` archive entries including `local-ai-agent` marked `Discontinued / Archived`), `7` first-year courses, `8` published learning notes, `6` verified milestones, and `settings/profile` (`CS50x: Week 3`, Elzero C++, GKS-U 2027, operational Excel experience).
+- [ ] Review existing legacy documents in `/admin` -> **Projects** to ensure every public project explicitly has `visibility: 'public'`, `archiveGroup`, and `featuredOnHome` saved, and that any owner-only private drafts remain `internal_archive`.
 - [ ] Check **Diagnostics** tab: inspect per-collection load statuses (`loaded` vs `error`) and download a baseline JSON backup (`neural-atlas-backup-YYYY-MM-DD.json`).

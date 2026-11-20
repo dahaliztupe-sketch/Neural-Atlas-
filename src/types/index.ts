@@ -288,6 +288,29 @@ export interface PracticalExperienceSection {
   activitiesAr: string[];
 }
 
+export type SkillTier = 'practiced' | 'learning' | 'exploring';
+
+export type SkillDomain = 'programming' | 'technical_interest';
+
+export interface SkillItem {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  domain: SkillDomain;
+  tier: SkillTier;
+  contextEn: string;
+  contextAr: string;
+}
+
+export interface KnowledgeCategoryItem {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  topicMatchKey: string;
+}
+
 export interface ProfileSettingsRecord {
   nameEn: string;
   nameAr: string;
@@ -326,6 +349,7 @@ export interface ImportPreview {
 
 export interface ImportResult {
   added: number;
+  updated?: number;
   skipped: number;
   failed: number;
   details: string[];

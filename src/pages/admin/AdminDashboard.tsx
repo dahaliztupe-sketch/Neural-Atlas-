@@ -31,6 +31,7 @@ import {
   getPublicProfileSettings,
   saveProfileSettings,
   importExistingSiteContent,
+  syncVerifiedBaselineToFirestore,
   isValidOptionalUrl,
   validateProjectForSave,
   validateCourseForSave,
@@ -140,9 +141,11 @@ export const AdminDashboard: React.FC = () => {
   const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const messageTimerRef = useRef<number | null>(null);
 
-  // Import state
+  // Import & Sync state
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [syncingBaseline, setSyncingBaseline] = useState(false);
+  const [syncResult, setSyncResult] = useState<ImportResult | null>(null);
 
   // Modals state
   const [editingProject, setEditingProject] = useState<Partial<ProjectRecord> | null>(null);
@@ -451,6 +454,24 @@ export const AdminDashboard: React.FC = () => {
       showMessage('error', formatFirestoreUserError(err, language));
     } finally {
       setImporting(false);
+    }
+  };
+
+  const handleSyncBaseline = async () => {
+    setSyncingBaseline(true);
+    try {
+      const res = await syncVerifiedBaselineToFirestore();
+      setSyncResult(res);
+      showMessage(
+        'success',
+        `${t('adminSyncBaselineSuccess')} (+${res.added} added, ${res.updated || 0} updated)`
+      );
+      await loadAdminData();
+      await refreshPublicProfile();
+    } catch (err: unknown) {
+      showMessage('error', formatFirestoreUserError(err, language));
+    } finally {
+      setSyncingBaseline(false);
     }
   };
 
@@ -834,6 +855,9 @@ export const AdminDashboard: React.FC = () => {
           importing={importing}
           importResult={importResult}
           onImport={handleImport}
+          syncingBaseline={syncingBaseline}
+          syncResult={syncResult}
+          onSyncBaseline={handleSyncBaseline}
         />
       )}
 

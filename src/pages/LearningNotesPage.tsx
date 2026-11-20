@@ -12,8 +12,9 @@ import {
   getNoteBySlugResult,
   formatLocalizedDate,
 } from '../services/contentRepository';
-import { filterNotesByQuery } from '../lib/validation';
+import { filterNotesCatalog, resolveNoteCategoryAndTags } from '../lib/validation';
 import { computeReadingStats } from '../lib/markdown';
+import { KNOWLEDGE_CATEGORIES } from '../data/portfolioData';
 import {
   FileText,
   ArrowRight,
@@ -28,6 +29,7 @@ import {
   Share2,
   Check,
   EyeOff,
+  Layers,
 } from 'lucide-react';
 
 const LazyMarkdownRenderer = lazy(() =>
@@ -43,7 +45,9 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
   const { isOwner, loading: authLoading } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [topicFilter, setTopicFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState('all');
+  const [showAllTags, setShowAllTags] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const fetchNotesList = useCallback(() => getPublishedNotesResult(), []);
@@ -89,6 +93,101 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
   const activeNote =
     detailState.data && detailState.data.status !== 'error' ? detailState.data.item : null;
 
+  const validCategoryKeys = useMemo(
+    () => KNOWLEDGE_CATEGORIES.map((c) => c.topicMatchKey),
+    []
+  );
+
+  const categoryByKey = useMemo(
+    () => new Map(KNOWLEDGE_CATEGORIES.map((c) => [c.topicMatchKey.toLowerCase(), c])),
+    []
+  );
+
+  const getLocalizedCategoryTitle = useCallback(
+    (categoryKey: string | null) => {
+      if (!categoryKey) return null;
+      const match = categoryByKey.get(categoryKey.toLowerCase());
+      if (!match) return categoryKey;
+      return isRtl ? match.titleAr : match.titleEn;
+    },
+    [categoryByKey, isRtl]
+  );
+
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const key of validCategoryKeys) {
+      counts.set(key.toLowerCase(), 0);
+    }
+    for (const note of notes) {
+      const { categoryKey } = resolveNoteCategoryAndTags(note.topicLabels, validCategoryKeys);
+      if (categoryKey) {
+        const k = categoryKey.toLowerCase();
+        counts.set(k, (counts.get(k) || 0) + 1);
+      }
+    }
+    return counts;
+  }, [notes, validCategoryKeys]);
+
+  const uniqueTags = useMemo(() => {
+    const seen = new Map<string, string>();
+    const sourceNotes =
+      categoryFilter !== 'all'
+        ? notes.filter((n) => {
+            const { categoryKey } = resolveNoteCategoryAndTags(n.topicLabels, validCategoryKeys);
+            return categoryKey?.toLowerCase() === categoryFilter.toLowerCase();
+          })
+        : notes;
+    for (const note of sourceNotes) {
+      const { tags } = resolveNoteCategoryAndTags(note.topicLabels, validCategoryKeys);
+      for (const tag of tags) {
+        const clean = tag.trim();
+        if (clean && !seen.has(clean.toLowerCase())) {
+          seen.set(clean.toLowerCase(), clean);
+        }
+      }
+    }
+    if (tagFilter !== 'all' && !seen.has(tagFilter.toLowerCase())) {
+      seen.set(tagFilter.toLowerCase(), tagFilter);
+    }
+    return Array.from(seen.values());
+  }, [notes, validCategoryKeys, categoryFilter, tagFilter]);
+
+  const DEFAULT_VISIBLE_TAGS = 6;
+  const visibleTags = useMemo(() => {
+    if (showAllTags || categoryFilter !== 'all' || uniqueTags.length <= DEFAULT_VISIBLE_TAGS) {
+      return uniqueTags;
+    }
+    const base = uniqueTags.slice(0, DEFAULT_VISIBLE_TAGS);
+    if (
+      tagFilter !== 'all' &&
+      !base.some((tItem) => tItem.toLowerCase() === tagFilter.toLowerCase())
+    ) {
+      return [...base, tagFilter];
+    }
+    return base;
+  }, [uniqueTags, showAllTags, categoryFilter, tagFilter]);
+  const hiddenTagsCount = Math.max(0, uniqueTags.length - visibleTags.length);
+
+  const filteredNotes = useMemo(
+    () =>
+      filterNotesCatalog(notes, {
+        queryText: searchQuery,
+        categoryFilter,
+        tagFilter,
+        validCategoryKeys,
+      }),
+    [notes, searchQuery, categoryFilter, tagFilter, validCategoryKeys]
+  );
+
+  const hasActiveFilters =
+    categoryFilter !== 'all' || tagFilter !== 'all' || searchQuery.trim().length > 0;
+
+  const isCategoryOnlyEmpty =
+    filteredNotes.length === 0 &&
+    categoryFilter !== 'all' &&
+    tagFilter === 'all' &&
+    searchQuery.trim().length === 0;
+
   const relatedNotes = useMemo(() => {
     if (!activeNote || notes.length === 0) return [];
     const topicSet = new Set((activeNote.topicLabels || []).map((topic) => topic.toLowerCase()));
@@ -113,6 +212,12 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
     } catch {
       // Clipboard API unavailable in restricted contexts
     }
+  };
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setCategoryFilter('all');
+    setTagFilter('all');
   };
 
   const loadData = noteId ? detailState.refresh : listState.refresh;
@@ -141,27 +246,30 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
     return () => setSeoOverride(null);
   }, [noteId, activeNote, isRtl, setSeoOverride, t]);
 
-  const uniqueTopics = useMemo(() => {
-    const seen = new Map<string, string>();
-    for (const n of notes) {
-      for (const topic of n.topicLabels || []) {
-        const clean = topic.trim();
-        if (clean && !seen.has(clean.toLowerCase())) {
-          seen.set(clean.toLowerCase(), clean);
-        }
-      }
-    }
-    return Array.from(seen.values());
-  }, [notes]);
+  const activeNoteMeta = useMemo(() => {
+    if (!activeNote) return { categoryKey: null, categoryTitle: null, tags: [] as string[] };
+    const { categoryKey, tags } = resolveNoteCategoryAndTags(
+      activeNote.topicLabels,
+      validCategoryKeys
+    );
+    return {
+      categoryKey,
+      categoryTitle: getLocalizedCategoryTitle(categoryKey),
+      tags,
+    };
+  }, [activeNote, validCategoryKeys, getLocalizedCategoryTitle]);
 
-  const filteredNotes = useMemo(
-    () => filterNotesByQuery(notes, searchQuery, topicFilter),
-    [notes, searchQuery, topicFilter]
-  );
+  const activePublishedDate = formatLocalizedDate(activeNote?.publishedAt, language);
+  const activeCreatedDate = formatLocalizedDate(activeNote?.createdAt, language);
+  const activeUpdatedDate = formatLocalizedDate(activeNote?.updatedAt, language);
+  const primaryDateLabel = activePublishedDate || activeCreatedDate;
+  const showSeparateUpdatedDate =
+    Boolean(activeUpdatedDate) && activeUpdatedDate !== primaryDateLabel;
+  const showSeparateCreatedDate =
+    Boolean(activeCreatedDate) &&
+    Boolean(activePublishedDate) &&
+    activeCreatedDate !== activePublishedDate;
 
-  const hasActiveFilters = topicFilter !== 'all' || searchQuery.trim().length > 0;
-
-  const formattedNoteDate = formatLocalizedDate(activeNote?.publishedAt, language);
   const activeContent = activeNote
     ? isRtl
       ? activeNote.contentAr || activeNote.contentEn
@@ -179,14 +287,106 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight text-balance mb-3">
           {t('notesTitle')}
         </h1>
-        <p className="text-base text-[var(--color-text-muted)]">
+        <p className="text-base text-[var(--color-text-muted)] leading-relaxed">
           {t('notesSubtitle')}
         </p>
       </div>
 
-      {/* Search & Topic Filter Bar (List View Only) */}
+      {/* 9 Public Knowledge Categories Directory (List View Only) */}
+      {!noteId && (
+        <section className="space-y-4" aria-labelledby="knowledge-categories-heading">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2
+                id="knowledge-categories-heading"
+                className="text-base font-semibold text-[var(--color-text)] flex items-center gap-2"
+              >
+                <Layers className="w-4 h-4 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
+                <span>{t('notesCategoriesHeading')}</span>
+              </h2>
+              <div className="flex items-center gap-3 text-xs font-mono">
+                {categoryFilter !== 'all' && (
+                  <button
+                    type="button"
+                    onClick={() => setCategoryFilter('all')}
+                    className="text-[var(--color-primary)] hover:underline cursor-pointer"
+                  >
+                    {t('notesAllCategoriesBtn')}
+                  </button>
+                )}
+                <span className="text-[var(--color-secondary)] tabular-nums">
+                  {String(KNOWLEDGE_CATEGORIES.length).padStart(2, '0')}
+                </span>
+              </div>
+            </div>
+            <p className="text-xs sm:text-sm text-[var(--color-text-muted)] leading-relaxed">
+              {t('notesCategoriesSubtitle')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {KNOWLEDGE_CATEGORIES.map((category, idx) => {
+              const count = categoryCounts.get(category.topicMatchKey.toLowerCase()) || 0;
+              const isSelected =
+                categoryFilter.toLowerCase() === category.topicMatchKey.toLowerCase();
+              const countLabel = isRtl
+                ? count === 0
+                  ? 'قريباً'
+                  : count === 1
+                  ? 'مذكرة واحدة'
+                  : `${count} مذكرات`
+                : count === 0
+                ? '0 notes'
+                : count === 1
+                ? '1 note'
+                : `${count} notes`;
+
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() =>
+                    setCategoryFilter(isSelected ? 'all' : category.topicMatchKey)
+                  }
+                  className={`na-mineral-card na-mineral-card-interactive p-3.5 rounded-xl space-y-1.5 text-start transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                    isSelected
+                      ? 'border-[var(--color-primary)] bg-[var(--color-surface-hover)]'
+                      : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="tabular-nums text-[var(--color-secondary)]">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    <span
+                      className={`tabular-nums ${
+                        isSelected
+                          ? 'text-[var(--color-primary)] font-semibold'
+                          : count > 0
+                          ? 'text-[var(--color-text-muted)]'
+                          : 'text-[var(--color-text-subtle)]'
+                      }`}
+                    >
+                      {countLabel}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-semibold text-[var(--color-text)] leading-snug">
+                    {isRtl ? category.titleAr : category.titleEn}
+                  </h3>
+                  <p className="text-xs text-[var(--color-text-muted)] leading-relaxed line-clamp-2">
+                    {isRtl ? category.descriptionAr : category.descriptionEn}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Search & Complementary Tag Filter Bar (List View Only) */}
       {!noteId && !loading && !errorCode && notes.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3 pt-1">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="relative flex-1 sm:max-w-sm">
               <Search
@@ -213,44 +413,70 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
               )}
             </div>
 
-            <div className="text-xs text-[var(--color-text-subtle)] font-mono tabular-nums">
-              <span>{filteredNotes.length}</span>
-              <span className="mx-1">/</span>
-              <span>{notes.length}</span>
-              <span className="ms-1">{t('projectsCountEntries')}</span>
+            <div className="flex items-center gap-3 text-xs text-[var(--color-text-subtle)] font-mono tabular-nums">
+              <span>
+                {filteredNotes.length} / {notes.length} {t('projectsCountEntries')}
+              </span>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-[var(--color-primary)] hover:underline cursor-pointer"
+                >
+                  {t('clearFiltersBtn')}
+                </button>
+              )}
             </div>
           </div>
 
-          {uniqueTopics.length > 0 && (
+          {uniqueTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-[11px] font-mono text-[var(--color-text-subtle)] me-1">
+                {t('notesAvailableTagsHeading')}:
+              </span>
               <button
                 type="button"
-                onClick={() => setTopicFilter('all')}
+                onClick={() => setTagFilter('all')}
                 className={`px-2.5 py-1 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
-                  topicFilter === 'all'
+                  tagFilter === 'all'
                     ? 'border-[var(--color-secondary)] bg-[var(--color-secondary-muted)] text-[var(--color-secondary)] font-semibold'
                     : 'border-[var(--color-border-subtle)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
-                {t('filterAllTopics')}
+                {t('notesAllTagsBtn')}
               </button>
-              {uniqueTopics.map((topic) => {
-                const active = topicFilter.toLowerCase() === topic.toLowerCase();
+              {visibleTags.map((tag) => {
+                const active = tagFilter.toLowerCase() === tag.toLowerCase();
                 return (
                   <button
-                    key={topic}
+                    key={tag}
                     type="button"
-                    onClick={() => setTopicFilter(active ? 'all' : topic)}
+                    onClick={() => setTagFilter(active ? 'all' : tag)}
                     className={`px-2.5 py-1 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                       active
                         ? 'border-[var(--color-secondary)] bg-[var(--color-secondary-muted)] text-[var(--color-secondary)] font-semibold'
                         : 'border-[var(--color-border-subtle)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                     }`}
                   >
-                    {topic}
+                    {tag}
                   </button>
                 );
               })}
+              {categoryFilter === 'all' && uniqueTags.length > DEFAULT_VISIBLE_TAGS && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllTags((prev) => !prev)}
+                  className="px-2 py-1 text-[11px] font-mono text-[var(--color-primary)] hover:underline cursor-pointer"
+                >
+                  {showAllTags
+                    ? isRtl
+                      ? 'أقل'
+                      : 'Less'
+                    : isRtl
+                    ? `+${hiddenTagsCount} وسوم`
+                    : `+${hiddenTagsCount} more`}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -314,7 +540,11 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
                     onClick={() => navigate('/notes')}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
                   >
-                    {isRtl ? <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /> : <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {isRtl ? (
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    ) : (
+                      <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
                     <span>{t('notesBackToNotes')}</span>
                   </button>
 
@@ -332,65 +562,89 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
                   </button>
                 </div>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[var(--color-secondary)]">
-                <span>{activeNote.slug}</span>
-                {formattedNoteDate && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>{formattedNoteDate}</span>
-                    </span>
-                  </>
-                )}
-                {activeStats.readingMinutes > 0 && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span className="inline-flex items-center gap-1 text-[var(--color-text-muted)] tabular-nums">
-                      <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>
-                        {activeStats.readingMinutes} {t('readingTimeSuffix')} · {activeStats.wordCount} {t('wordsCountLabel')}
+                {/* Structured Note Metadata Header (Unboxed, Zero Pills) */}
+                <div className="space-y-2 text-xs font-mono">
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[var(--color-secondary)]">
+                    {activeNoteMeta.categoryTitle && (
+                      <span className="font-semibold text-[var(--color-primary)]">
+                        {t('notesCategoryLabel')}: {activeNoteMeta.categoryTitle}
                       </span>
-                    </span>
-                  </>
-                )}
-                {activeNote.topicLabels && activeNote.topicLabels.length > 0 && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span className="text-[var(--color-text-subtle)]">
-                      {activeNote.topicLabels.join(' · ')}
-                    </span>
-                  </>
-                )}
-              </div>
+                    )}
+                    {primaryDateLabel && (
+                      <>
+                        {activeNoteMeta.categoryTitle && <span aria-hidden="true">·</span>}
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>
+                            {activePublishedDate ? t('notesPublishedDateLabel') : t('notesCreatedDateLabel')}: {primaryDateLabel}
+                          </span>
+                        </span>
+                      </>
+                    )}
+                    {showSeparateCreatedDate && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span className="text-[var(--color-text-subtle)]">
+                          {t('notesCreatedDateLabel')}: {activeCreatedDate}
+                        </span>
+                      </>
+                    )}
+                    {showSeparateUpdatedDate && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span className="text-[var(--color-text-subtle)]">
+                          {t('notesUpdatedDateLabel')}: {activeUpdatedDate}
+                        </span>
+                      </>
+                    )}
+                    {activeStats.readingMinutes > 0 && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span className="inline-flex items-center gap-1 text-[var(--color-text-muted)] tabular-nums">
+                          <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>
+                            {activeStats.readingMinutes} {t('readingTimeSuffix')} · {activeStats.wordCount} {t('wordsCountLabel')}
+                          </span>
+                        </span>
+                      </>
+                    )}
+                  </div>
 
-              <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">
-                {isRtl ? activeNote.titleAr : activeNote.titleEn}
-              </h2>
-
-              {(activeNote.summaryEn || activeNote.summaryAr) && (
-                <p className="text-base text-[var(--color-text-muted)] leading-relaxed max-w-3xl">
-                  {isRtl ? activeNote.summaryAr || activeNote.summaryEn : activeNote.summaryEn || activeNote.summaryAr}
-                </p>
-              )}
-
-              <div className="pt-6 border-t border-[var(--color-border-subtle)] max-w-3xl">
-                <Suspense
-                  fallback={
-                    <div className="text-sm sm:text-base text-[var(--color-text)] leading-relaxed whitespace-pre-wrap font-sans">
-                      {activeContent}
+                  {activeNoteMeta.tags.length > 0 && (
+                    <div className="text-[11px] text-[var(--color-text-subtle)]">
+                      <span>{t('notesTagsLabel')}: </span>
+                      <span>{activeNoteMeta.tags.join(' · ')}</span>
                     </div>
-                  }
-                >
-                  <LazyMarkdownRenderer
-                    content={activeContent}
-                    showToc={true}
-                    tocTitle={t('tocHeading')}
-                    copyLabel={t('copyCodeBtn')}
-                    copiedLabel={t('copiedCodeBtn')}
-                  />
-                </Suspense>
-              </div>
+                  )}
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] leading-tight text-balance">
+                  {isRtl ? activeNote.titleAr : activeNote.titleEn}
+                </h2>
+
+                {(activeNote.summaryEn || activeNote.summaryAr) && (
+                  <p className="text-base text-[var(--color-text-muted)] leading-relaxed max-w-3xl">
+                    {isRtl ? activeNote.summaryAr || activeNote.summaryEn : activeNote.summaryEn || activeNote.summaryAr}
+                  </p>
+                )}
+
+                <div className="pt-6 border-t border-[var(--color-border-subtle)] max-w-3xl">
+                  <Suspense
+                    fallback={
+                      <div className="text-sm sm:text-base text-[var(--color-text)] leading-relaxed whitespace-pre-wrap font-sans">
+                        {activeContent}
+                      </div>
+                    }
+                  >
+                    <LazyMarkdownRenderer
+                      content={activeContent}
+                      showToc={true}
+                      tocTitle={t('tocHeading')}
+                      copyLabel={t('copyCodeBtn')}
+                      copiedLabel={t('copiedCodeBtn')}
+                    />
+                  </Suspense>
+                </div>
               </article>
 
               {relatedNotes.length > 0 && (
@@ -399,26 +653,37 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
                     {t('relatedNotesHeading')}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {relatedNotes.map((rel) => (
-                      <button
-                        key={rel.id}
-                        type="button"
-                        onClick={() => navigate(`/notes/${rel.slug || rel.id}`)}
-                        className="na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start space-y-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                      >
-                        <div className="text-[11px] font-mono text-[var(--color-secondary)]">
-                          {rel.topicLabels?.slice(0, 2).join(' · ') || rel.slug}
-                        </div>
-                        <h3 className="text-base font-semibold text-[var(--color-text)]">
-                          {isRtl ? rel.titleAr : rel.titleEn}
-                        </h3>
-                        {(rel.summaryEn || rel.summaryAr) && (
-                          <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 leading-relaxed">
-                            {isRtl ? rel.summaryAr || rel.summaryEn : rel.summaryEn || rel.summaryAr}
-                          </p>
-                        )}
-                      </button>
-                    ))}
+                    {relatedNotes.map((rel) => {
+                      const relMeta = resolveNoteCategoryAndTags(
+                        rel.topicLabels,
+                        validCategoryKeys
+                      );
+                      const relCategoryTitle = getLocalizedCategoryTitle(relMeta.categoryKey);
+                      const relDate = formatLocalizedDate(
+                        rel.publishedAt || rel.createdAt,
+                        language
+                      );
+                      return (
+                        <button
+                          key={rel.id}
+                          type="button"
+                          onClick={() => navigate(`/notes/${rel.slug || rel.id}`)}
+                          className="na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start space-y-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                        >
+                          <div className="text-[11px] font-mono text-[var(--color-secondary)]">
+                            {[relCategoryTitle, relDate].filter(Boolean).join(' · ') || rel.slug}
+                          </div>
+                          <h3 className="text-base font-semibold text-[var(--color-text)]">
+                            {isRtl ? rel.titleAr : rel.titleEn}
+                          </h3>
+                          {(rel.summaryEn || rel.summaryAr) && (
+                            <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 leading-relaxed">
+                              {isRtl ? rel.summaryAr || rel.summaryEn : rel.summaryEn || rel.summaryAr}
+                            </p>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </section>
               )}
@@ -430,7 +695,11 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
                 onClick={() => navigate('/notes')}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer mb-2"
               >
-                {isRtl ? <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /> : <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />}
+                {isRtl ? (
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                ) : (
+                  <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+                )}
                 <span>{t('notesBackToNotes')}</span>
               </button>
               <h2 className="text-xl font-bold text-[var(--color-text)]">
@@ -444,23 +713,47 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
         ) : filteredNotes.length > 0 ? (
           <div className="space-y-4">
             {filteredNotes.map((note) => {
-              const noteDate = formatLocalizedDate(note.publishedAt, language);
+              const { categoryKey, tags } = resolveNoteCategoryAndTags(
+                note.topicLabels,
+                validCategoryKeys
+              );
+              const categoryTitle = getLocalizedCategoryTitle(categoryKey);
+              const notePublished = formatLocalizedDate(note.publishedAt, language);
+              const noteCreated = formatLocalizedDate(note.createdAt, language);
+              const noteUpdated = formatLocalizedDate(note.updatedAt, language);
+              const displayDate = notePublished || noteCreated;
+              const showUpdated = Boolean(noteUpdated) && noteUpdated !== displayDate;
               const noteBody = isRtl ? note.contentAr || note.contentEn : note.contentEn || note.contentAr;
               const stats = computeReadingStats(noteBody);
+
               return (
                 <button
                   key={note.id}
                   type="button"
                   onClick={() => navigate(`/notes/${note.slug || note.id}`)}
-                  className="na-mineral-card na-mineral-card-interactive w-full group p-5 rounded-xl cursor-pointer space-y-2 text-start focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                  className="na-mineral-card na-mineral-card-interactive w-full group p-5 rounded-xl cursor-pointer space-y-2.5 text-start focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--color-text-subtle)] font-mono">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span>{note.slug}</span>
-                      {noteDate && (
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      {categoryTitle && (
+                        <span className="text-[var(--color-secondary)] font-semibold">
+                          {categoryTitle}
+                        </span>
+                      )}
+                      {displayDate && (
+                        <>
+                          {categoryTitle && <span aria-hidden="true">·</span>}
+                          <span>
+                            {notePublished ? t('notesPublishedDateLabel') : t('notesCreatedDateLabel')}: {displayDate}
+                          </span>
+                        </>
+                      )}
+                      {showUpdated && (
                         <>
                           <span aria-hidden="true">·</span>
-                          <span>{noteDate}</span>
+                          <span>
+                            {t('notesUpdatedDateLabel')}: {noteUpdated}
+                          </span>
                         </>
                       )}
                       {stats.readingMinutes > 0 && (
@@ -477,17 +770,20 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
                       <ChevronRight className={`w-3.5 h-3.5 ${isRtl ? 'rotate-180' : ''}`} aria-hidden="true" />
                     </span>
                   </div>
+
                   <h2 className="text-lg font-semibold text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors">
                     {isRtl ? note.titleAr : note.titleEn}
                   </h2>
+
                   {(note.summaryEn || note.summaryAr) && (
-                    <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[var(--color-text-muted)] line-clamp-2 leading-relaxed">
                       {isRtl ? note.summaryAr || note.summaryEn : note.summaryEn || note.summaryAr}
                     </p>
                   )}
-                  {note.topicLabels && note.topicLabels.length > 0 && (
-                    <p className="text-[11px] font-mono text-[var(--color-text-subtle)] pt-1">
-                      {note.topicLabels.join(' · ')}
+
+                  {tags.length > 0 && (
+                    <p className="text-[11px] font-mono text-[var(--color-text-subtle)] pt-0.5">
+                      {t('notesTagsLabel')}: {tags.join(' · ')}
                     </p>
                   )}
                 </button>
@@ -496,16 +792,21 @@ export const LearningNotesPage: React.FC<LearningNotesPageProps> = ({ noteId }) 
           </div>
         ) : (
           <div className="pt-4">
-            {hasActiveFilters && notes.length > 0 ? (
+            {isCategoryOnlyEmpty ? (
+              <EmptyState
+                icon={Layers}
+                title={t('notesCategoryEmptyTitle')}
+                description={t('notesCategoryEmptyDesc')}
+                actionText={t('notesAllCategoriesBtn')}
+                onAction={() => setCategoryFilter('all')}
+              />
+            ) : hasActiveFilters && notes.length > 0 ? (
               <EmptyState
                 icon={Search}
                 title={t('filterResultsEmptyTitle')}
                 description={t('filterResultsEmptyDesc')}
                 actionText={t('clearFiltersBtn')}
-                onAction={() => {
-                  setSearchQuery('');
-                  setTopicFilter('all');
-                }}
+                onAction={resetFilters}
               />
             ) : (
               <EmptyState

@@ -32,6 +32,8 @@
     --color-text: #f8fafc;
     --color-text-muted: #9aa9be;
     --color-text-subtle: #8596ae;
+    --color-status-success: #34d399;
+    --color-status-warning: #fbbf24;
 
     /* Calibrated Smoked Glass (zero CSS backdrop-filter over active WebGL canvas) */
     --glass-bg: rgba(5, 8, 17, 0.92);
@@ -69,6 +71,8 @@
     --color-text: #0f172a;
     --color-text-muted: #475569;
     --color-text-subtle: #516278;
+    --color-status-success: #047857;
+    --color-status-warning: #b45309;
 
     /* Mineral Alabaster Chrome */
     --glass-bg: rgba(244, 246, 251, 0.94);

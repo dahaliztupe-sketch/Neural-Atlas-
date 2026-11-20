@@ -39,4 +39,4 @@
 | 9 | `/contactMessages/msg-1` | Public `create` sets `status: "read"` or injects `replyNote` ghost field | `status == 'unread'` & `hasOnly(...)` | `PERMISSION_DENIED` |
 | 10 | `/contactMessages/msg-1` | Public visitor tries `get`, `list`, `update`, or `delete` on inbox messages | Write-only dropbox boundary | `PERMISSION_DENIED` |
 | 11 | `/contactMessages/msg-1` | Owner `update` mutates `message`, `senderName`, or `createdAt` | `affectedKeys().hasOnly(['status', 'updatedAt'])` | `PERMISSION_DENIED` |
-| 12 | `/projects/local-ai-agent` (and `/projects/..poison..`) | Anonymous `get`/`list` attempts to read `visibility == 'internal_archive'` or legacy missing-`visibility` project, or forged doc ID / unverified email | Explicit `visibility == 'public'` + `isValidId` + `email_verified == true` | `PERMISSION_DENIED` |
+| 12 | `/projects/private-archive-example` (and `/projects/..poison..`) | Anonymous `get`/`list` attempts to read `visibility == 'internal_archive'` or legacy missing-`visibility` project, or forged doc ID / unverified email | Explicit `visibility == 'public'` + `isValidId` + `email_verified == true` | `PERMISSION_DENIED` |

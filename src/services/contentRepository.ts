@@ -8,12 +8,15 @@ import {
   deleteDoc,
   query,
   where,
+  limit,
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { clientCache, CACHE_KEYS } from './cacheService';
 import firebaseConfig from '../../firebase-applet-config.json';
 import {
   ProjectRecord,
+  ProjectItem,
+  LearningTrackItem,
   LearningNoteRecord,
   MilestoneRecord,
   CourseRecord,
@@ -31,6 +34,7 @@ import {
   OWNER_INFO,
   SOCIAL_LINKS,
   INITIAL_MILESTONES,
+  INITIAL_LEARNING_NOTES,
   LEARNING_TRACKS,
   PRACTICAL_EXPERIENCE,
 } from '../data/portfolioData';
@@ -197,6 +201,43 @@ function mapLocalCourseToRecord(c: typeof COURSES[0]): CourseRecord {
   };
 }
 
+function mapLocalMilestoneToRecord(m: typeof INITIAL_MILESTONES[0]): MilestoneRecord {
+  return {
+    ...m,
+    publicationStatus: m.publicationStatus === 'published' ? 'published' : 'draft',
+    createdAt: m.createdAt || '2026-10-01T00:00:00.000Z',
+    updatedAt: m.updatedAt || '2026-10-01T00:00:00.000Z',
+    publishedAt: m.publicationStatus === 'published' ? m.publishedAt || '2026-10-01T00:00:00.000Z' : undefined,
+  };
+}
+
+export function getLocalPublicProjectsBaseline(): ProjectRecord[] {
+  return PROJECTS.filter((p) => p.visibility !== 'internal_archive').map(mapLocalProjectToRecord);
+}
+
+export function getLocalPublicCoursesBaseline(): CourseRecord[] {
+  return sortCoursesDeterministically(COURSES.map(mapLocalCourseToRecord));
+}
+
+export function getLocalPublicMilestonesBaseline(): MilestoneRecord[] {
+  return INITIAL_MILESTONES.filter((m) => m.publicationStatus === 'published').map(
+    mapLocalMilestoneToRecord
+  );
+}
+
+export function getLocalPublicNotesBaseline(): LearningNoteRecord[] {
+  return sortRecordsDeterministically(
+    INITIAL_LEARNING_NOTES.filter((n) => n.publicationStatus === 'published').map((n) => ({
+      ...n,
+      topicLabels: [...(n.topicLabels || [])],
+      publicationStatus: 'published' as const,
+      createdAt: n.createdAt || '2026-10-01T00:00:00.000Z',
+      updatedAt: n.updatedAt || n.createdAt || '2026-10-01T00:00:00.000Z',
+      publishedAt: n.publishedAt || n.createdAt || '2026-10-01T00:00:00.000Z',
+    }))
+  );
+}
+
 function sortCoursesDeterministically(items: CourseRecord[]): CourseRecord[] {
   return [...items].sort((a, b) => {
     if (a.latticeNodeIndex !== b.latticeNodeIndex) {
@@ -207,15 +248,13 @@ function sortCoursesDeterministically(items: CourseRecord[]): CourseRecord[] {
 }
 
 /* =====================================================================
- * CENTRALIZED PUBLIC ACCESS API (Authoritative Firestore / Strict Fallback)
+ * CENTRALIZED PUBLIC ACCESS API (Authoritative Firestore / Baseline Fallback)
  * ===================================================================== */
 
 export async function getPublishedProjectsResult(): Promise<DataQueryResult<ProjectRecord[]>> {
   if (!isFirebaseConfigured()) {
     return {
-      items: sortRecordsDeterministically(
-        PROJECTS.filter((p) => p.visibility !== 'internal_archive').map(mapLocalProjectToRecord)
-      ),
+      items: getLocalPublicProjectsBaseline(),
       source: 'local',
       status: 'unconfigured',
     };
@@ -236,10 +275,17 @@ export async function getPublishedProjectsResult(): Promise<DataQueryResult<Proj
             item !== null && item.publicationStatus === 'published' && item.visibility === 'public'
         )
     );
+    if (items.length === 0) {
+      return {
+        items: getLocalPublicProjectsBaseline(),
+        source: 'local',
+        status: 'success',
+      };
+    }
     return {
       items,
       source: 'firestore',
-      status: items.length === 0 ? 'empty' : 'success',
+      status: 'success',
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -309,6 +355,28 @@ export async function getProjectBySlugResult(
           }
         }
       }
+      // If public projects collection in Firestore has 0 documents, fall back to verified local public baseline
+      const localMatch = PROJECTS.find(
+        (p) =>
+          (p.id === normalized || p.id === trimmed) && p.visibility !== 'internal_archive'
+      );
+      if (localMatch) {
+        const anyPublicSnap = await getDocs(
+          query(
+            collection(db, 'projects'),
+            where('publicationStatus', '==', 'published'),
+            where('visibility', '==', 'public'),
+            limit(1)
+          )
+        );
+        if (anyPublicSnap.empty) {
+          return {
+            item: mapLocalProjectToRecord(localMatch),
+            source: 'local',
+            status: 'success',
+          };
+        }
+      }
       return { item: null, source: 'firestore', status: 'not_found' };
     }
 
@@ -351,7 +419,11 @@ export async function getProjectBySlug(slug: string, isOwner = false): Promise<P
 
 export async function getPublishedNotesResult(): Promise<DataQueryResult<LearningNoteRecord[]>> {
   if (!isFirebaseConfigured()) {
-    return { items: [], source: 'local', status: 'unconfigured' };
+    return {
+      items: getLocalPublicNotesBaseline(),
+      source: 'local',
+      status: 'unconfigured',
+    };
   }
 
   try {
@@ -365,10 +437,17 @@ export async function getPublishedNotesResult(): Promise<DataQueryResult<Learnin
         .map((d) => normalizeNoteRecord(d.id, d.data()))
         .filter((item): item is LearningNoteRecord => item !== null && item.publicationStatus === 'published')
     );
+    if (items.length === 0) {
+      return {
+        items: getLocalPublicNotesBaseline(),
+        source: 'local',
+        status: 'success',
+      };
+    }
     return {
       items,
       source: 'firestore',
-      status: items.length === 0 ? 'empty' : 'success',
+      status: 'success',
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -402,7 +481,16 @@ export async function getNoteBySlugResult(
   }
 
   if (!isFirebaseConfigured()) {
-    return { item: null, source: 'local', status: 'not_found' };
+    const local = INITIAL_LEARNING_NOTES.find(
+      (n) =>
+        (n.id === trimmed || n.id === normalized || n.slug === normalized || n.slug === trimmed) &&
+        (isOwner || n.publicationStatus === 'published')
+    );
+    return {
+      item: local ? { ...local, topicLabels: [...(local.topicLabels || [])] } : null,
+      source: 'local',
+      status: local ? 'success' : 'not_found',
+    };
   }
 
   try {
@@ -427,6 +515,26 @@ export async function getNoteBySlugResult(
           }
         }
       }
+      // If public notes collection in Firestore has 0 documents, fall back to verified local baseline notes
+      const localMatch = getLocalPublicNotesBaseline().find(
+        (n) => n.id === trimmed || n.id === normalized || n.slug === normalized || n.slug === trimmed
+      );
+      if (localMatch) {
+        const anyPublicSnap = await getDocs(
+          query(
+            collection(db, 'notes'),
+            where('publicationStatus', '==', 'published'),
+            limit(1)
+          )
+        );
+        if (anyPublicSnap.empty) {
+          return {
+            item: localMatch,
+            source: 'local',
+            status: 'success',
+          };
+        }
+      }
       return { item: null, source: 'firestore', status: 'not_found' };
     }
 
@@ -449,6 +557,14 @@ export async function getNoteBySlugResult(
         return { item: data, source: 'firestore', status: 'success' };
       }
     }
+    if (allSnap.empty) {
+      const localOwnerMatch = getLocalPublicNotesBaseline().find(
+        (n) => n.id === trimmed || n.id === normalized || n.slug === normalized || n.slug === trimmed
+      );
+      if (localOwnerMatch) {
+        return { item: localOwnerMatch, source: 'local', status: 'success' };
+      }
+    }
     return { item: null, source: 'firestore', status: 'not_found' };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -469,7 +585,11 @@ export async function getNoteBySlug(slug: string, isOwner = false): Promise<Lear
 
 export async function getPublishedMilestonesResult(): Promise<DataQueryResult<MilestoneRecord[]>> {
   if (!isFirebaseConfigured()) {
-    return { items: [], source: 'local', status: 'unconfigured' };
+    return {
+      items: getLocalPublicMilestonesBaseline(),
+      source: 'local',
+      status: 'unconfigured',
+    };
   }
 
   try {
@@ -483,10 +603,17 @@ export async function getPublishedMilestonesResult(): Promise<DataQueryResult<Mi
         .map((d) => normalizeMilestoneRecord(d.id, d.data()))
         .filter((item): item is MilestoneRecord => item !== null && item.publicationStatus === 'published')
     );
+    if (items.length === 0) {
+      return {
+        items: getLocalPublicMilestonesBaseline(),
+        source: 'local',
+        status: 'success',
+      };
+    }
     return {
       items,
       source: 'firestore',
-      status: items.length === 0 ? 'empty' : 'success',
+      status: 'success',
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -518,7 +645,7 @@ export function resolvePublicCoursesCatchResult(err: unknown): DataQueryResult<C
 export async function getPublishedCoursesResult(): Promise<DataQueryResult<CourseRecord[]>> {
   if (!isFirebaseConfigured()) {
     return {
-      items: sortCoursesDeterministically(COURSES.map(mapLocalCourseToRecord)),
+      items: getLocalPublicCoursesBaseline(),
       source: 'local',
       status: 'unconfigured',
     };
@@ -535,10 +662,17 @@ export async function getPublishedCoursesResult(): Promise<DataQueryResult<Cours
         .map((d) => normalizeCourseRecord(d.id, d.data()))
         .filter((item): item is CourseRecord => item !== null && item.publicationStatus === 'published')
     );
+    if (items.length === 0) {
+      return {
+        items: getLocalPublicCoursesBaseline(),
+        source: 'local',
+        status: 'success',
+      };
+    }
     return {
       items,
       source: 'firestore',
-      status: items.length === 0 ? 'empty' : 'success',
+      status: 'success',
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -1058,7 +1192,7 @@ export function getImportPreview(): ImportPreview {
   return {
     projectsCount: PROJECTS.length,
     coursesCount: COURSES.length,
-    notesCount: 0,
+    notesCount: INITIAL_LEARNING_NOTES.length,
     milestonesCount: INITIAL_MILESTONES.length,
     hasProfileData: true,
   };
@@ -1110,6 +1244,35 @@ export async function importExistingSiteContent(): Promise<ImportResult> {
     }
   }
 
+  for (const localNote of INITIAL_LEARNING_NOTES) {
+    const docId = localNote.id;
+    try {
+      const existingNote = await getDoc(doc(db, 'notes', docId));
+      if (existingNote.exists()) {
+        result.skipped++;
+        result.details.push(`Note "${localNote.titleEn}" already exists in database (Skipped to prevent overwrite).`);
+      } else {
+        const now = new Date().toISOString();
+        const isPublished = localNote.publicationStatus === 'published';
+        const record = stripUndefined({
+          ...localNote,
+          publicationStatus: isPublished ? 'published' : 'draft',
+          createdAt: localNote.createdAt || now,
+          updatedAt: localNote.updatedAt || now,
+          publishedAt: isPublished ? localNote.publishedAt || localNote.createdAt || now : undefined,
+        } as unknown as Record<string, unknown>);
+        await setDoc(doc(db, 'notes', docId), record);
+        result.added++;
+        result.details.push(
+          `Imported learning note: "${localNote.titleEn}" (${isPublished ? 'published' : 'draft'}).`
+        );
+      }
+    } catch (err) {
+      result.failed++;
+      result.details.push(`Failed to import learning note "${localNote.titleEn}": ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
   for (const localMilestone of INITIAL_MILESTONES) {
     const docId = localMilestone.id;
     try {
@@ -1151,6 +1314,235 @@ export async function importExistingSiteContent(): Promise<ImportResult> {
   } catch (err) {
     result.failed++;
     result.details.push(`Failed to import profile settings: ${err instanceof Error ? err.message : String(err)}`);
+  }
+
+  clientCache.invalidate('public:');
+  return result;
+}
+
+export function reconcileLearningTracks(
+  existingTracks: LearningTrackItem[] | undefined,
+  baselineTracks: LearningTrackItem[] = LEARNING_TRACKS
+): LearningTrackItem[] {
+  const baselineIds = new Set(baselineTracks.map((t) => t.id));
+  const customTracks = (existingTracks || []).filter((t) => t && t.id && !baselineIds.has(t.id));
+  return [...baselineTracks.map((t) => ({ ...t })), ...customTracks].slice(0, 10);
+}
+
+export function reconcileProfileForBaselineSync(
+  existingProfile: ProfileSettingsRecord | null | undefined,
+  nowIso = new Date().toISOString()
+): ProfileSettingsRecord {
+  const defaults = buildDefaultProfileSettings(nowIso);
+  if (!existingProfile) {
+    return defaults;
+  }
+  return {
+    ...defaults,
+    ...existingProfile,
+    universityEn: defaults.universityEn,
+    universityAr: defaults.universityAr,
+    departmentEn: defaults.departmentEn,
+    departmentAr: defaults.departmentAr,
+    academicYearEn: defaults.academicYearEn,
+    academicYearAr: defaults.academicYearAr,
+    currentSemesterEn: defaults.currentSemesterEn,
+    currentSemesterAr: defaults.currentSemesterAr,
+    currentFocusEn: defaults.currentFocusEn,
+    currentFocusAr: defaults.currentFocusAr,
+    futureFocusEn: defaults.futureFocusEn,
+    futureFocusAr: defaults.futureFocusAr,
+    learningTracks: reconcileLearningTracks(existingProfile.learningTracks, LEARNING_TRACKS),
+    practicalExperience: existingProfile.practicalExperience || PRACTICAL_EXPERIENCE,
+    githubUrl: existingProfile.githubUrl?.trim() || defaults.githubUrl,
+    linkedinUrl: existingProfile.linkedinUrl?.trim() || defaults.linkedinUrl,
+    updatedAt: nowIso,
+  };
+}
+
+export function buildBaselineProjectSyncPayload(
+  localProject: ProjectItem,
+  existing?: ProjectRecord | null,
+  nowIso = new Date().toISOString()
+): Omit<ProjectRecord, 'id'> {
+  const base = mapLocalProjectToRecord(localProject);
+  return {
+    slug: base.slug,
+    titleEn: base.titleEn,
+    titleAr: base.titleAr,
+    statusEn: base.statusEn,
+    statusAr: base.statusAr,
+    statusType: base.statusType,
+    publicationStatus: base.publicationStatus,
+    visibility: base.visibility,
+    archiveGroup: base.archiveGroup,
+    featuredOnHome: base.featuredOnHome,
+    summaryEn: base.summaryEn,
+    summaryAr: base.summaryAr,
+    descriptionEn: base.descriptionEn,
+    descriptionAr: base.descriptionAr,
+    technologies: base.technologies,
+    url: base.url || existing?.url || '',
+    repoUrl: base.repoUrl || existing?.repoUrl || '',
+    coverImageUrl: existing?.coverImageUrl || base.coverImageUrl || '',
+    coverImageAltEn: existing?.coverImageAltEn || base.coverImageAltEn || '',
+    coverImageAltAr: existing?.coverImageAltAr || base.coverImageAltAr || '',
+    roleEn: base.roleEn,
+    roleAr: base.roleAr,
+    problemEn: base.problemEn,
+    problemAr: base.problemAr,
+    approachEn: base.approachEn,
+    approachAr: base.approachAr,
+    outcomeEn: base.outcomeEn,
+    outcomeAr: base.outcomeAr,
+    fullOverviewEn: base.fullOverviewEn,
+    fullOverviewAr: base.fullOverviewAr,
+    seoTitleEn: base.seoTitleEn,
+    seoTitleAr: base.seoTitleAr,
+    seoDescriptionEn: base.seoDescriptionEn,
+    seoDescriptionAr: base.seoDescriptionAr,
+    createdAt: existing?.createdAt || base.createdAt || nowIso,
+    updatedAt: nowIso,
+    publishedAt: existing?.publishedAt || base.publishedAt || nowIso,
+  };
+}
+
+export async function syncVerifiedBaselineToFirestore(): Promise<ImportResult> {
+  const result: ImportResult = {
+    added: 0,
+    updated: 0,
+    skipped: 0,
+    failed: 0,
+    details: [],
+  };
+  const nowIso = new Date().toISOString();
+
+  // 1. Reconcile baseline projects (preserving existing createdAt & owner media)
+  for (const localProject of PROJECTS) {
+    const docId = localProject.id;
+    try {
+      const existingSnap = await getDoc(doc(db, 'projects', docId));
+      const existingRecord = existingSnap.exists()
+        ? normalizeProjectRecord(docId, existingSnap.data())
+        : null;
+      const syncPayload = buildBaselineProjectSyncPayload(localProject, existingRecord, nowIso);
+      await saveProject(syncPayload, docId);
+      if (existingSnap.exists()) {
+        result.updated = (result.updated || 0) + 1;
+        result.details.push(
+          `Synced project "${localProject.titleEn}" (${localProject.visibility || 'public'} · ${localProject.statusEn}).`
+        );
+      } else {
+        result.added++;
+        result.details.push(`Added missing baseline project "${localProject.titleEn}".`);
+      }
+    } catch (err) {
+      result.failed++;
+      result.details.push(
+        `Failed to sync project "${localProject.titleEn}": ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
+  // 2. Add any missing baseline courses without clobbering existing edits
+  for (const localCourse of COURSES) {
+    const docId = localCourse.id;
+    try {
+      const existingCourse = await getDoc(doc(db, 'courses', docId));
+      if (existingCourse.exists()) {
+        result.skipped++;
+      } else {
+        const record = stripUndefined(mapLocalCourseToRecord(localCourse) as unknown as Record<string, unknown>);
+        await setDoc(doc(db, 'courses', docId), record);
+        result.added++;
+        result.details.push(`Added missing baseline course "${localCourse.nameEn}".`);
+      }
+    } catch (err) {
+      result.failed++;
+      result.details.push(
+        `Failed to sync course "${localCourse.nameEn}": ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
+  // 3. Add any missing baseline learning notes while preserving owner edits & draft/published state
+  for (const localNote of INITIAL_LEARNING_NOTES) {
+    const docId = localNote.id;
+    try {
+      const existingNote = await getDoc(doc(db, 'notes', docId));
+      if (existingNote.exists()) {
+        result.skipped++;
+      } else {
+        const isPublished = localNote.publicationStatus === 'published';
+        const record = stripUndefined({
+          ...localNote,
+          publicationStatus: isPublished ? 'published' : 'draft',
+          createdAt: localNote.createdAt || nowIso,
+          updatedAt: localNote.updatedAt || nowIso,
+          publishedAt: isPublished ? localNote.publishedAt || localNote.createdAt || nowIso : undefined,
+        } as unknown as Record<string, unknown>);
+        await setDoc(doc(db, 'notes', docId), record);
+        result.added++;
+        result.details.push(`Added missing baseline learning note "${localNote.titleEn}".`);
+      }
+    } catch (err) {
+      result.failed++;
+      result.details.push(
+        `Failed to sync note "${localNote.titleEn}": ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
+  // 4. Add any missing baseline milestones while preserving existing records
+  for (const localMilestone of INITIAL_MILESTONES) {
+    const docId = localMilestone.id;
+    try {
+      const existingMilestone = await getDoc(doc(db, 'milestones', docId));
+      if (existingMilestone.exists()) {
+        result.skipped++;
+      } else {
+        const record = stripUndefined({
+          ...localMilestone,
+          createdAt: localMilestone.createdAt || nowIso,
+          updatedAt: nowIso,
+          publishedAt:
+            localMilestone.publicationStatus === 'published'
+              ? localMilestone.publishedAt || nowIso
+              : undefined,
+        } as unknown as Record<string, unknown>);
+        await setDoc(doc(db, 'milestones', docId), record);
+        result.added++;
+        result.details.push(`Added missing baseline milestone "${localMilestone.titleEn}".`);
+      }
+    } catch (err) {
+      result.failed++;
+      result.details.push(
+        `Failed to sync milestone "${localMilestone.titleEn}": ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
+  // 5. Reconcile settings/profile learningTracks (CS50x: Week 3) while keeping custom URLs & tracks
+  try {
+    const defaults = buildDefaultProfileSettings(nowIso);
+    const existingProfileSnap = await getDoc(doc(db, 'settings', 'profile'));
+    const existingProfile = existingProfileSnap.exists()
+      ? normalizeProfileRecord(existingProfileSnap.data(), defaults)
+      : null;
+    const reconciled = reconcileProfileForBaselineSync(existingProfile, nowIso);
+    await saveProfileSettings(reconciled);
+    if (existingProfileSnap.exists()) {
+      result.updated = (result.updated || 0) + 1;
+      result.details.push('Synced settings/profile learning tracks (CS50x: Week 3) & focus metadata.');
+    } else {
+      result.added++;
+      result.details.push('Created verified settings/profile document.');
+    }
+  } catch (err) {
+    result.failed++;
+    result.details.push(
+      `Failed to sync profile settings: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 
   clientCache.invalidate('public:');

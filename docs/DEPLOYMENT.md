@@ -76,16 +76,14 @@ are listed under Authorized domains, and **Google** is enabled as the sign-in pr
 
 ---
 
-## 5. Initial Live Data Seeding (`/admin`)
+## 5. Live Data Seeding & Baseline Sync (`/admin`)
 
-Because public queries do not fall back silently to local arrays when Firebase is configured, a newly provisioned database displays an honest empty state until seeded:
+When Firestore collections are empty/unseeded, public pages render the verified local baseline while Admin Studio lets you seed and reconcile live Cloud Firestore documents:
 
-1. Navigate to `/admin` and sign in with the authorized owner Google account.
-2. Open the **Overview** tab and click **Import Existing Site Content** once to seed:
-   - `7` project records (`6` public showcase/archive entries + `1` `internal_archive` entry)
-   - `7` Semester 1 Archive courses
-   - `4` verified milestone records
-   - Public `settings/profile` (including learning tracks and operational Excel experience)
+1. Navigate to `/admin` and sign in with the authorized owner Google account (`abdalrahman32008@gmail.com`).
+2. Open the **Overview** tab:
+   - Run **Import Existing Site Content** once on an empty database to seed `9` projects (`3` main showcase + `6` archive entries including `LOCAL AI AGENT` marked `Discontinued / Archived`), `7` first-year subjects, `8` learning notes, `6` milestones, and `settings/profile` (`CS50x: Week 3`, Elzero C++, GKS-U 2027, operational Excel experience).
+   - Run **Sync Baseline Updates** after codebase updates to reconcile baseline project records and `settings/profile` learning tracks (`CS50x: Week 3`) into live Firestore without overwriting `createdAt` timestamps, owner-edited notes, or visitor messages.
 3. Visit the **Diagnostics** tab to confirm per-collection status and export a baseline JSON backup.
 
 For the actionable launch checklist, see [OWNER_DEPLOYMENT_CHECKLIST.md](./OWNER_DEPLOYMENT_CHECKLIST.md).

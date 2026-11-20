@@ -3,6 +3,20 @@
 All notable changes to **Neural Atlas** are documented in this file.  
 Earlier phase-by-phase engineering logs and audit snapshots are preserved under [`docs/archive/`](./docs/archive/).
 
+## [1.3.0] — Personal Knowledge Library, CS50x Week 3 Alignment & Baseline Sync
+
+### Added
+- **Personal Knowledge Library (`src/data/portfolioData.ts`, `LearningNotesPage.tsx`)**: Published 8 authored EN/AR first-person learning articles across 9 structured knowledge categories (`Programming`, `Computer Science`, `Artificial Intelligence`, `Problem Solving`, `University Studies`, `Learning Journey`, `Business & Technology`, `Personal Insights`, `Experiments`) with category/tag filtering and primary-category selection in `AdminNoteModal.tsx`.
+- **Structured Skills & Early Self-Learning Background (`AboutPage.tsx`)**: Documented age ~12 programming roots and qualitative skill depth (`Experienced / Practiced`, `Currently Learning`, `Exploring`) without artificial percentages.
+- **Admin Studio Non-Destructive Baseline Sync (`AdminOverviewTab.tsx`, `contentRepository.ts`)**: Added `syncVerifiedBaselineToFirestore()` (`reconcileLearningTracks`, `reconcileProfileForBaselineSync`, `buildBaselineProjectSyncPayload`) to update baseline projects and learning tracks in live Firestore while preserving immutable `createdAt` timestamps, custom notes, and inbox messages.
+- **One-Command GitHub Verification & Push Helper (`scripts/sync-github.sh`, `npm run sync:github`)**: Runs `lint`, `lint:rules`, `test`, and `build` before staging and pushing to `origin main`.
+
+### Changed
+- **Site-Wide Status Alignment**: Updated Home (`/`), About (`/about`), and Projects (`/projects`, `/projects/local-ai-agent`) to explicitly reflect **`CS50x: Week 3`** (ongoing independent study) and list **`LOCAL AI AGENT`** as **`Discontinued / Archived`** for historical context without exposing private internals.
+- **Verified Local Baseline Fallback**: Updated public repository queries (`contentRepository.ts`) to display verified local baseline records when Firestore collections are unseeded/empty while continuing to surface query and permission errors explicitly.
+
+---
+
 ## [1.2.0] — Personal Identity Migration, Security Hardening & Home-Only 3D
 
 ### Added

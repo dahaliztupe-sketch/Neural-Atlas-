@@ -81,13 +81,17 @@ export const ProjectsPage: React.FC = () => {
     [allProjects, searchQuery, filter, techFilter]
   );
 
-  const isArchiveEntry = (p: ProjectItem): boolean =>
-    p.archiveGroup === 'experiments_discontinued' ||
-    p.statusType === 'experimental' ||
-    p.statusType === 'discontinued' ||
-    p.statusType === 'paused' ||
-    p.statusType === 'archived' ||
-    p.statusType === 'needs_confirmation';
+  const isArchiveEntry = (p: ProjectItem): boolean => {
+    if (p.archiveGroup === 'experiments_discontinued') return true;
+    if (p.archiveGroup === 'showcase') return false;
+    return (
+      p.statusType === 'experimental' ||
+      p.statusType === 'discontinued' ||
+      p.statusType === 'paused' ||
+      p.statusType === 'archived' ||
+      p.statusType === 'needs_confirmation'
+    );
+  };
 
   const showcaseProjects = useMemo(
     () => filteredProjects.filter((p) => !isArchiveEntry(p)),
@@ -110,10 +114,14 @@ export const ProjectsPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-      <div className="max-w-3xl">
-        <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-primary)] mb-2">
-          <Code2 className="w-4 h-4" aria-hidden="true" />
-          <span>{t('projectsKicker')}</span>
+      <div className="max-w-3xl space-y-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-[var(--color-primary)]">
+          <span className="inline-flex items-center gap-2">
+            <Code2 className="w-4 h-4" aria-hidden="true" />
+            <span>{t('projectsKicker')}</span>
+          </span>
+          <span aria-hidden="true" className="text-[var(--color-text-subtle)]">·</span>
+          <span className="text-[var(--color-secondary)]">{t('projectsStudyContextBadge')}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] tracking-tight text-balance mb-3">
           {t('projectsTitle')}

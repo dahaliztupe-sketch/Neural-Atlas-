@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { CheckCircle, UploadCloud, Database, AlertTriangle, X } from 'lucide-react';
+import { CheckCircle, UploadCloud, Database, AlertTriangle, X, RefreshCw } from 'lucide-react';
 import {
   AdminCollectionStatuses,
   ProjectRecord,
@@ -25,6 +25,9 @@ interface AdminOverviewTabProps {
   importing: boolean;
   importResult: ImportResult | null;
   onImport: () => void;
+  syncingBaseline: boolean;
+  syncResult: ImportResult | null;
+  onSyncBaseline: () => void;
 }
 
 export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
@@ -38,11 +41,17 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
   importing,
   importResult,
   onImport,
+  syncingBaseline,
+  syncResult,
+  onSyncBaseline,
 }) => {
   const { t, language } = useApp();
   const [seedConfirmOpen, setSeedConfirmOpen] = useState(false);
+  const [syncConfirmOpen, setSyncConfirmOpen] = useState(false);
   const seedDialogRef = useRef<HTMLDivElement>(null);
+  const syncDialogRef = useRef<HTMLDivElement>(null);
   useModalFocusTrap(seedDialogRef, seedConfirmOpen);
+  useModalFocusTrap(syncDialogRef, syncConfirmOpen);
   const preview = getImportPreview();
   const unreadMessages = messages.filter((m) => m.status === 'unread').length;
 
@@ -82,11 +91,19 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
     collectionStatuses.projects === 'loaded' &&
     collectionStatuses.courses === 'loaded';
   const needsBaselineSeed =
-    noCollectionErrored && (projects.length === 0 || courses.length === 0);
+    noCollectionErrored &&
+    (projects.length === 0 ||
+      courses.length === 0 ||
+      (collectionStatuses.notes === 'loaded' && notes.length === 0));
 
   const handleConfirmSeed = () => {
     setSeedConfirmOpen(false);
     onImport();
+  };
+
+  const handleConfirmSync = () => {
+    setSyncConfirmOpen(false);
+    onSyncBaseline();
   };
 
   return (
@@ -148,7 +165,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
               {t('adminQuickSeedConfirmDesc')}
             </p>
-            <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
               <div className="p-2.5 rounded-xl bg-[var(--color-surface-solid)] border border-[var(--color-border-subtle)]">
                 <span className="block text-[10px] text-[var(--color-text-subtle)]">{t('adminPreviewProjects')}</span>
                 <span className="font-semibold text-[var(--color-text)]">{preview.projectsCount}</span>
@@ -156,6 +173,10 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
               <div className="p-2.5 rounded-xl bg-[var(--color-surface-solid)] border border-[var(--color-border-subtle)]">
                 <span className="block text-[10px] text-[var(--color-text-subtle)]">{t('adminPreviewCourses')}</span>
                 <span className="font-semibold text-[var(--color-text)]">{preview.coursesCount}</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[var(--color-surface-solid)] border border-[var(--color-border-subtle)]">
+                <span className="block text-[10px] text-[var(--color-text-subtle)]">{t('adminPreviewNotesDrafts')}</span>
+                <span className="font-semibold text-[var(--color-primary)]">{preview.notesCount}</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[var(--color-surface-solid)] border border-[var(--color-border-subtle)]">
                 <span className="block text-[10px] text-[var(--color-text-subtle)]">{t('adminPreviewProfile')}</span>
@@ -318,7 +339,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
         </div>
 
         {/* Import Preview Information */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono">
           <div className="p-3 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-solid)]">
             <span className="block text-[var(--color-text-subtle)] mb-1">{t('adminPreviewProjects')}</span>
             <span className="font-semibold text-[var(--color-text)] tabular-nums">
@@ -329,6 +350,12 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             <span className="block text-[var(--color-text-subtle)] mb-1">{t('adminPreviewCourses')}</span>
             <span className="font-semibold text-[var(--color-text)] tabular-nums">
               {preview.coursesCount} {t('adminEntriesLabel')}
+            </span>
+          </div>
+          <div className="p-3 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-solid)]">
+            <span className="block text-[var(--color-text-subtle)] mb-1">{t('adminPreviewNotesDrafts')}</span>
+            <span className="font-semibold text-[var(--color-primary)] tabular-nums">
+              {preview.notesCount} {t('adminEntriesLabel')}
             </span>
           </div>
           <div className="p-3 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-solid)]">
@@ -359,6 +386,99 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
           </div>
         )}
       </div>
+
+      {/* Non-Destructive Verified Baseline Sync Tool */}
+      <div className="na-mineral-card p-6 sm:p-8 rounded-2xl space-y-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="space-y-1 max-w-xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-primary)]">
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+              <span>{t('adminSyncBaselineTitle')}</span>
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+              {t('adminSyncBaselineDesc')}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setSyncConfirmOpen(true)}
+            disabled={syncingBaseline}
+            className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[42px] rounded-xl border border-[var(--color-primary)] bg-[var(--color-primary)]/15 hover:bg-[var(--color-primary)]/25 text-[var(--color-text)] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          >
+            <RefreshCw className={`w-4 h-4 text-[var(--color-primary)] ${syncingBaseline ? 'animate-spin' : ''}`} aria-hidden="true" />
+            <span>{syncingBaseline ? t('adminSyncBaselineSyncing') : t('adminSyncBaselineBtn')}</span>
+          </button>
+        </div>
+
+        {syncResult && (
+          <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-emerald-400">
+              <CheckCircle className="w-4 h-4" aria-hidden="true" />
+              <span>
+                {syncResult.added} added · {syncResult.updated || 0} updated · {syncResult.skipped} preserved · {syncResult.failed} failed
+              </span>
+            </div>
+            <ul className="space-y-1 font-mono text-[11px] text-[var(--color-text-muted)] max-h-36 overflow-y-auto">
+              {syncResult.details.map((detail, idx) => (
+                <li key={idx}>• {detail}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Sync Baseline Confirmation Dialog */}
+      {syncConfirmOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75"
+          onClick={() => setSyncConfirmOpen(false)}
+        >
+          <div
+            ref={syncDialogRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sync-baseline-confirm-title"
+            onClick={(e) => e.stopPropagation()}
+            className="na-mineral-card w-full max-w-md rounded-2xl border-[var(--color-primary)]/40 p-6 space-y-4 text-[var(--color-text)] shadow-2xl focus:outline-none"
+          >
+            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[var(--color-border-subtle)]">
+              <div className="flex items-center gap-2 text-[var(--color-primary)] font-bold text-sm">
+                <RefreshCw className="w-5 h-5 shrink-0" aria-hidden="true" />
+                <h3 id="sync-baseline-confirm-title">{t('adminSyncBaselineConfirmTitle')}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSyncConfirmOpen(false)}
+                className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text)] cursor-pointer"
+                aria-label={t('closeModal')}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+              {t('adminSyncBaselineConfirmDesc')}
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setSyncConfirmOpen(false)}
+                className="px-4 py-2 rounded-xl border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] text-xs cursor-pointer"
+              >
+                {t('adminActionCancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmSync}
+                className="px-4 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer"
+              >
+                {t('adminSyncBaselineConfirmBtn')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

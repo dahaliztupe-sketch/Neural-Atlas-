@@ -780,25 +780,18 @@ export function filterProjectsByQuery(
   const normalizedTech = techFilter.trim().toLowerCase();
 
   return projects.filter((p) => {
+    const isArchiveStatus =
+      p.archiveGroup === 'experiments_discontinued' ||
+      (p.archiveGroup !== 'showcase' &&
+        (p.statusType === 'experimental' ||
+          p.statusType === 'discontinued' ||
+          p.statusType === 'paused' ||
+          p.statusType === 'archived' ||
+          p.statusType === 'needs_confirmation'));
+
     if (statusFilter === 'active_practice') {
-      if (p.archiveGroup === 'experiments_discontinued') return false;
-      if (
-        p.statusType === 'experimental' ||
-        p.statusType === 'discontinued' ||
-        p.statusType === 'paused' ||
-        p.statusType === 'archived' ||
-        p.statusType === 'needs_confirmation'
-      ) {
-        return false;
-      }
+      if (isArchiveStatus) return false;
     } else if (statusFilter === 'archive_group') {
-      const isArchiveStatus =
-        p.archiveGroup === 'experiments_discontinued' ||
-        p.statusType === 'experimental' ||
-        p.statusType === 'discontinued' ||
-        p.statusType === 'paused' ||
-        p.statusType === 'archived' ||
-        p.statusType === 'needs_confirmation';
       if (!isArchiveStatus) return false;
     } else if (statusFilter !== 'all' && p.statusType !== statusFilter) {
       return false;
@@ -858,3 +851,101 @@ export function filterNotesByQuery(
     return haystack.includes(q);
   });
 }
+
+export function resolveNoteCategoryAndTags(
+  topicLabels: string[] | undefined,
+  validCategoryKeys: string[]
+): { categoryKey: string | null; tags: string[] } {
+  const labels = Array.isArray(topicLabels) ? topicLabels : [];
+  const canonicalByLower = new Map<string, string>();
+  for (const key of validCategoryKeys) {
+    const cleanKey = String(key || '').trim();
+    if (cleanKey && !canonicalByLower.has(cleanKey.toLowerCase())) {
+      canonicalByLower.set(cleanKey.toLowerCase(), cleanKey);
+    }
+  }
+
+  let matchedCategory: string | null = null;
+  let matchedIndex = -1;
+
+  for (let i = 0; i < labels.length; i++) {
+    const clean = String(labels[i] || '').trim();
+    if (!clean) continue;
+    const canonical = canonicalByLower.get(clean.toLowerCase());
+    if (canonical) {
+      matchedCategory = canonical;
+      matchedIndex = i;
+      break;
+    }
+  }
+
+  const tags: string[] = [];
+  const seenTagLower = new Set<string>();
+  if (matchedCategory) {
+    seenTagLower.add(matchedCategory.toLowerCase());
+  }
+
+  for (let i = 0; i < labels.length; i++) {
+    if (i === matchedIndex) continue;
+    const clean = String(labels[i] || '').trim();
+    if (!clean) continue;
+    const lower = clean.toLowerCase();
+    if (seenTagLower.has(lower)) continue;
+    seenTagLower.add(lower);
+    tags.push(clean);
+  }
+
+  return { categoryKey: matchedCategory, tags };
+}
+
+export interface NotesCatalogFilterOptions {
+  queryText: string;
+  categoryFilter: string;
+  tagFilter: string;
+  validCategoryKeys: string[];
+}
+
+export function filterNotesCatalog(
+  notes: LearningNoteRecord[],
+  options: NotesCatalogFilterOptions
+): LearningNoteRecord[] {
+  const q = options.queryText.trim().toLowerCase();
+  const normalizedCategory = options.categoryFilter.trim().toLowerCase();
+  const normalizedTag = options.tagFilter.trim().toLowerCase();
+
+  return notes.filter((note) => {
+    const { categoryKey, tags } = resolveNoteCategoryAndTags(
+      note.topicLabels,
+      options.validCategoryKeys
+    );
+
+    if (normalizedCategory && normalizedCategory !== 'all') {
+      if (!categoryKey || categoryKey.toLowerCase() !== normalizedCategory) {
+        return false;
+      }
+    }
+
+    if (normalizedTag && normalizedTag !== 'all') {
+      const hasTag = tags.some((t) => t.toLowerCase() === normalizedTag);
+      if (!hasTag) return false;
+    }
+
+    if (!q) return true;
+
+    const haystack = [
+      note.slug,
+      note.titleEn,
+      note.titleAr,
+      note.summaryEn || '',
+      note.summaryAr || '',
+      note.contentEn,
+      note.contentAr,
+      ...(note.topicLabels || []),
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return haystack.includes(q);
+  });
+}
+

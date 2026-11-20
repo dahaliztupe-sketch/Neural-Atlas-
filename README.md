@@ -41,8 +41,9 @@
 
 The platform is engineered around **evidence-first documentation**:
 
-- **Strict separation of active practice and archive**: Active computational work (`C++ & Problem Solving`) is separated cleanly from exploratory/discontinued experiments (`Kalmeron-Two`, `Sanad`, `Ruwadverse`, `SmartLifeAI`), unverified entries (`WANASBRAND` marked `Needs Confirmation`), and owner-only internal archive items (`internal_archive`).
-- **Accurate academic & learning framing**: Preserves first-semester university coursework in a clearly labeled **Semester 1 Academic Archive** (`unverified-syllabus` disclaimer), documents **Harvard CS50x** accurately as paused/in-progress independent study, distinguishes self-paced tracks (**Elzero C++**) from formal certificates, and records **GKS-U 2027** strictly as `Application Submitted`.
+- **Strict separation of active practice and historical archive**: Main showcase entries (`Neural Atlas`, `J.A.R.V.I.S.`, `C++ & Problem Solving`) are cleanly separated from archived experiments (`LOCAL AI AGENT` explicitly marked `Discontinued / Archived`, `Kalmeron-Two`, `Sanad`, `Ruwadverse`, `SmartLifeAI`) and unverified entries (`WANASBRAND` marked `Needs Confirmation`).
+- **Accurate academic & learning framing**: Preserves first-year Al-Azhar Intelligent Computing subjects cleanly, documents **Harvard CS50x** accurately as **`CS50x: Week 3`** (ongoing independent study, not completed or certified), distinguishes self-paced tracks (**Elzero C++**) from formal certificates, and records **GKS-U 2027** strictly as `Application Submitted`.
+- **Personal Knowledge Library & Skills**: Features structured depth-tiered skills (no artificial proficiency percentages), ~age 12 self-learning background, and 8 bilingual first-person Learning Notes across 9 knowledge categories.
 - **Operational experience transparency**: Documents real administrative and spreadsheet coordination experience in Microsoft Excel without fabricated job titles, dates, employers, or KPIs.
 
 ---
@@ -82,7 +83,7 @@ The platform is engineered around **evidence-first documentation**:
 ### Private Admin Studio (`/admin`)
 - **Fail-Closed Owner Gate**: Google Sign-In verified against `emailVerified === true` + owner allowlist (`src/lib/adminConfig.ts`), backed server-side by `firestore.rules`.
 - **Full CRUD & Publishing Gates**: Manage Projects (`visibility`, `archiveGroup`, `featuredOnHome`, 8 `statusType` states), Academic Courses, Learning Notes, Milestones, Visitor Inbox (`contactMessages`), and Public Profile (`settings/profile` including learning tracks and practical experience).
-- **Backup, Diff Preview & One-Time Seeding**: Schema-validated JSON export/import (`backupService.ts` strips private inbox records and rejects unsafe URLs) plus idempotent initial seed migration.
+- **Backup, Diff Preview, Seed & Non-Destructive Sync**: Schema-validated JSON export/import (`backupService.ts` strips private inbox records and rejects unsafe URLs), idempotent initial seeding, and one-click **Sync Verified Baseline Updates** that reconciles baseline projects and learning tracks while preserving existing `createdAt` timestamps and owner-edited notes.
 
 ---
 
@@ -124,6 +125,7 @@ For deeper technical details (SWR cache invariants, KaTeX/Markdown security, and
 ├── .github/                  # Issue/PR templates, CODEOWNERS, CI workflow, Dependabot, social preview
 ├── docs/                     # Architecture, deployment, security spec, live screenshots, historical archive
 ├── public/                   # Static icons, PWA icons, robots.txt, sitemap.xml, og-preview.png
+├── scripts/                  # GitHub verification & push helper (sync-github.sh)
 ├── src/
 │   ├── components/           # Shared UI, Markdown/KaTeX renderer, OptimizedImage, world/ (3D Astrolabe)
 │   ├── context/              # AppContext (theme/language/SEO/profile) & AuthContext (Firebase Auth)
@@ -156,8 +158,8 @@ For deeper technical details (SWR cache invariants, KaTeX/Markdown security, and
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<owner>/<repo>.git
-cd <repo>
+git clone https://github.com/dahaliztupe-sketch/neural-atlas.git
+cd neural-atlas
 
 # 2. Install dependencies
 npm install
@@ -194,7 +196,8 @@ Defined in [`.env.example`](./.env.example):
 | `npm run preview` | Serves the compiled `dist/` bundle locally via Vite preview |
 | `npm run lint` | Runs TypeScript static type checking (`tsc --noEmit`) |
 | `npm run lint:rules` | Validates `firestore.rules` with `@firebase/eslint-plugin-security-rules` |
-| `npm test` | Executes the unit, regression, and security-rules test suite across 11 `*.test.ts` files (`77` subtests) |
+| `npm test` | Executes the unit, regression, and security-rules test suite across 11 `*.test.ts` files (`80` subtests) |
+| `npm run sync:github` | Runs full verification (`lint`, `lint:rules`, `test`, `build`) and pushes changes via `scripts/sync-github.sh` |
 | `npm run clean` | Removes the generated `dist/` directory |
 
 ---
@@ -213,14 +216,14 @@ npm run build
 What is verified automatically in `npm test`:
 - **Data Integrity (`src/data/data.test.ts`)**: Enforces zero fabricated course codes/grades, visibility split (`public` vs `internal_archive`), accurate CS50x/GKS-U/WANASBRAND framing, and absence of unverified claims.
 - **Validation & Security Rules (`src/lib/validation.test.ts`, `firestore.rules.test.ts`)**: Verifies 100% schema parity between `firebase-blueprint.json` and `firestore.rules`, PII omission on `settings/profile`, URL protocol checks, and adversarial payload rejection.
-- **Repository, Cache & Backup (`src/services/*.test.ts`)**: Ensures configured Firestore never masks errors/empty states with local fallback, validates SWR stale-preservation, and confirms backup exports strip private inbox items.
+- **Repository, Cache & Backup (`src/services/*.test.ts`)**: Ensures Firestore query errors never mask permission/network failures, validates baseline sync `createdAt` preservation, validates SWR stale-preservation, and confirms backup exports strip private inbox items.
 - **Markdown/KaTeX, SEO, Routing & 3D Capability (`src/lib/*.test.ts`, `src/router/router.test.ts`, `src/components/world/world.test.ts`)**: Tests XSS sanitization, `noindex` on admin/draft routes, route matching, and strict Home-only 3D mounting.
 
 ---
 
 ## Security Considerations
 
-- **No Silent Data Fallback When Configured**: When Firestore is configured, remote empty results or query errors surface explicitly instead of masking backend failures with local seed arrays.
+- **Explicit Error Surfacing & Verified Local Baseline**: When Firestore is configured, query or permission errors surface explicitly instead of masking backend failures, while unseeded empty collections fall back cleanly to verified local baseline records.
 - **Explicit Public Visibility Gate**: Public `projects` queries and Firestore rules require both `publicationStatus == 'published'` and `visibility == 'public'`. Legacy documents missing `visibility` and `internal_archive` records are denied to anonymous readers.
 - **PII Isolation**: `settings/profile` does not accept `contactEmail`; public `JSON-LD` and JSON backups never include personal email addresses or visitor messages.
 - **Hardened Markdown/KaTeX**: Disallows `javascript:`, `vbscript:`, and `data:` protocols and runs KaTeX with `trust: false`.

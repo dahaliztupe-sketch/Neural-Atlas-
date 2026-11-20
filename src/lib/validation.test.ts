@@ -19,6 +19,8 @@ import {
   validateContactMessageInput,
   filterProjectsByQuery,
   filterNotesByQuery,
+  resolveNoteCategoryAndTags,
+  filterNotesCatalog,
   isValidFirestoreDocId,
   sanitizeFirestoreDocId,
   formatFirestoreUserError,
@@ -559,6 +561,20 @@ test('filterProjectsByQuery and filterNotesByQuery filter by search text, status
       fullOverviewAr: [],
     },
     {
+      id: 'jarvis-ai-assistant',
+      titleEn: 'J.A.R.V.I.S.',
+      titleAr: 'مشروع J.A.R.V.I.S.',
+      statusEn: 'In Development',
+      statusAr: 'قيد التطوير',
+      statusType: 'in_development' as const,
+      archiveGroup: 'showcase' as const,
+      descriptionEn: 'Independent AI assistant exploration',
+      descriptionAr: 'استكشاف مستقل لمساعد ذكي',
+      technologies: ['Python'],
+      fullOverviewEn: [],
+      fullOverviewAr: [],
+    },
+    {
       id: 'kalmeron-two',
       titleEn: 'Kalmeron-Two',
       titleAr: 'Kalmeron-Two (تجربة معمارية)',
@@ -574,9 +590,10 @@ test('filterProjectsByQuery and filterNotesByQuery filter by search text, status
     },
   ];
 
-  assert.equal(filterProjectsByQuery(sampleProjects, '', 'all', 'all').length, 2);
+  assert.equal(filterProjectsByQuery(sampleProjects, '', 'all', 'all').length, 3);
   assert.equal(filterProjectsByQuery(sampleProjects, 'نموذج', 'all', 'all')[0].id, 'kalmeron-two');
   assert.equal(filterProjectsByQuery(sampleProjects, '', 'active_practice', 'C++').length, 1);
+  assert.equal(filterProjectsByQuery(sampleProjects, '', 'active_practice', 'all').length, 2);
   assert.equal(filterProjectsByQuery(sampleProjects, '', 'archive_group', 'all')[0].id, 'kalmeron-two');
   assert.equal(filterProjectsByQuery(sampleProjects, 'missing', 'all', 'all').length, 0);
 
@@ -596,4 +613,90 @@ test('filterProjectsByQuery and filterNotesByQuery filter by search text, status
   assert.equal(filterNotesByQuery(sampleNotes, '', 'Memory').length, 1);
   assert.equal(filterNotesByQuery(sampleNotes, '', 'Python').length, 0);
 });
+
+test('resolveNoteCategoryAndTags and filterNotesCatalog separate canonical categories from secondary tags', () => {
+  const validKeys = [
+    'Programming',
+    'Computer Science',
+    'Artificial Intelligence',
+    'Problem Solving',
+    'University Studies',
+    'Learning Journey',
+    'Business & Technology',
+    'Personal Insights',
+    'Experiments',
+  ];
+
+  const resolved = resolveNoteCategoryAndTags(
+    ['programming', 'C++', 'Programming', 'Elzero Track', 'c++'],
+    validKeys
+  );
+  assert.equal(resolved.categoryKey, 'Programming');
+  assert.deepEqual(resolved.tags, ['C++', 'Elzero Track']);
+
+  const unresolved = resolveNoteCategoryAndTags(['Custom Tag', 'Foundations'], validKeys);
+  assert.equal(unresolved.categoryKey, null);
+  assert.deepEqual(unresolved.tags, ['Custom Tag', 'Foundations']);
+
+  const notesCatalog = [
+    {
+      id: 'n1',
+      slug: 'cpp-note',
+      titleEn: 'Finishing C++ Course',
+      titleAr: 'إتمام مسار C++',
+      contentEn: 'Syntax vs problem solving.',
+      contentAr: 'القواعد مقابل حل المشكلات.',
+      topicLabels: ['Programming', 'C++', 'Foundations'],
+      publicationStatus: 'published' as const,
+    },
+    {
+      id: 'n2',
+      slug: 'cs50-note',
+      titleEn: 'CS50x Week 3',
+      titleAr: 'الأسبوع الثالث في CS50x',
+      contentEn: 'Algorithms and thinking cleanly.',
+      contentAr: 'الخوارزميات والتفكير المنظم.',
+      topicLabels: ['Learning Journey', 'CS50x', 'Foundations'],
+      publicationStatus: 'published' as const,
+    },
+  ];
+
+  assert.equal(
+    filterNotesCatalog(notesCatalog, {
+      queryText: '',
+      categoryFilter: 'Programming',
+      tagFilter: 'all',
+      validCategoryKeys: validKeys,
+    }).length,
+    1
+  );
+  assert.equal(
+    filterNotesCatalog(notesCatalog, {
+      queryText: '',
+      categoryFilter: 'University Studies',
+      tagFilter: 'all',
+      validCategoryKeys: validKeys,
+    }).length,
+    0
+  );
+  assert.equal(
+    filterNotesCatalog(notesCatalog, {
+      queryText: '',
+      categoryFilter: 'all',
+      tagFilter: 'Foundations',
+      validCategoryKeys: validKeys,
+    }).length,
+    2
+  );
+  assert.equal(
+    filterNotesCatalog(notesCatalog, {
+      queryText: 'الأسبوع الثالث',
+      categoryFilter: 'Learning Journey',
+      tagFilter: 'CS50x',
+      validCategoryKeys: validKeys,
+    })[0].id,
+    'n2'
+  );
+});
+
 
