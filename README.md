@@ -21,7 +21,7 @@
   </p>
 
   <p>
-    <a href="https://ais-pre-ahuiyvesdomlkxjzyw7kqw-152637699957.europe-west1.run.app">Live Preview</a>
+    <a href="https://neural-atlas-one.vercel.app">Live Preview</a>
     ·
     <a href="./docs/ARCHITECTURE.md">Architecture</a>
     ·
