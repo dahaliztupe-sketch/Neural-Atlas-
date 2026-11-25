@@ -70,7 +70,7 @@ export const OfflineIndicator: React.FC = () => {
           <button
             type="button"
             onClick={handleApplyUpdate}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--color-primary)] text-white text-[11px] font-semibold cursor-pointer hover:bg-[var(--color-primary-hover)] transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#7c3aed] text-white text-[11px] font-semibold cursor-pointer hover:bg-[#6d28d9] transition-colors"
           >
             <RefreshCw className="w-3 h-3" aria-hidden="true" />
             <span>{t('pwaUpdateReloadBtn')}</span>
