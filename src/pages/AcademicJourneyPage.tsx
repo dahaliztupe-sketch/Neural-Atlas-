@@ -182,7 +182,7 @@ export const AcademicJourneyPage: React.FC = () => {
                   onClick={() => setSelectedCategory('all')}
                   className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'all'
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
+                      ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   }`}
                 >
@@ -193,7 +193,7 @@ export const AcademicJourneyPage: React.FC = () => {
                   onClick={() => setSelectedCategory('computational')}
                   className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'computational'
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
+                      ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   }`}
                 >
@@ -204,7 +204,7 @@ export const AcademicJourneyPage: React.FC = () => {
                   onClick={() => setSelectedCategory('mathematical')}
                   className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'mathematical'
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
+                      ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   }`}
                 >
@@ -215,7 +215,7 @@ export const AcademicJourneyPage: React.FC = () => {
                   onClick={() => setSelectedCategory('humanities')}
                   className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'humanities'
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
+                      ? 'border-[#7c3aed] bg-[#7c3aed] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   }`}
                 >
