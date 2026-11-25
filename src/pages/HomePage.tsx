@@ -375,7 +375,7 @@ export const HomePage: React.FC = () => {
                         onBlur={() => setHoveredNodeId(null)}
                         className={`px-2.5 py-2 min-h-[44px] rounded-lg text-[11px] font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                           isSelected
-                            ? 'bg-[var(--color-primary)] text-white font-semibold'
+                            ? 'bg-[#7c3aed] text-white font-semibold'
                             : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                         }`}
                       >
