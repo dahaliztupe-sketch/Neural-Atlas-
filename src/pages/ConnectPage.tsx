@@ -398,7 +398,7 @@ export const ConnectPage: React.FC = () => {
             <a
               href={`mailto:${directEmail}`}
               dir="ltr"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs sm:text-sm font-mono font-semibold text-[var(--color-primary)] transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs sm:text-sm font-mono font-semibold text-[var(--color-primary-hover)] transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
               <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>{directEmail}</span>
