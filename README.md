@@ -41,10 +41,9 @@
 
 The platform is engineered around **evidence-first documentation**:
 
-- **Strict separation of active practice and historical archive**: Main showcase entries (`Neural Atlas`, `J.A.R.V.I.S.`, `C++ & Problem Solving`) are cleanly separated from archived experiments (`LOCAL AI AGENT` explicitly marked `Discontinued / Archived`, `Kalmeron-Two`, `Sanad`, `Ruwadverse`, `SmartLifeAI`) and unverified entries (`WANASBRAND` marked `Needs Confirmation`).
-- **Accurate academic & learning framing**: Preserves first-year Al-Azhar Intelligent Computing subjects cleanly, documents **Harvard CS50x** accurately as **`CS50x: Week 3`** (ongoing independent study, not completed or certified), distinguishes self-paced tracks (**Elzero C++**) from formal certificates, and records **GKS-U 2027** strictly as `Application Submitted`.
-- **Personal Knowledge Library & Skills**: Features structured depth-tiered skills (no artificial proficiency percentages), ~age 12 self-learning background, and 8 bilingual first-person Learning Notes across 9 knowledge categories.
-- **Operational experience transparency**: Documents real administrative and spreadsheet coordination experience in Microsoft Excel without fabricated job titles, dates, employers, or KPIs.
+- **Strict separation of active practice and historical archive**: Main showcase entries (`Neural Atlas`, `J.A.R.V.I.S.`, `C++ & Problem Solving`, and live storefront `WANASBRAND`) are cleanly separated from archived experiments (`LOCAL AI AGENT` explicitly marked `Discontinued / Archived`, `Kalmeron-Two`, `Sanad`, `Ruwadverse`, `SmartLifeAI`).
+- **Accurate academic & learning framing**: Preserves first-year Al-Azhar Intelligent Computing subjects cleanly, documents **Harvard CS50x** accurately as **`CS50x: Week 3`** (ongoing independent study, not completed or certified), distinguishes self-paced tracks (**Elzero C++**) from formal certificates, and records **GKS-U 2027** accurately as `Not Accepted`.
+- **Personal Knowledge Library & Skills**: Features structured depth-tiered skills (including practical Excel data organization and active Python study, without artificial proficiency percentages), ~age 12 self-learning background, and 8 bilingual first-person Learning Notes across 9 knowledge categories.
 
 ---
 

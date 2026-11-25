@@ -25,6 +25,7 @@ import {
   reconcileProfileForBaselineSync,
   buildBaselineProjectSyncPayload,
   buildDefaultProfileSettings,
+  bisectProfileSaveDiagnostic,
 } from './contentRepository';
 import { isConfiguredOwner, isPlaceholderEmailConfigured } from '../lib/adminConfig';
 import { COURSES, PROJECTS, SOCIAL_LINKS } from '../data/portfolioData';
@@ -105,7 +106,7 @@ test('stripUndefined removes undefined keys so Firestore setDoc draft saves do n
 
 test('getImportPreview accurately counts existing real items and 8 learning notes', () => {
   const preview = getImportPreview();
-  assert.equal(preview.projectsCount, 9, 'Should reflect 3 showcase + 6 archive projects');
+  assert.equal(preview.projectsCount, 9, 'Should reflect 4 showcase + 5 archive projects');
   assert.equal(preview.coursesCount, 7, 'Should reflect the 7 owner-provided first-year subjects');
   assert.equal(preview.notesCount, 8, 'Should reflect the 8 published learning notes');
   assert.equal(preview.milestonesCount, 6, 'Should reflect the 6 factual timeline milestones');
@@ -204,7 +205,7 @@ test('REGRESSION: Local Firestore rules harden read, write schema, URL protocol,
 
 test('REGRESSION: Owner provided course data, 9 public projects, 8 notes, baseline fallbacks, and social links remain factual', () => {
   assert.equal(COURSES.length, 7, 'Must maintain exactly 7 owner-provided first-year course titles');
-  assert.equal(PROJECTS.length, 9, 'Must maintain 3 main showcase entries + 6 archive entries');
+  assert.equal(PROJECTS.length, 9, 'Must maintain 4 main showcase entries + 5 archive entries');
   assert.equal(PROJECTS.filter((p) => p.visibility === 'public').length, 9);
 
   const baselineProjects = getLocalPublicProjectsBaseline();
@@ -333,6 +334,37 @@ test('Baseline sync reconciles CS50x Week 3 and LOCAL AI AGENT while preserving 
   const syncedProfile = reconcileProfileForBaselineSync(oldProfile, '2026-11-20T12:00:00.000Z');
   assert.equal(syncedProfile.githubUrl, 'https://github.com/custom-handle', 'Must preserve custom profile URL');
   assert.ok(syncedProfile.learningTracks?.find((tr) => tr.id === 'harvard-cs50x')?.statusLabelEn.includes('CS50x: Week 3'));
+  assert.equal(syncedProfile.practicalExperience?.activitiesEn.length, 0);
 });
+
+test('bisectProfileSaveDiagnostic isolates failing payload fields using injected writer', async () => {
+  const defaults = buildDefaultProfileSettings();
+
+  const fullOnlyFail = await bisectProfileSaveDiagnostic(defaults, async (payload) => {
+    if ('githubUrl' in payload) {
+      throw Object.assign(new Error('Missing or insufficient permissions.'), {
+        code: 'permission-denied',
+      });
+    }
+  });
+  assert.equal(fullOnlyFail.steps.length, 4);
+  assert.equal(fullOnlyFail.steps[0].ok, true);
+  assert.equal(fullOnlyFail.steps[1].ok, true);
+  assert.equal(fullOnlyFail.steps[2].ok, true);
+  assert.equal(fullOnlyFail.steps[3].ok, false);
+  assert.equal(fullOnlyFail.steps[3].code, 'permission-denied');
+  assert.equal(fullOnlyFail.summary, 'fullPayload: permission-denied');
+
+  const tracksFail = await bisectProfileSaveDiagnostic(defaults, async (payload) => {
+    if ('learningTracks' in payload) {
+      throw Object.assign(new Error('Invalid tracks field'), { code: 'invalid-argument' });
+    }
+  });
+  assert.equal(tracksFail.steps[1].ok, false);
+  assert.equal(tracksFail.steps[3].ok, false);
+  assert.match(tracksFail.summary, /\+learningTracks: invalid-argument/);
+  assert.match(tracksFail.summary, /fullPayload: invalid-argument/);
+});
+
 
 

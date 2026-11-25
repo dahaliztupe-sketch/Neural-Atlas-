@@ -49,7 +49,25 @@ function neuralAtlasSeoPlugin(siteUrl: string): Plugin {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const configuredSiteUrl = env.VITE_SITE_URL || process.env.VITE_SITE_URL || '';
+  const vercelEnv = env.VERCEL_ENV || process.env.VERCEL_ENV || '';
+  const vercelHost =
+    vercelEnv === 'production'
+      ? env.VERCEL_PROJECT_PRODUCTION_URL ||
+        process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+        env.VERCEL_URL ||
+        process.env.VERCEL_URL ||
+        ''
+      : env.VERCEL_URL ||
+        process.env.VERCEL_URL ||
+        env.VERCEL_PROJECT_PRODUCTION_URL ||
+        process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+        '';
+  const normalizedVercelUrl = vercelHost
+    ? /^https?:\/\//i.test(vercelHost)
+      ? vercelHost
+      : `https://${vercelHost}`
+    : '';
+  const configuredSiteUrl = env.VITE_SITE_URL || process.env.VITE_SITE_URL || normalizedVercelUrl || '';
 
   return {
     plugins: [
@@ -100,6 +118,7 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
           globPatterns: ['**/*.{html,ico,svg,json,css,js}'],
           globIgnores: [
+            '**/404.html',
             '**/KaTeX_*',
             '**/Admin*',
             '**/vendor-katex*',

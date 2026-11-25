@@ -26,3 +26,5 @@ tmp/
 # AI Studio & browser test artifacts
 .aistudio/
 .playwright-cli/
+.backups/
+

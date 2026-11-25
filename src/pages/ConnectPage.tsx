@@ -7,6 +7,7 @@ import {
   validateContactMessageInput,
 } from '../services/contentRepository';
 import { formatFirestoreUserError } from '../lib/validation';
+import { getClientContactEmail } from '../lib/contactConfig';
 import {
   Github,
   Linkedin,
@@ -189,7 +190,7 @@ export const ConnectPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setSubmitted(false)}
-              className="px-4 py-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-emerald-500/20 transition-colors cursor-pointer"
+              className="px-4 py-2 min-h-[44px] rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-emerald-500/20 transition-colors cursor-pointer"
             >
               {t('contactSendAnotherBtn')}
             </button>
@@ -374,16 +375,37 @@ export const ConnectPage: React.FC = () => {
         )}
       </section>
 
-      {/* Privacy-Preserving Direct Contact Notice */}
-      <div className="p-6 rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] space-y-2">
-        <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-text-subtle)]">
-          <Mail className="w-4 h-4 text-[var(--color-text-subtle)]" aria-hidden="true" />
-          <span>{t('emailNoticeTitle')}</span>
-        </div>
-        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
-          {t('emailNoticeDesc')}
-        </p>
-      </div>
+      {/* Direct Email Contact Card */}
+      {(() => {
+        const directEmail = getClientContactEmail();
+        return (
+          <section
+            aria-labelledby="direct-email-heading"
+            className="na-mineral-card p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          >
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-secondary)]">
+                <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <h2 id="direct-email-heading" className="font-semibold text-[var(--color-text)]">
+                  {t('emailNoticeTitle')}
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm text-[var(--color-text-muted)] leading-relaxed">
+                {t('emailNoticeDesc')}
+              </p>
+            </div>
+
+            <a
+              href={`mailto:${directEmail}`}
+              dir="ltr"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs sm:text-sm font-mono font-semibold text-[var(--color-primary)] transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            >
+              <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>{directEmail}</span>
+            </a>
+          </section>
+        );
+      })()}
     </div>
   );
 };

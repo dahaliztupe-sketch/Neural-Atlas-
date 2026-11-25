@@ -26,6 +26,10 @@ import {
   getPublishedProjectsResult,
   getPublishedNotesResult,
   getPublishedMilestonesResult,
+  getLocalPublicCoursesBaseline,
+  getLocalPublicProjectsBaseline,
+  getLocalPublicNotesBaseline,
+  getLocalPublicMilestonesBaseline,
   formatLocalizedDate,
 } from '../services/contentRepository';
 import {
@@ -85,22 +89,27 @@ export const HomePage: React.FC = () => {
     }
   );
 
-  const coursesLoading = coursesState.loading;
   const coursesError =
     coursesState.data?.status === 'error' ? coursesState.data.errorCode || 'query_error' : null;
-  const courses = useMemo<CourseDisplayItem[]>(
-    () => (coursesState.data && coursesState.data.status !== 'error' ? coursesState.data.items : []),
-    [coursesState.data]
-  );
+  const coursesLoading = coursesState.loading && !coursesState.data;
+  const courses = useMemo<CourseDisplayItem[]>(() => {
+    if (coursesState.data) {
+      return coursesState.data.status === 'error' ? [] : coursesState.data.items;
+    }
+    return getLocalPublicCoursesBaseline();
+  }, [coursesState.data]);
 
-  const projectsLoading = projState.loading;
   const projectsError =
     projState.data?.status === 'error' ? projState.data.errorCode || 'query_error' : null;
-  const archiveLoading = notesState.loading || milestonesState.loading;
+  const projectsLoading = projState.loading && !projState.data;
 
   const projects = useMemo<ProjectItem[]>(() => {
-    if (!projState.data || projState.data.status === 'error') return [];
-    return projState.data.items.map((p) => ({
+    const sourceItems = projState.data
+      ? projState.data.status === 'error'
+        ? []
+        : projState.data.items
+      : getLocalPublicProjectsBaseline();
+    return sourceItems.map((p) => ({
       id: p.slug || p.id,
       titleEn: p.titleEn,
       titleAr: p.titleAr,
@@ -166,14 +175,19 @@ export const HomePage: React.FC = () => {
     : publicProfile.currentSemesterEn || 'Active Academic Term';
   const termDisplay = `${yearLabel} · ${semesterLabel}`;
 
-  const notes = useMemo(
-    () => (notesState.data?.status === 'success' ? notesState.data.items : []),
-    [notesState.data]
-  );
-  const milestones = useMemo(
-    () => (milestonesState.data?.status === 'success' ? milestonesState.data.items : []),
-    [milestonesState.data]
-  );
+  const notes = useMemo(() => {
+    if (notesState.data) {
+      return notesState.data.status === 'success' ? notesState.data.items : [];
+    }
+    return getLocalPublicNotesBaseline();
+  }, [notesState.data]);
+
+  const milestones = useMemo(() => {
+    if (milestonesState.data) {
+      return milestonesState.data.status === 'success' ? milestonesState.data.items : [];
+    }
+    return getLocalPublicMilestonesBaseline();
+  }, [milestonesState.data]);
 
   const loadHomeData = useCallback(async () => {
     await Promise.all([
@@ -184,22 +198,19 @@ export const HomePage: React.FC = () => {
     ]);
   }, [coursesState, projState, notesState, milestonesState]);
 
-  const publishedProjectSlugs = useMemo(
-    () =>
-      projState.data?.status === 'success'
-        ? projState.data.items.map((p) => p.slug || p.id)
-        : [],
-    [projState.data]
-  );
+  const publishedProjectSlugs = useMemo(() => {
+    const items = projState.data
+      ? projState.data.status === 'success'
+        ? projState.data.items
+        : []
+      : getLocalPublicProjectsBaseline();
+    return items.map((p) => p.slug || p.id);
+  }, [projState.data]);
 
-  const courseCountDisplay = coursesLoading
-    ? '—'
-    : coursesError
+  const courseCountDisplay = coursesError
     ? '!'
     : String(courses.length).padStart(2, '0');
-  const projectCountDisplay = projectsLoading
-    ? '—'
-    : projectsError
+  const projectCountDisplay = projectsError
     ? '!'
     : String(projects.length).padStart(2, '0');
 
@@ -314,17 +325,13 @@ export const HomePage: React.FC = () => {
             {/* Compact Unboxed Proof Line */}
             <div className="pt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-[var(--color-text-subtle)]">
               <span>
-                {coursesLoading
-                  ? t('coursesLoading')
-                  : isRtl
+                {isRtl
                   ? `${courses.length} مقررات أكاديمية منشورة`
                   : `${courses.length} Published Academic Courses`}
               </span>
               <span aria-hidden="true">·</span>
               <span>
-                {projectsLoading
-                  ? t('projectsLoading')
-                  : isRtl
+                {isRtl
                   ? `${featuredProjects.length} مشاريع رئيسية · ${projects.length} إجمالي الإدخالات`
                   : `${featuredProjects.length} Active Showcase · ${projects.length} Total Entries`}
               </span>
@@ -366,7 +373,7 @@ export const HomePage: React.FC = () => {
                         onMouseLeave={() => setHoveredNodeId(null)}
                         onFocus={() => setHoveredNodeId(nodeId)}
                         onBlur={() => setHoveredNodeId(null)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                        className={`px-2.5 py-2 min-h-[44px] rounded-lg text-[11px] font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                           isSelected
                             ? 'bg-[var(--color-primary)] text-white font-semibold'
                             : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -396,7 +403,7 @@ export const HomePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigate(activeNodeTarget.route)}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-hover)] hover:border-[var(--color-primary)] text-xs font-semibold text-[var(--color-text)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-hover)] hover:border-[var(--color-primary)] text-xs font-semibold text-[var(--color-text)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                   >
                     <span>{resolvedAstrolabeCtaLabel}</span>
                     <DirectionalArrow className="w-3.5 h-3.5 text-[var(--color-secondary)]" aria-hidden="true" />
@@ -529,7 +536,7 @@ export const HomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/academic')}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer self-start md:self-auto focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+            className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer self-start md:self-auto focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
           >
             <span>{courses.length === 7 ? t('heroViewAllCourses') : t('btnExploreCourses')}</span>
             <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
@@ -537,12 +544,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div aria-live="polite">
-          {coursesLoading ? (
-            <div className="py-10 flex items-center justify-center gap-2 text-xs font-mono text-[var(--color-text-muted)]" role="status">
-              <RefreshCw className="w-4 h-4 text-[var(--color-primary)] animate-spin" aria-hidden="true" />
-              <span>{t('coursesLoading')}</span>
-            </div>
-          ) : coursesError ? (
+          {coursesError ? (
             <div className="p-6 rounded-2xl border border-red-500/30 bg-red-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
@@ -554,13 +556,13 @@ export const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={loadHomeData}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
               >
                 <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>{t('retryAction')}</span>
               </button>
             </div>
-          ) : courses.length === 0 ? (
+          ) : coursesLoading && courses.length === 0 ? (
             <EmptyState
               icon={BookOpen}
               title={t('academicTitle')}
@@ -599,7 +601,7 @@ export const HomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/projects')}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer self-start md:self-auto focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+            className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer self-start md:self-auto focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
           >
             <span>{t('btnExploreProjects')}</span>
             <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
@@ -607,12 +609,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div aria-live="polite">
-          {projectsLoading ? (
-            <div className="py-12 flex items-center justify-center gap-2 text-xs font-mono text-[var(--color-text-muted)]" role="status">
-              <RefreshCw className="w-4 h-4 text-[var(--color-primary)] animate-spin" aria-hidden="true" />
-              <span>{t('projectsLoading')}</span>
-            </div>
-          ) : projectsError ? (
+          {projectsError ? (
             <div className="p-6 rounded-2xl border border-red-500/30 bg-red-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-red-400 font-semibold text-sm">
@@ -624,11 +621,16 @@ export const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={loadHomeData}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
               >
                 <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>{t('retryAction')}</span>
               </button>
+            </div>
+          ) : projectsLoading && featuredProjects.length === 0 ? (
+            <div className="py-12 flex items-center justify-center gap-2 text-xs font-mono text-[var(--color-text-muted)]" role="status">
+              <RefreshCw className="w-4 h-4 text-[var(--color-primary)] animate-spin" aria-hidden="true" />
+              <span>{t('projectsLoading')}</span>
             </div>
           ) : featuredProjects.length === 0 ? (
             <EmptyState
@@ -658,7 +660,7 @@ export const HomePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/projects/local-ai-agent')}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+                  className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
                 >
                   <span>{t('homeArchiveContextAction')}</span>
                   <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
@@ -690,7 +692,7 @@ export const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/notes')}
-                className="inline-flex items-center gap-1.5 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+                className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
               >
                 <span>{t('homeViewNotes')}</span>
                 <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
@@ -698,7 +700,7 @@ export const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/milestones')}
-                className="inline-flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-secondary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] rounded-sm"
+                className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-[var(--color-secondary)] hover:text-[var(--color-secondary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] rounded-sm"
               >
                 <span>{t('homeViewMilestones')}</span>
                 <DirectionalArrow className="w-3.5 h-3.5" aria-hidden="true" />
@@ -760,7 +762,7 @@ export const HomePage: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : archiveLoading ? (
+          ) : (notesState.loading || milestonesState.loading) ? (
             <div className="py-8 flex items-center justify-center gap-2 text-xs font-mono text-[var(--color-text-muted)]" role="status">
               <RefreshCw className="w-4 h-4 text-[var(--color-primary)] animate-spin" aria-hidden="true" />
               <span>{t('notesLoading')}</span>

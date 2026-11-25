@@ -4,13 +4,13 @@ import { ProjectItem, ProjectRecord } from '../types';
 import { CACHE_KEYS } from '../services/cacheService';
 import { useCachedResource } from '../hooks/useCachedResource';
 import { DataQueryResult, getPublishedProjectsResult } from '../services/contentRepository';
-import { filterProjectsByQuery, ProjectListFilter } from '../lib/validation';
+import { filterProjectsByQuery, localizeProjectTech, ProjectListFilter } from '../lib/validation';
 import { ProjectCard } from '../components/ProjectCard';
 import { EmptyState } from '../components/EmptyState';
 import { Code2, AlertTriangle, RefreshCw, Search, X } from 'lucide-react';
 
 export const ProjectsPage: React.FC = () => {
-  const { t, navigate } = useApp();
+  const { t, isRtl, navigate } = useApp();
   const [filter, setFilter] = useState<ProjectListFilter>('all');
   const [techFilter, setTechFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -140,7 +140,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFilter('all')}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'all'
                     ? 'bg-[var(--color-primary)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -151,7 +151,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFilter('active_practice')}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'active_practice'
                     ? 'bg-[var(--color-primary)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -162,7 +162,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFilter('archive_group')}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'archive_group'
                     ? 'bg-[var(--color-primary)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -214,7 +214,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setTechFilter('all')}
-                className={`px-2.5 py-1 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   techFilter === 'all'
                     ? 'border-[var(--color-secondary)] bg-[var(--color-secondary-muted)] text-[var(--color-secondary)] font-semibold'
                     : 'border-[var(--color-border-subtle)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -229,13 +229,13 @@ export const ProjectsPage: React.FC = () => {
                     key={tech}
                     type="button"
                     onClick={() => setTechFilter(active ? 'all' : tech)}
-                    className={`px-2.5 py-1 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                    className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                       active
                         ? 'border-[var(--color-secondary)] bg-[var(--color-secondary-muted)] text-[var(--color-secondary)] font-semibold'
                         : 'border-[var(--color-border-subtle)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                     }`}
                   >
-                    {tech}
+                    {localizeProjectTech(tech, isRtl)}
                   </button>
                 );
               })}
@@ -264,7 +264,7 @@ export const ProjectsPage: React.FC = () => {
             <button
               type="button"
               onClick={loadProjects}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
             >
               <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{t('retryAction')}</span>

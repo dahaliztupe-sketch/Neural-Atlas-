@@ -100,7 +100,7 @@ export const TRANSLATIONS = {
     // Projects
     projectsTitle: 'Projects & Archive',
     projectsSubtitle: 'Clear separation between active showcase projects and archived experiments',
-    projectsIntro: 'Three main showcase and active practice entries—Neural Atlas, J.A.R.V.I.S. (independent assistant concept), and C++ Problem-Solving Practice—kept clearly separate from historical archive entries including LOCAL AI AGENT (Discontinued / Archived).',
+    projectsIntro: 'Four main showcase and live entries—Neural Atlas, J.A.R.V.I.S. (independent assistant concept), C++ Problem-Solving Practice, and the live WANASBRAND storefront—kept clearly separate from historical archive entries including LOCAL AI AGENT (Discontinued / Archived).',
     statusPracticing: 'Learning & Practicing',
     statusInDevelopment: 'In Development',
     statusPlanned: 'Planned',
@@ -129,7 +129,7 @@ export const TRANSLATIONS = {
     filterArchiveExperiments: 'Experiments & Archive',
     projectsShowcaseHeading: 'Main Showcase & Active Practice',
     projectsArchiveHeading: 'Experiments & Discontinued Archive',
-    projectsArchiveNote: 'Archived experiments, stopped pre-production prototypes (such as Kalmeron-Two and AI-directed builds like WANASBRAND), and earlier systems such as LOCAL AI AGENT—explicitly marked Discontinued / Archived and kept listed for historical context.',
+    projectsArchiveNote: 'Archived experiments, stopped pre-production prototypes (such as Kalmeron-Two), and earlier systems such as LOCAL AI AGENT—explicitly marked Discontinued / Archived and kept listed for historical context.',
     
     // Learning Notes
     notesTitle: 'Learning Notes',
@@ -156,14 +156,14 @@ export const TRANSLATIONS = {
     aboutTitle: 'About Me',
     aboutSubtitle: 'Academic direction in Cairo, age ~12 self-learning roots, structured skills, and learning tracks',
     aboutP1: 'I am Abdalrahman Mostafa, a first-year university student in Intelligent Computing / Computer Science at Al-Azhar University in Cairo, Egypt. I began self-learning programming around age 12 and believe in growing through experimentation, independent research, and practical projects.',
-    aboutP2: 'I completed the Elzero Web School C++ Programming Fundamentals track (self-paced study) and continue practicing C++ problem solving and algorithmic thinking, with Python planned as my next language step after solidifying these fundamentals.',
-    aboutP3: 'My active explorations—Neural Atlas and conceptual thinking around J.A.R.V.I.S.—remain cleanly separated from historical archive entries such as LOCAL AI AGENT (Discontinued / Archived), Kalmeron-Two, and WANASBRAND.',
-    aboutP4: 'Alongside university studies, I document all learning tracks honestly—including CS50x: Week 3 (ongoing independent study), GKS-U 2027 (application submitted), and practical Microsoft Excel operational coordination.',
+    aboutP2: 'I completed the Elzero Web School C++ Programming Fundamentals track (self-paced study) and continue practicing C++ problem solving and algorithmic thinking, while currently learning Python alongside strengthening these foundations.',
+    aboutP3: 'My active showcase—Neural Atlas, the live WANASBRAND storefront, C++ problem solving, and conceptual thinking around J.A.R.V.I.S.—remains cleanly separated from historical archive entries such as LOCAL AI AGENT (Discontinued / Archived) and Kalmeron-Two.',
+    aboutP4: 'Alongside university studies, I document all learning tracks honestly—including CS50x: Week 3 (ongoing independent study) and GKS-U 2027 (not accepted).',
     aboutUniversity: 'Al-Azhar University, Faculty of Science, Cairo',
     aboutDepartment: 'Intelligent Computing / Computer Science',
     aboutKickerTracks: 'Verified Learning & Study Tracks',
-    aboutTracksSubtitle: 'Accurately documented learning history separating completed self-paced study, paused tracks needing review, and submitted applications.',
-    aboutKickerExperience: 'Practical Experience',
+    aboutTracksSubtitle: 'Accurately documented learning history separating completed self-paced study, ongoing coursework, and non-accepted or paused tracks.',
+    aboutKickerExperience: 'Microsoft Excel',
     
     // Connect
     connectTitle: 'Connect',
@@ -172,8 +172,8 @@ export const TRANSLATIONS = {
     connectGithubDesc: 'View my code repositories and problem-solving practice logs.',
     connectLinkedinDesc: 'Connect with my professional network and academic updates.',
     emailNoticeTitle: 'Direct Email Contact',
-    emailNoticeDesc: 'Direct email is not yet configured. Please reach out via my verified LinkedIn profile above.',
-    emailDirectDesc: 'Direct email contact is enabled by the owner.',
+    emailNoticeDesc: 'Reach me directly by email using the address below.',
+    emailDirectDesc: 'Direct email contact for academic or technical inquiries.',
     emailContactBtn: 'Send Email',
     
     // Not Found
@@ -183,7 +183,7 @@ export const TRANSLATIONS = {
     
     // Universal & Footer
     footerAffiliation: 'Abdalrahman Mostafa · Faculty of Science, Al-Azhar University',
-    footerRights: 'All rights reserved. Built with precision and honest documentation.',
+    footerRights: '© 2026 Abdalrahman Mostafa. All rights reserved. Built with precision and honest documentation.',
     openLink: 'Open external profile',
     themeToggleDark: 'Switch to light theme',
     themeToggleLight: 'Switch to dark theme',
@@ -429,8 +429,8 @@ export const TRANSLATIONS = {
     imageZoomHint: 'Inspect full view',
     imageLightboxClose: 'Close enlarged view',
     imageUnavailableCaption: 'Media preview unavailable',
-    adminQuickSeedTitle: 'Live public collections are awaiting baseline seed',
-    adminQuickSeedDesc: 'One or more public Firestore collections currently contain zero published records. Run the one-click seed import below to populate your verified baseline coursework, projects, and learning notes.',
+    adminQuickSeedTitle: 'Baseline seed check available',
+    adminQuickSeedDesc: 'One or more Firestore collections currently have fewer records than the local baseline. Run the one-click seed import if you want to populate missing baseline items.',
     adminQuickSeedBtn: 'Seed Baseline Content',
     draftPreviewBannerTitle: 'Owner Draft Preview',
     draftPreviewBannerDesc: 'This entry is currently saved as a Draft and hidden from public visitors (noindex active).',
@@ -513,6 +513,8 @@ export const TRANSLATIONS = {
     adminSyncBaselineConfirmTitle: 'Confirm Baseline Synchronization',
     adminSyncBaselineConfirmDesc: 'This reconciles baseline project records (such as LOCAL AI AGENT) and learning tracks (such as CS50x: Week 3) inside Cloud Firestore while preserving existing createdAt timestamps, owner notes, and visitor messages.',
     adminSyncBaselineConfirmBtn: 'Confirm & Sync Firestore',
+    academicConciseNote: '7 owner-provided Semester 1 course titles without fabricated codes, syllabi, or grades.',
+    adminContactEmailLabel: 'Contact email (local Connect display only · never saved to Firestore)',
   },
   ar: {
     siteBrand: 'Neural Atlas',
@@ -537,7 +539,7 @@ export const TRANSLATIONS = {
     heroGreeting: 'المسار الأكاديمي والممارسة البرمجية',
     heroRole: 'طالب بالسنة الأولى · قسم الحوسبة الذكية',
     heroInstitution: 'كلية العلوم · جامعة الأزهر · القاهرة، مصر',
-    heroDescription: 'بدأت التعلّم الذاتي للبرمجة منذ نحو ١٢ عاماً في مصر، وأدرس حالياً في السنة الأولى بمسار الحوسبة الذكية وعلوم الحاسب بجامعة الأزهر مع توثيق دراستي وممارسة C++ ومشاريعي المستقلة في الذكاء الاصطناعي.',
+    heroDescription: 'بدأت التعلّم الذاتي للبرمجة منذ نحو الثانية عشرة من عمري في مصر، وأدرس حالياً في السنة الأولى بمسار الحوسبة الذكية وعلوم الحاسب بجامعة الأزهر مع توثيق دراستي وممارسة C++ وتعلّم Python ومشاريعي المستقلة في الذكاء الاصطناعي.',
     btnExploreCourses: 'استعراض الدراسة الجامعية',
     btnExploreProjects: 'تصفح المشاريع والأرشيف',
     currentFocusHeading: 'مسارات التعلّم والدراسة الموثقة',
@@ -615,7 +617,7 @@ export const TRANSLATIONS = {
     // Projects
     projectsTitle: 'المشاريع والأرشيف',
     projectsSubtitle: 'فصل واضح بين المشاريع الرئيسية النشطة وأرشيف التجارب السابقة',
-    projectsIntro: 'تضم القائمة ثلاثة مسارات رئيسية نشطة: Neural Atlas، وJ.A.R.V.I.S. (استكشاف مفاهيمي لمساعد ذكي)، وممارسة C++ وحل المشكلات — مفصولة بوضوح عن الأرشيف التاريخي الذي يضم مشروع LOCAL AI AGENT (متوقف / مؤرشف).',
+    projectsIntro: 'تضم القائمة أربعة مسارات ومشاريع رئيسية: Neural Atlas، وJ.A.R.V.I.S. (استكشاف مفاهيمي لمساعد ذكي)، وممارسة C++ وحل المشكلات، ومتجر WANASBRAND المنشور — مفصولة بوضوح عن الأرشيف التاريخي الذي يضم مشروع LOCAL AI AGENT (متوقف / مؤرشف).',
     statusPracticing: 'تعلّم وممارسة مستمرة',
     statusInDevelopment: 'قيد التطوير',
     statusPlanned: 'مخطط مستقبلاً',
@@ -644,7 +646,7 @@ export const TRANSLATIONS = {
     filterArchiveExperiments: 'التجارب والأرشيف المتوقف',
     projectsShowcaseHeading: 'المشاريع الرئيسية والممارسة النشطة',
     projectsArchiveHeading: 'أرشيف التجارب والمشاريع المتوقفة',
-    projectsArchiveNote: 'تجارب سابقة مثل LOCAL AI AGENT الموسومة بوضوح كـ «متوقف / مؤرشف» والمحفوظة للسياق التاريخي، إلى جانب نماذج أولية مثل Kalmeron-Two وWANASBRAND، مفصولة عن المشاريع النشطة.',
+    projectsArchiveNote: 'تجارب سابقة مثل LOCAL AI AGENT الموسومة بوضوح كـ «متوقف / مؤرشف» والمحفوظة للسياق التاريخي، إلى جانب نماذج أولية مثل Kalmeron-Two، مفصولة عن المشاريع النشطة.',
     
     // Learning Notes
     notesTitle: 'مذكرات التعلّم',
@@ -670,15 +672,15 @@ export const TRANSLATIONS = {
     // About
     aboutTitle: 'نبذة عنّي',
     aboutSubtitle: 'المسار الجامعي في القاهرة، بداية التعلّم الذاتي منذ سن ١٢، وخريطة المهارات',
-    aboutP1: 'أنا عبد الرحمن مصطفى، طالب بالسنة الأولى في تخصص الحوسبة الذكية وعلوم الحاسب بجامعة الأزهر في القاهرة، مصر. بدأت التعلّم الذاتي للبرمجة منذ نحو ١٢ عاماً، وأؤمن بأن التعلم العميق يتحقق عبر التجريب والبحث المستقل وبناء مشاريع عملية.',
-    aboutP2: 'أتممت مسار أكاديمية الزيرو لأساسيات لغة C++ (تعلّم ذاتي)، وأواصل ممارسة حل المشكلات والتفكير الخوارزمي، مع التخطيط لتعلّم لغة Python كخطوة تالية بعد ترسيخ الأساس.',
-    aboutP3: 'تركّز تجاربي النشطة حالياً على منصة Neural Atlas والتفكير المفاهيمي في مشروع J.A.R.V.I.S.، بشكل منفصل تماماً عن السجلات المؤرشفة التاريخية مثل LOCAL AI AGENT (متوقف / مؤرشف) وKalmeron-Two وWANASBRAND.',
-    aboutP4: 'بجانب الدراسة الجامعية، أحرص على التوثيق الصادق لحالة كل مسار تعلّم (مثل CS50x: Week 3 المستمر، وطلب منحة GKS-U 2027) والخبرة العملية الإدارية باستخدام Microsoft Excel.',
+    aboutP1: 'أنا عبد الرحمن مصطفى، طالب بالسنة الأولى في تخصص الحوسبة الذكية وعلوم الحاسب بجامعة الأزهر في القاهرة، مصر. بدأت التعلّم الذاتي للبرمجة منذ قرابة سن ١٢، وأؤمن بأن التعلم العميق يتحقق عبر التجريب والبحث المستقل وبناء مشاريع عملية.',
+    aboutP2: 'أتممت مسار أكاديمية الزيرو لأساسيات لغة C++ (تعلّم ذاتي)، وأواصل ممارسة حل المشكلات والتفكير الخوارزمي، مع التعلّم المستمر للغة Python حالياً إلى جانب ترسيخ الأساس.',
+    aboutP3: 'تضم مشاريعي النشطة منصة Neural Atlas، ومتجر WANASBRAND المنشور، وممارسة C++، والتفكير المفاهيمي في مشروع J.A.R.V.I.S.، بشكل منفصل تماماً عن السجلات المؤرشفة التاريخية مثل LOCAL AI AGENT (متوقف / مؤرشف) وKalmeron-Two.',
+    aboutP4: 'بجانب الدراسة الجامعية، أحرص على التوثيق الصادق لحالة كل مسار تعلّم (مثل CS50x: Week 3 المستمر، وحالة GKS-U 2027: لم يتم القبول).',
     aboutUniversity: 'جامعة الأزهر، كلية العلوم، القاهرة',
     aboutDepartment: 'قسم الحوسبة الذكية / علوم الحاسب',
     aboutKickerTracks: 'مسارات التعلّم والدراسة الموثقة',
-    aboutTracksSubtitle: 'توثيق دقيق يميّز بين المسارات الذاتية المكتملة، والمسارات المتوقفة للمراجعة، وطلبات التقديم.',
-    aboutKickerExperience: 'الخبرة العملية والتطبيقية',
+    aboutTracksSubtitle: 'توثيق دقيق يميّز بين المسارات الذاتية المكتملة، والدراسة المستمرة، والمسارات غير المقبولة أو المتوقفة مؤقتاً.',
+    aboutKickerExperience: 'Microsoft Excel',
     
     // Connect
     connectTitle: 'تواصل معي',
@@ -687,8 +689,8 @@ export const TRANSLATIONS = {
     connectGithubDesc: 'تصفح مستودعات الأكواد وسجلات حل المسائل البرمجية الخاصة بي.',
     connectLinkedinDesc: 'تواصل معي عبر شبكتي المهنية لمتابعة المستجدات الأكاديمية.',
     emailNoticeTitle: 'التواصل عبر البريد الإلكتروني',
-    emailNoticeDesc: 'لم يتم تفعيل التواصل المباشر عبر البريد الإلكتروني حالياً. يمكنك التواصل معي عبر حسابي المعتمد على لينكد إن أعلاه.',
-    emailDirectDesc: 'التواصل المباشر عبر البريد الإلكتروني مفعّل من قِبل صاحب الموقع.',
+    emailNoticeDesc: 'يمكنك التواصل معي مباشرة عبر عنوان البريد الإلكتروني الموضح أدناه.',
+    emailDirectDesc: 'التواصل المباشر عبر البريد الإلكتروني للاستفسارات الأكاديمية والتقنية.',
     emailContactBtn: 'إرسال بريد إلكتروني',
     
     // Not Found
@@ -698,7 +700,7 @@ export const TRANSLATIONS = {
     
     // Universal & Footer
     footerAffiliation: 'عبد الرحمن مصطفى · كلية العلوم، جامعة الأزهر',
-    footerRights: 'جميع الحقوق محفوظة. بُني الموقع بدقة وتوثيق حقيقي.',
+    footerRights: '© 2026 عبد الرحمن مصطفى. جميع الحقوق محفوظة. بُني الموقع بدقة وتوثيق حقيقي.',
     openLink: 'فتح الحساب الخارجي',
     themeToggleDark: 'التحويل إلى المظهر الفاتح',
     themeToggleLight: 'التحويل إلى المظهر الداكن',
@@ -944,8 +946,8 @@ export const TRANSLATIONS = {
     imageZoomHint: 'تكبير الصورة',
     imageLightboxClose: 'إغلاق العرض المكبّر',
     imageUnavailableCaption: 'معاينة الصورة غير متاحة',
-    adminQuickSeedTitle: 'المجموعات العامة المباشرة بانتظار البذر الأولي',
-    adminQuickSeedDesc: 'تحتوي مجموعة أو أكثر في قاعدة بيانات Firestore الحالية على صفر من السجلات المنشورة. يمكنك تشغيل الاستيراد الأولي بنقرة واحدة لإدراج مقرراتك ومشاريعك ومذكرات التعلّم التأسيسية.',
+    adminQuickSeedTitle: 'فحص بذور البيانات الأساسية متاح',
+    adminQuickSeedDesc: 'تحتوي بعض المجموعات على عناصر أقل من خط الأساس المحلي. يمكنك تشغيل الاستيراد الأولي لإضافة أي عناصر أساسية ناقصة عند الحاجة.',
     adminQuickSeedBtn: 'تشغيل البذر الأولي الآن',
     draftPreviewBannerTitle: 'معاينة مسودة المالك',
     draftPreviewBannerDesc: 'هذا السجل محفوظ حالياً كمسودة ومخفي عن الزوار العامين (مفعّل له منع الفهرسة noindex).',
@@ -1028,5 +1030,7 @@ export const TRANSLATIONS = {
     adminSyncBaselineConfirmTitle: 'تأكيد مزامنة التحديثات مع Firestore',
     adminSyncBaselineConfirmDesc: 'سيقوم هذا الإجراء بمواءمة سجلات المشاريع الأساسية (مثل LOCAL AI AGENT) ومسارات التعلّم (مثل CS50x: Week 3) داخل Firestore مع الحفاظ التام على طوابع createdAt الأصلية ومذكراتك ورسائل الزوار.',
     adminSyncBaselineConfirmBtn: 'تأكيد ومزامنة Firestore',
+    academicConciseNote: '٧ مسميات مقررات للفصل الأول أدخلها صاحب الموقع دون اختلاق رموز أو مناهج أو درجات.',
+    adminContactEmailLabel: 'بريد التواصل (للعرض المحلي فقط · لا يُحفظ في Firestore)',
   }
 };

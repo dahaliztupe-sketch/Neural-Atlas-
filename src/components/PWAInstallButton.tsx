@@ -28,8 +28,8 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ compact = fa
       <button
         type="button"
         onClick={handleClick}
-        className={`inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
-          compact ? 'px-3 py-2 text-xs min-h-[44px]' : 'px-3 py-1.5 text-xs font-medium'
+        className={`inline-flex items-center gap-1.5 min-h-[44px] rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+          compact ? 'px-3 py-2 text-xs' : 'px-3 py-2 text-xs font-medium'
         }`}
         title={t('pwaInstallTitle')}
         aria-label={t('pwaInstallTitle')}
@@ -49,7 +49,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ compact = fa
             <button
               type="button"
               onClick={() => setShowIosTip(false)}
-              className="p-1 text-[var(--color-text-subtle)] hover:text-[var(--color-text)] cursor-pointer"
+              className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2 text-[var(--color-text-subtle)] hover:text-[var(--color-text)] cursor-pointer"
               aria-label={t('closeModal')}
             >
               <X className="w-3.5 h-3.5" aria-hidden="true" />

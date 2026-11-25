@@ -39,13 +39,13 @@ export const OWNER_INFO = {
   backgroundAr:
     'بدأت علاقتي بالبرمجة وعلوم الحاسب منذ قرابة سن الثانية عشرة عبر التعلّم الذاتي والاستكشاف العملي، انطلاقاً من قناعة بأن الفهم الحقيقي يُبنى بالتجربة والبحث المستقل والتطبيق. واليوم، إلى جانب سنتي الأولى في جامعة الأزهر، أضع أولوية واضحة لبناء أساس علمي وهندسي رصين قبل التخصص الدقيق.',
   currentFocusEn:
-    'First-year Al-Azhar Intelligent Computing studies, C++ problem solving, CS50x: Week 3, and building Neural Atlas with Python planned as my next step',
+    'First-year Al-Azhar Intelligent Computing studies, C++ problem solving, CS50x: Week 3, learning Python now, and building Neural Atlas',
   currentFocusAr:
-    'الدراسة الجامعية في السنة الأولى بقسم الحوسبة الذكية، وممارسة حل المشكلات بلغة C++، ومتابعة CS50x: Week 3، مع التخطيط للانتقال إلى Python لاحقاً',
+    'الدراسة الجامعية في السنة الأولى بقسم الحوسبة الذكية، وممارسة حل المشكلات بلغة C++، ومتابعة CS50x: Week 3، وتعلّم Python حالياً، وتطوير Neural Atlas',
   futureFocusEn:
-    'Strengthening algorithms, mathematics, and C++ depth before moving into Python and specialized artificial intelligence systems',
+    'Strengthening algorithms, mathematics, C++, and Python toward artificial intelligence and systems engineering',
   futureFocusAr:
-    'ترسيخ الخوارزميات والرياضيات والتأسيس في C++ قبل الانتقال المنهجي إلى لغة بايثون والتعمق في أنظمة الذكاء الاصطناعي',
+    'ترسيخ الخوارزميات والرياضيات والتعمق في C++ وبايثون نحو أنظمة الذكاء الاصطناعي',
 };
 
 export const SKILLS_CATALOG: SkillItem[] = [
@@ -69,12 +69,12 @@ export const SKILLS_CATALOG: SkillItem[] = [
   },
   {
     id: 'skill-python',
-    nameEn: 'Python — Planned Next Step',
-    nameAr: 'لغة Python — الخطوة القادمة المخطط لها',
+    nameEn: 'Python — Learning Now',
+    nameAr: 'لغة Python — قيد التعلّم حالياً',
     domain: 'programming',
-    tier: 'exploring',
-    contextEn: 'Planned next language after C++ foundations to support scripting and AI study — not yet mastered or covered via formal courses.',
-    contextAr: 'الخطوة القادمة المخطط لها بعد تثبيت أسس C++ لدعم السكربتات ودراسة الذكاء الاصطناعي — دون ادعاء إتقانها حالياً.',
+    tier: 'learning',
+    contextEn: 'Currently learning Python alongside first-year university coursework to build scripting and AI foundations — without claiming mastery yet.',
+    contextAr: 'أتعلّم لغة Python حالياً بالتوازي مع السنة الأولى الجامعية لبناء أساس السكربتات والذكاء الاصطناعي — دون ادعاء الاحتراف بعد.',
   },
   {
     id: 'skill-algorithms-ps',
@@ -522,9 +522,9 @@ When I look at my first-year subjects—*Algorithmic Thinking*, *Computer Archit
 
 ## Even My Language Roadmap Follows the Same Rule
 
-I finished the C++ track and want to strengthen problem solving and core CS concepts before jumping deep into everything else. That is also why **Python is a planned next step** for me rather than something I claim to have mastered alongside ten other stacks right now.
+I finished the C++ track and want to strengthen problem solving and core CS concepts before jumping deep into everything else. That is also why I am **learning Python thoughtfully now** alongside my C++ and algorithmic habits rather than claiming to have mastered ten stacks at once.
 
-Learning five tools superficially in one year feels busy. Getting solid with fundamentals first—and picking up Python thoughtfully once my C++ and algorithmic habits are firmer—means every future tool takes a fraction of the effort to truly understand.
+Learning five tools superficially in one year feels busy. Getting solid with fundamentals first—and building Python fluency step by step as my algorithmic habits mature—means every future tool takes a fraction of the effort to truly understand.
 
 ## Curiosity Doesn't Have to Mean Confusion
 
@@ -547,9 +547,9 @@ Staying broad at nineteen doesn't mean wandering aimlessly. It means keeping eno
 
 ## حتى خطتي في اللغات تتبع نفس المنطق
 
-بعد إنهاء تأسيس C++، أركّز على تقوية التفكير الخوارزمي قبل التشتت في عشرات الأدوات. ولهذا السبب تحديداً أتعامل مع **لغة بايثون كخطوة قادمة مخطط لها** بعد ترسيخ الأساس الحالي، لا كمهارة أدّعي إتقانها اليوم.
+بعد إنهاء تأسيس C++، أركّز على تقوية التفكير الخوارزمي قبل التشتت في عشرات الأدوات. ولهذا السبب تحديداً أتعامل مع **تعلّم لغة بايثون حالياً** كامتداد تدريجي بعد ترسيخ الأساس الأول، لا كمهارة أدّعي إتقانها من اليوم الأول.
 
-جمع خمس لغات بشكل سطحي يمنح وهماً بالحركة، بينما إتقان الأساسيات أولاً يجعل تعلم أي لغة أو مجال لاحقاً أسرع وأعمق بمراحل.
+جمع خمس لغات بشكل سطحي يمنح وهماً بالحركة، بينما إتقان الأساسيات أولاً يجعل التعمق في أي لغة أو مجال لاحقاً أسرع وأكثر ثباتاً.
 
 ## الاتساع في البداية ليس تشتتاً
 
@@ -643,63 +643,63 @@ If you don't understand state, validation, or problem decomposition, you can't t
     titleEn: 'I Want to Learn More Than Just Programming',
     titleAr: 'أريد أن أتعلّم ما هو أبعد من كتابة الكود وحدها',
     summaryEn:
-      'Why staying curious about business, marketing, and real-world Excel operations alongside computer science changes how I look at building useful software.',
+      'Why staying curious about business, marketing, and structured Microsoft Excel records alongside computer science changes how I look at building useful software.',
     summaryAr:
-      'لماذا أرى أن فهم الأعمال والتسويق وتنظيم البيانات التشغيلية بالـ Excel إلى جانب البرمجة يغيّر نظرتي لبناء أي تقنية نافعة.',
+      'لماذا أرى أن فهم الأعمال والتسويق وتنظيم البيانات باستخدام Microsoft Excel إلى جانب البرمجة يغيّر نظرتي لبناء أي تقنية نافعة.',
     contentEn: `If you ask some developers what matters most, the answer sounds like code lives in an isolated glass box: write clean functions, pick a neat data structure, and the rest is somebody else's department.
 
-I've never quite bought into that split. Studying computer science is my core direction, yet I enjoy exploring business, marketing, operations, and other fields rather than locking myself inside code alone.
+I've never quite bought into that split. Studying computer science is my core direction, yet I enjoy exploring business, marketing, and structured problem domains rather than locking myself inside code alone.
 
-## What Messy Real Spreadsheets Taught Me
+## What Structured Spreadsheets Taught Me
 
-One surprisingly grounding experience for me wasn't a complex algorithm—it was practical administrative and operational work in **Microsoft Excel**: keeping workforce rosters organized, tracking daily wages and overtime, logging transport expenses, consolidating records from different places, and checking weekly paid vs. unpaid statuses.
+Practical experience organizing operational records and data in Microsoft Excel taught me something simple that textbook exercises rarely highlight: clean data structure matters long before anyone writes an application.
 
-At first glance, Excel sheets look completely ordinary next to C++ or AI. In practice, they teach a lesson you don't always get from textbook exercises:
+At first glance, Excel sheets look completely ordinary next to C++ or AI. In practice, they sharpen habits that translate directly into software engineering:
 
-- **People don't live inside ideal schemas**: Real records arrive messy, late, and inconsistent.
-- **Clarity beats cleverness**: A well-structured table someone can actually check at the end of a busy week matters more than a flashy formula nobody trusts.
-- **Context determines usefulness**: Before automating or building anything, you have to understand *who* uses the output and *what decision* depends on it.
+- **Consistency beats improvisation**: Real records arrive from different places and need consistent columns and validation rules to stay trustworthy.
+- **Clarity beats cleverness**: A well-organized table anyone can inspect calmly at the end of a week matters far more than a flashy formula nobody understands.
+- **Context determines usefulness**: Before building or automating anything, you have to understand *who* relies on the output and *what decision* depends on it.
 
 ## Why Business and Marketing Curiosity Fits Naturally
 
 Reading about how products work, why people choose one solution over another, and how teams communicate value feels like the other half of building technology.
 
-Technology for its own sake is fun as a puzzle—and I love puzzles—but meaningful technology solves something real for real people. Understanding basic business constraints and marketing perspective asks healthy questions early: *Who actually cares about this? What friction are we removing? Is this solving a genuine problem or just adding noise?*
+Technology for its own sake is fun as a puzzle—and I love puzzles—but meaningful technology solves something real for real people. Exploring business constraints and marketing perspective encourages healthy questions early: *Who actually benefits from this? What friction are we removing? Is this solving a genuine problem or just adding complexity?*
 
 ## Staying Multi-Dimensional Without Losing Focus
 
-Wanting to learn beyond pure coding doesn't mean abandoning deep technical study. My priority as a student remains building strong computer science foundations. Still, paying attention to operations, business logic, and human communication keeps my feet on the ground—reminding me that good software always meets the real world halfway.`,
+Wanting to learn beyond pure coding doesn't mean abandoning deep technical study. My priority as a student remains building strong computer science foundations. Still, paying attention to clear record-keeping, business logic, and human communication keeps my perspective grounded—reminding me that good software always meets real needs halfway.`,
     contentAr: `أحياناً يبدو حديث بعض المبرمجين كما لو أن الكود يعيش داخل صندوق زجاجي معزول: اكتب دوالاً نظيفة واختر بنية بيانات أنيقة، وبقية العالم شأن شخص آخر.
 
-لم أقتنع يوماً بهذا الانفصال الكامل. صحيح أن علوم الحاسب والبرمجة هما مساري الأساسي، لكنني أستمتع أيضاً باستكشاف مجالات الأعمال والتسويق والعمل التنظيمي بدلاً من حصر ذهني في زاوية الكود وحدها.
+لم أقتنع يوماً بهذا الانفصال الكامل. صحيح أن علوم الحاسب والبرمجة هما مساري الأساسي، لكنني أستمتع أيضاً باستكشاف مجالات الأعمال والتسويق والتفكير المنظم بدلاً من حصر ذهني في زاوية الكود وحدها.
 
-## ماذا علّمتني جداول البيانات العملية؟
+## ماذا علّمني تنظيم البيانات في Excel؟
 
-من التجارب التي أبقت نظرتي قريبة من الواقع لم تكن خوارزمية معقدة، بل الممارسة الإدارية والتشغيلية باستخدام **Microsoft Excel**: ترتيب سجلات العمالة، ومتابعة الأجور اليومية والساعات الإضافية، وحصر مصروفات الانتقالات، وتوحيد سجلات متفرقة، ومراجعة حالات الدفع الأسبوعية.
+تعلّمت من الممارسة العملية في تنظيم السجلات والبيانات باستخدام **Microsoft Excel** درساً بسيطاً قد لا تنتبه له في التمارين النظرية: جودة هيكلة البيانات تسبق كتابة أي تطبيق.
 
-قد تبدو جداول Excel أمراً عادياً مقارنة بلغة C++ أو أفكار الذكاء الاصطناعي، لكنها في الواقع تعلّمك دروساً لا تجدها بسهولة في التمارين النظرية:
+قد تبدو جداول Excel أمراً عادياً مقارنة بلغة C++ أو أفكار الذكاء الاصطناعي، لكنها في الواقع ترسّخ عادات هندسية مهمة:
 
-- **الواقع لا يلتزم بالمدخلات المثالية**: البيانات تأتي ناقصة أو متأخرة أو بصيغ مختلفة.
-- **الوضوح يهزم الفذلكة**: جدول منظم يسهل مراجعته في نهاية الأسبوع أنفع من معادلة معقدة لا يفهمها غيرك.
+- **الاتساق أهم من الارتجال**: السجلات الواقعية تحتاج إلى أعمدة واضحة وقواعد تحقق ثابتة لتبقى موثوقة.
+- **الوضوح يهزم التعقيد**: جدول منظم يسهل مراجعته بثقة أنفع بكثير من معادلة معقدة يصعب تتبعها.
 - **السياق يحدد الجدوى**: قبل أن تبني أو تؤتمت أي خطوة، لا بد أن تفهم *مَن* يستخدم النتيجة وما القرار المبني عليها.
 
 ## لماذا أهتم بالأعمال والتسويق؟
 
 القراءة في كيفية تفكير المشاريع، ولماذا يختار الناس حلاً دون غيره، وكيف تُشرح القيمة بوضوح ليست تشتتاً عن التقنية؛ بل هي النصف الآخر الذي يكملها.
 
-كتابة الكود للتحدي الذهني ممتعة جداً — وأنا أحب ذلك — لكن التقنية المؤثرة حقاً هي التي تلمس حاجة بشرية واضحة. النظر بعين الأعمال والتسويق يجعلك تسأل مبكراً: *هل هذا يحل مشكلة فعلية أم يضيف تعقيداً جديداً فقط؟*
+كتابة الكود للتحدي الذهني ممتعة جداً — وأنا أحب ذلك — لكن التقنية المؤثرة حقاً هي التي تخدم حاجة حقيقية بوضوح. النظر بعين الأعمال والتسويق يجعلك تسأل مبكراً: *هل هذا يحل مشكلة فعلية أم يضيف تعقيداً جديداً فقط؟*
 
 ## اتساع الأفق دون فقدان البوصلة
 
-رغبتي في التعلم خارج حدود الكود لا تعني التفريط في الأساس العلمي؛ فالدراسة الجامعية والأساس التقني يبقيان في المقدمة. لكن إبقاء نافذة مفتوحة على الإدارة والأعمال والتواصل الإنساني يحفظ توازن النظرة، ويذكّرني دائماً بأن البرمجيات الجيدة تُبنى للناس لا للآلات وحدها.`,
-    topicLabels: ['Business & Technology', 'Excel Operations', 'Marketing', 'Product Thinking'],
+رغبتي في التعلم خارج حدود الكود لا تعني التفريط في الأساس العلمي؛ فالدراسة الجامعية والأساس التقني يبقيان في المقدمة. لكن إبقاء نافذة مفتوحة على تنظيم البيانات والأعمال والتواصل الإنساني يحفظ توازن النظرة، ويذكّرني دائماً بأن البرمجيات الجيدة تُبنى للناس لا للآلات وحدها.`,
+    topicLabels: ['Business & Technology', 'Excel', 'Marketing', 'Product Thinking'],
     publicationStatus: 'published',
     seoTitleEn: 'I Want to Learn More Than Just Programming · Neural Atlas',
     seoTitleAr: 'أريد أن أتعلّم ما هو أبعد من كتابة الكود وحدها · أطلس الشبكات العصبية',
     seoDescriptionEn:
-      'Why pairing computer science with business thinking, marketing curiosity, and real Excel operations builds grounded engineering judgment.',
+      'Why pairing computer science with business thinking, marketing curiosity, and structured Excel record-keeping builds grounded engineering judgment.',
     seoDescriptionAr:
-      'لماذا يمنح الجمع بين علوم الحاسب وفهم الأعمال والتسويق والخبرة العملية في Excel رؤية تقنية أكثر نضجاً.',
+      'لماذا يمنح الجمع بين علوم الحاسب وفهم الأعمال والتسويق وتنظيم البيانات في Excel رؤية تقنية أكثر نضجاً.',
     createdAt: '2026-11-05T14:00:00.000Z',
     updatedAt: '2026-11-05T14:00:00.000Z',
     publishedAt: '2026-11-05T14:30:00.000Z',
@@ -1028,18 +1028,18 @@ export const LEARNING_TRACKS: LearningTrackItem[] = [
     id: 'gks-u-2027',
     titleEn: 'Global Korea Scholarship — Undergraduate (GKS-U 2027)',
     titleAr: 'منحة الحكومة الكورية للدراسة الجامعية (GKS-U 2027)',
-    status: 'submitted',
-    statusLabelEn: 'Application Submitted',
-    statusLabelAr: 'تم تقديم الطلب',
-    cadenceNoteEn: 'Application submitted for 2027 intake — no selection or award claimed',
-    cadenceNoteAr: 'تقتصر الحالة على تقديم الطلب — دون أي ادعاء بالقبول أو الفوز',
+    status: 'paused',
+    statusLabelEn: 'Not Accepted',
+    statusLabelAr: 'لم يتم القبول',
+    cadenceNoteEn: 'GKS-U 2027 undergraduate application outcome',
+    cadenceNoteAr: 'نتيجة التقديم لدورة GKS-U 2027',
     summaryEn:
-      'Prepared and submitted the GKS-U 2027 undergraduate scholarship application. Recorded strictly as Application Submitted.',
+      'Applied for the GKS-U 2027 undergraduate scholarship cycle; the application was not accepted.',
     summaryAr:
-      'تم تجهيز وتقديم طلب الترشّح لمنحة GKS-U 2027 للدراسة الجامعية؛ الحالة الحالية موثّقة بدقة كـ «تم تقديم الطلب».',
-    highlightsEn: ['Status: Application Submitted (2027 cycle)'],
-    highlightsAr: ['الحالة الموثقة: تم تقديم الطلب (دورة ٢٠٢٧)'],
-    showInActiveHighlights: true,
+      'تم التقديم لمنحة GKS-U 2027 للدراسة الجامعية، ولم يتم القبول في هذه الدورة.',
+    highlightsEn: ['Status: Not Accepted (2027 cycle)'],
+    highlightsAr: ['الحالة الموثقة: لم يتم القبول (دورة ٢٠٢٧)'],
+    showInActiveHighlights: false,
   },
   {
     id: 'korean-language-paused',
@@ -1061,28 +1061,14 @@ export const LEARNING_TRACKS: LearningTrackItem[] = [
 ];
 
 export const PRACTICAL_EXPERIENCE: PracticalExperienceSection = {
-  sectionTitleEn: 'Administrative & Operational Data Experience',
-  sectionTitleAr: 'الخبرة الإدارية والبيانات التشغيلية',
+  sectionTitleEn: 'Microsoft Excel',
+  sectionTitleAr: 'Microsoft Excel',
   contextSummaryEn:
-    'Practical day-to-day operational record-keeping and spreadsheet coordination using Microsoft Excel across workforce logistics, daily wages, expenses, and weekly payouts — presented transparently without fabricated employer names, formal titles, dates, or KPI claims.',
+    'Practical experience organizing operational records and data in Microsoft Excel.',
   contextSummaryAr:
-    'ممارسة عملية في تنظيم البيانات التشغيلية والعمل الإداري باستخدام Microsoft Excel لمتابعة شؤون العمالة والأجور والمصروفات والانتقالات والتسويات الأسبوعية — موثقة بصدق دون اختلاق أسماء شركات أو مسميات وظيفية رسمية أو مؤشرات رقمية غير مثبتة.',
-  activitiesEn: [
-    'Organizing workforce rosters and operational personnel data in Microsoft Excel.',
-    'Preparing daily wage sheets and tracking overtime hours systematically.',
-    'Logging transportation and recurring operational expenses across clean templates.',
-    'Consolidating and cross-checking multi-source operational records into unified tables.',
-    'Following up on weekly account settlements and payout readiness.',
-    'Tracking paid versus unpaid statuses across recurring workforce schedules.',
-  ],
-  activitiesAr: [
-    'تنظيم سجلات العمالة والبيانات التشغيلية في جداول Microsoft Excel.',
-    'إعداد جداول الأجور اليومية ومتابعة ساعات العمل الإضافي بشكل منظم.',
-    'تسجيل وحصر مصروفات الانتقالات والتكاليف التشغيلية المرتبطة بالعمل.',
-    'تجميع وتوحيد البيانات القادمة من مصادر وسجلات متعددة في جداول مركزية.',
-    'متابعة الحسابات الأسبوعية وجداول المستحقات الدورية.',
-    'رصد وتحديث حالة الصرف (مدفوع / غير مدفوع) بدقة وانتظام.',
-  ],
+    'خبرة عملية في تنظيم السجلات والبيانات التشغيلية باستخدام Microsoft Excel.',
+  activitiesEn: [],
+  activitiesAr: [],
 };
 
 export const PROJECTS: ProjectItem[] = [
@@ -1096,7 +1082,7 @@ export const PROJECTS: ProjectItem[] = [
     visibility: 'public',
     archiveGroup: 'showcase',
     featuredOnHome: true,
-    url: 'https://neural-atlas-one.vercel.app/',
+    repoUrl: 'https://github.com/dahaliztupe-sketch/neural-atlas',
     descriptionEn:
       'A personal digital identity and knowledge platform built to represent my academic journey at Al-Azhar University, technical interests, independent software projects, study notes, and evolving skills in both English and Arabic.',
     descriptionAr:
@@ -1372,32 +1358,39 @@ export const PROJECTS: ProjectItem[] = [
   },
   {
     id: 'wanasbrand',
-    titleEn: 'WANASBRAND (Experimental Project — Needs Confirmation)',
-    titleAr: 'WANASBRAND (مشروع تجريبي — بانتظار التحقق والتوثيق)',
-    statusEn: 'Needs Confirmation',
-    statusAr: 'قيد المراجعة والتحقق',
-    statusType: 'needs_confirmation',
+    titleEn: 'WANASBRAND',
+    titleAr: 'WANASBRAND — متجر إلكتروني',
+    statusEn: 'Live',
+    statusAr: 'منشور',
+    statusType: 'completed',
     visibility: 'public',
-    archiveGroup: 'experiments_discontinued',
-    featuredOnHome: false,
+    archiveGroup: 'showcase',
+    featuredOnHome: true,
+    url: 'https://wanasbrand.vercel.app',
     descriptionEn:
-      'An earlier experimental project where I worked with AI tools and directed its development. Kept outside main home highlights while exact technical scope and status remain Pending Confirmation.',
+      'WANASBRAND: an online storefront for handcrafted fashion, built by directing AI tools (Next.js, Firebase, Vercel). The store is live.',
     descriptionAr:
-      'مشروع تجريبي سابق عملت فيه مع أدوات الذكاء الاصطناعي ووجّهت تطويره. يُحفظ في الأرشيف بعيداً عن المشاريع الرئيسية وتُترك تفاصيله في حالة «قيد المراجعة والتحقق» لحين مراجعة مصادره.',
-    roleEn: 'Directed development using AI tools — exact scope & status: Needs Confirmation',
-    roleAr: 'توجيه التطوير باستخدام أدوات الذكاء الاصطناعي — تفاصيل النطاق: قيد التحقق',
-    outcomeEn: 'Needs Confirmation — zero unverified product, commercial, or technical claims made.',
-    outcomeAr: 'بانتظار التأكيد — دون تقديم أي ادعاءات حول منتج تجاري مكتمل أو تقنيات غير مراجعة.',
-    technologies: ['AI-Directed Experiment', 'Needs Confirmation'],
+      'WANASBRAND: متجر إلكتروني للأزياء المصنوعة يدوياً، بُني بتوجيه أدوات الذكاء الاصطناعي (Next.js وFirebase وVercel). المتجر منشور حالياً.',
+    roleEn: 'AI-Directed Storefront Builder & Product Owner',
+    roleAr: 'توجيه البناء بأدوات الذكاء الاصطناعي وإدارة المتجر',
+    problemEn:
+      'Building a clean online storefront for handcrafted fashion items with clear product browsing and live deployment.',
+    problemAr:
+      'تصميم وإطلاق متجر إلكتروني واضح لعرض الأزياء المصنوعة يدوياً بتجربة تصفح سهلة.',
+    approachEn:
+      'Directed AI development tools using Next.js, Firebase, and Vercel deployment workflows.',
+    approachAr:
+      'بُني بتوجيه أدوات الذكاء الاصطناعي عبر Next.js وFirebase والنشر على Vercel.',
+    outcomeEn: 'Live online storefront at https://wanasbrand.vercel.app.',
+    outcomeAr: 'متجر إلكتروني منشور ومتاح حالياً عبر الرابط العام.',
+    technologies: ['Next.js', 'Firebase', 'Vercel', 'AI-Directed'],
     fullOverviewEn: [
-      'Earlier experimental project whose development I directed working alongside AI tools.',
-      'Status and exact scope remain marked Needs Confirmation until original source files are audited.',
-      'Not presented as an active startup, commercial product, or featured showcase item.',
+      'WANASBRAND: an online storefront for handcrafted fashion, built by directing AI tools (Next.js, Firebase, Vercel).',
+      'The store is live at https://wanasbrand.vercel.app.',
     ],
     fullOverviewAr: [
-      'مشروع تجريبي سابق وجّهت تطويره بالعمل مع أدوات الذكاء الاصطناعي.',
-      'حالة المشروع وتفاصيله الدقيقة مُعلّمة كـ «قيد المراجعة والتحقق» لحين مراجعة مصادره الأصلية.',
-      'لا يُقدّم كشركة قائمة أو منتج تجاري مكتمل ولا يُعرض في الواجهة الرئيسية.',
+      'متجر إلكتروني للأزياء المصنوعة يدوياً بُني بتوجيه أدوات الذكاء الاصطناعي (Next.js وFirebase وVercel).',
+      'المتجر منشور حالياً ومتاح عبر الرابط العام.',
     ],
   },
 ];
@@ -1423,7 +1416,7 @@ export const INITIAL_MILESTONES: MilestoneItem[] = [
   {
     id: 'early-self-learning-age-12',
     titleEn: 'Self-Learning Programming Begins (~Around Age 12)',
-    titleAr: 'بداية رحلة التعلّم الذاتي في البرمجة (~منذ سن ١٢ عاماً)',
+    titleAr: 'بداية رحلة التعلّم الذاتي في البرمجة (~منذ قرابة سن ١٢)',
     dateEn: 'Early Background (~Age 12 · Egypt)',
     dateAr: 'خلفية مبكرة (~سن ١٢ · مصر)',
     category: 'technical',
@@ -1487,15 +1480,15 @@ export const INITIAL_MILESTONES: MilestoneItem[] = [
   },
   {
     id: 'gks-u-2027-application-submitted',
-    titleEn: 'Global Korea Scholarship (GKS-U 2027) — Application Submitted',
-    titleAr: 'منحة الحكومة الكورية (GKS-U 2027) — تم تقديم الطلب',
+    titleEn: 'Global Korea Scholarship (GKS-U 2027) — Not Accepted',
+    titleAr: 'منحة الحكومة الكورية (GKS-U 2027) — لم يتم القبول',
     dateEn: '2027 Intake Cycle',
     dateAr: 'دورة ٢٠٢٧',
     category: 'academic',
     descriptionEn:
-      'Submitted an undergraduate scholarship application for the GKS-U 2027 cycle (strictly documented as Application Submitted).',
+      'Applied for the GKS-U 2027 undergraduate scholarship cycle; the application was not accepted.',
     descriptionAr:
-      'تقديم طلب الترشح للدراسة الجامعية ضمن منحة GKS-U 2027 (الحالة الموثقة: تم تقديم الطلب فقط).',
+      'التقديم لدورة منحة GKS-U 2027 للدراسة الجامعية، ولم يتم القبول في هذه الدورة.',
     publicationStatus: 'published',
   },
 ];

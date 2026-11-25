@@ -1,7 +1,7 @@
 import React from 'react';
 import { CourseItem, CourseRecord } from '../types';
 import { useApp } from '../context/AppContext';
-import { BookOpen, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export type CourseDisplayItem = (CourseItem | CourseRecord) & {
   descriptionEn?: string;
@@ -35,19 +35,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect 
         {isRtl ? course.nameAr : course.nameEn}
       </h3>
 
-      <p className="text-xs text-[var(--color-text-muted)] font-mono mb-3" dir={isRtl ? 'ltr' : 'rtl'}>
+      <p className="text-xs text-[var(--color-text-muted)] font-mono mb-4" dir={isRtl ? 'ltr' : 'rtl'}>
         {isRtl ? course.nameEn : course.nameAr}
       </p>
 
-      <div className="text-[11px] font-mono text-[var(--color-text-subtle)] mb-4">
-        {t('unverifiedNoticeShort')}
-      </div>
-
-      <div className="pt-3 border-t border-[var(--color-border-subtle)] flex items-center justify-between text-[11px] text-[var(--color-text-subtle)]">
-        <span className="flex items-center gap-1.5">
-          <BookOpen className="w-3.5 h-3.5 text-[var(--color-secondary)]" aria-hidden="true" />
-          <span>{t('ownerProvidedBadge')}</span>
-        </span>
+      <div className="pt-3 border-t border-[var(--color-border-subtle)] flex items-center justify-end text-[11px]">
         <span className="inline-flex items-center gap-1 text-[var(--color-primary)] font-medium group-hover:underline shrink-0">
           <span>{t('academicInspectCourse')}</span>
           <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isRtl ? 'rotate-180' : ''}`} aria-hidden="true" />
@@ -61,7 +53,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect 
       <button
         type="button"
         onClick={() => onSelect(course)}
-        className="w-full group relative na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] flex flex-col justify-between"
+        className="w-full min-h-[44px] group relative na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] flex flex-col justify-between"
         aria-label={`${isRtl ? course.nameAr : course.nameEn} - ${t('academicInspectCourse')}`}
       >
         {content}

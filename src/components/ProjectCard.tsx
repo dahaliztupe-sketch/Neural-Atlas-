@@ -2,6 +2,7 @@ import React from 'react';
 import { ProjectItem } from '../types';
 import { useApp } from '../context/AppContext';
 import { isValidUrl } from '../services/contentRepository';
+import { localizeProjectTech } from '../lib/validation';
 import { OptimizedImage } from './OptimizedImage';
 import { ArrowRight, ArrowLeft, Terminal, ExternalLink } from 'lucide-react';
 
@@ -77,7 +78,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
             {project.technologies.map((tech, idx) => (
               <React.Fragment key={tech}>
                 {idx > 0 && <span aria-hidden="true">·</span>}
-                <span className="font-mono text-[var(--color-text-muted)]">{tech}</span>
+                <span className="font-mono text-[var(--color-text-muted)]">
+                  {localizeProjectTech(tech, isRtl)}
+                </span>
               </React.Fragment>
             ))}
           </div>
@@ -88,7 +91,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
         <button
           type="button"
           onClick={handleCardClick}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+          className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
         >
           <span>{t('btnViewDetails')}</span>
           {isRtl ? (
@@ -98,21 +101,29 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
           )}
         </button>
 
-        {project.url && isValidUrl(project.url) ? (
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm p-1"
-            aria-label={project.url}
-          >
-            <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-          </a>
-        ) : (
-          <span className="text-[11px] text-[var(--color-text-subtle)] font-mono truncate">
-            {t('noExternalUrl')}
-          </span>
-        )}
+        {(() => {
+          const externalHref =
+            project.url && isValidUrl(project.url)
+              ? project.url
+              : project.repoUrl && isValidUrl(project.repoUrl)
+              ? project.repoUrl
+              : null;
+          return externalHref ? (
+            <a
+              href={externalHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] gap-1 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg p-2"
+              aria-label={externalHref}
+            >
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+            </a>
+          ) : (
+            <span className="text-[11px] text-[var(--color-text-subtle)] font-mono truncate">
+              {t('noExternalUrl')}
+            </span>
+          );
+        })()}
       </div>
     </article>
   );

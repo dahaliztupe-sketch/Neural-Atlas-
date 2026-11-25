@@ -14,6 +14,7 @@ import {
   INITIAL_LEARNING_NOTES,
 } from './portfolioData';
 import { TRANSLATIONS } from './translations';
+import { CONTACT_EMAIL } from '../lib/contactConfig';
 
 test('academic courses match the owner-provided 7 first-semester items without fabricated codes or syllabus descriptions', () => {
   assert.equal(COURSES.length, 7, 'Must have exactly 7 first-semester courses');
@@ -74,19 +75,19 @@ test('academic program contains owner-provided Al-Azhar context and Semester 1 a
   assert.ok(ACADEMIC_PROGRAM.verificationDisclaimerAr.includes('مُدخلة من قِبل صاحب الموقع'));
 });
 
-test('projects expose 3 main showcase entries plus 6 archive entries with LOCAL AI AGENT discontinued and separated from J.A.R.V.I.S.', () => {
-  assert.equal(PROJECTS.length, 9, 'Must have 3 main showcase entries + 6 archive entries');
+test('projects expose 4 main showcase entries plus 5 archive entries with LOCAL AI AGENT discontinued and separated from J.A.R.V.I.S.', () => {
+  assert.equal(PROJECTS.length, 9, 'Must have 4 main showcase entries + 5 archive entries');
 
   const publicProjects = PROJECTS.filter((p) => p.visibility === 'public');
   const showcaseProjects = PROJECTS.filter((p) => p.archiveGroup === 'showcase');
   const archiveProjects = PROJECTS.filter((p) => p.archiveGroup === 'experiments_discontinued');
   assert.equal(publicProjects.length, 9);
-  assert.equal(showcaseProjects.length, 3);
-  assert.equal(archiveProjects.length, 6);
+  assert.equal(showcaseProjects.length, 4);
+  assert.equal(archiveProjects.length, 5);
 
   assert.deepEqual(
     showcaseProjects.map((p) => p.id),
-    ['neural-atlas', 'jarvis-ai-assistant', 'cpp-problem-solving']
+    ['neural-atlas', 'jarvis-ai-assistant', 'cpp-problem-solving', 'wanasbrand']
   );
 
   const jarvis = PROJECTS.find((p) => p.id === 'jarvis-ai-assistant');
@@ -123,9 +124,12 @@ test('projects expose 3 main showcase entries plus 6 archive entries with LOCAL 
   const wanasbrand = PROJECTS.find((p) => p.id === 'wanasbrand');
   assert.ok(wanasbrand, 'WANASBRAND entry must exist');
   assert.equal(wanasbrand.visibility, 'public');
-  assert.equal(wanasbrand.archiveGroup, 'experiments_discontinued');
-  assert.equal(wanasbrand.featuredOnHome, false);
-  assert.equal(wanasbrand.statusType, 'needs_confirmation');
+  assert.equal(wanasbrand.archiveGroup, 'showcase');
+  assert.equal(wanasbrand.featuredOnHome, true);
+  assert.equal(wanasbrand.statusType, 'completed');
+  assert.equal(wanasbrand.statusEn, 'Live');
+  assert.equal(wanasbrand.statusAr, 'منشور');
+  assert.equal(wanasbrand.url, 'https://wanasbrand.vercel.app');
 
   for (const slug of ['sanad', 'ruwadverse', 'smartlifeai']) {
     const entry = PROJECTS.find((p) => p.id === slug);
@@ -143,7 +147,7 @@ test('milestones list contains the 6 factual timeline records without fabricated
   assert.equal(INITIAL_MILESTONES.length, 6);
   const gks = INITIAL_MILESTONES.find((m) => m.id === 'gks-u-2027-application-submitted');
   assert.ok(gks);
-  assert.ok(gks.titleEn.includes('Application Submitted'));
+  assert.ok(gks.titleEn.includes('Not Accepted'));
   assert.ok(!gks.descriptionEn.toLowerCase().includes('awarded'));
   assert.ok(!gks.descriptionEn.toLowerCase().includes('selected'));
 
@@ -162,7 +166,8 @@ test('skills catalog, 9 knowledge categories, and 8 learning notes obey quality,
   );
   const pythonSkill = SKILLS_CATALOG.find((s) => s.id === 'skill-python');
   assert.ok(pythonSkill);
-  assert.equal(pythonSkill.tier, 'exploring', 'Python must be represented honestly as planned next step');
+  assert.equal(pythonSkill.nameEn, 'Python — Learning Now');
+  assert.equal(pythonSkill.tier, 'learning', 'Python must be represented honestly as currently learning');
 
   assert.deepEqual(
     KNOWLEDGE_CATEGORIES.map((c) => c.titleEn),
@@ -227,13 +232,28 @@ test('learning tracks and practical experience obey factual constraints without 
   assert.equal(korean.status, 'paused');
   assert.equal(korean.showInActiveHighlights, false, 'Paused Korean track must be excluded from active highlights');
 
-  assert.equal(PRACTICAL_EXPERIENCE.sectionTitleEn, 'Administrative & Operational Data Experience');
-  assert.equal(PRACTICAL_EXPERIENCE.sectionTitleAr, 'الخبرة الإدارية والبيانات التشغيلية');
-  assert.ok(PRACTICAL_EXPERIENCE.activitiesEn.length >= 6);
-  assert.ok(PRACTICAL_EXPERIENCE.activitiesAr.length >= 6);
+  const gksTrack = LEARNING_TRACKS.find((t) => t.id === 'gks-u-2027');
+  assert.ok(gksTrack);
+  assert.equal(gksTrack.status, 'paused');
+  assert.equal(gksTrack.statusLabelEn, 'Not Accepted');
+  assert.equal(gksTrack.statusLabelAr, 'لم يتم القبول');
+  assert.equal(gksTrack.showInActiveHighlights, false);
+
+  assert.equal(PRACTICAL_EXPERIENCE.sectionTitleEn, 'Microsoft Excel');
+  assert.equal(PRACTICAL_EXPERIENCE.sectionTitleAr, 'Microsoft Excel');
+  assert.equal(
+    PRACTICAL_EXPERIENCE.contextSummaryEn,
+    'Practical experience organizing operational records and data in Microsoft Excel.'
+  );
+  assert.equal(
+    PRACTICAL_EXPERIENCE.contextSummaryAr,
+    'خبرة عملية في تنظيم السجلات والبيانات التشغيلية باستخدام Microsoft Excel.'
+  );
+  assert.equal(PRACTICAL_EXPERIENCE.activitiesEn.length, 0);
+  assert.equal(PRACTICAL_EXPERIENCE.activitiesAr.length, 0);
 });
 
-test('public data and translations contain zero banned claims or exposed owner email', () => {
+test('public data and translations contain zero banned claims, removed job details, or duplicated contact email', () => {
   const publicDataBlob = JSON.stringify({
     OWNER_INFO,
     ACADEMIC_PROGRAM,
@@ -255,6 +275,16 @@ test('public data and translations contain zero banned claims or exposed owner e
     "In today's rapidly evolving world",
     'delve into',
     'abdalrahman32008@gmail.com',
+    'workforce',
+    'daily wage',
+    'overtime',
+    'weekly payout',
+    'paid vs unpaid',
+    'العمالة',
+    'الأجور',
+    'المستحقات',
+    'ساعات العمل الإضافي',
+    'Administrative & Operational Data Experience',
   ];
 
   for (const phrase of bannedPhrases) {
@@ -266,7 +296,7 @@ test('public data and translations contain zero banned claims or exposed owner e
   }
 });
 
-test('social links contain verified GitHub and LinkedIn with no fabricated email', () => {
+test('social links contain verified GitHub and LinkedIn and CONTACT_EMAIL matches owner constant', () => {
   const github = SOCIAL_LINKS.find((s) => s.platform === 'GitHub');
   assert.ok(github);
   assert.equal(github.url, 'https://github.com/dahaliztupe-sketch');
@@ -276,7 +306,8 @@ test('social links contain verified GitHub and LinkedIn with no fabricated email
   assert.equal(linkedin.url, 'https://www.linkedin.com/in/abdalrahman-mostafa-/');
 
   const email = SOCIAL_LINKS.find((s) => s.platform.toLowerCase().includes('email'));
-  assert.equal(email, undefined, 'Must not invent an email address');
+  assert.equal(email, undefined, 'Must not place email inside SOCIAL_LINKS');
+  assert.equal(CONTACT_EMAIL, 'abdalrahman32008@gmail.com');
 });
 
 test('translations dictionary maintains full EN/AR key parity with non-empty values', () => {

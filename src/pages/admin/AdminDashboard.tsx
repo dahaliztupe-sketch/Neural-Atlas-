@@ -30,6 +30,7 @@ import {
   deleteContactMessage,
   getPublicProfileSettings,
   saveProfileSettings,
+  bisectProfileSaveDiagnostic,
   importExistingSiteContent,
   syncVerifiedBaselineToFirestore,
   isValidOptionalUrl,
@@ -372,7 +373,7 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-xs font-mono text-[var(--color-text-subtle)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
+            className="inline-flex items-center min-h-[44px] px-3 py-2 text-xs font-mono text-[var(--color-text-subtle)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
           >
             ← {t('btnBackHome')}
           </button>
@@ -618,7 +619,13 @@ export const AdminDashboard: React.FC = () => {
       await refreshPublicProfile();
       showMessage('success', t('adminSaveProfileSuccess'));
     } catch (err: unknown) {
-      showMessage('error', formatFirestoreUserError(err, language));
+      const baseError = formatFirestoreUserError(err, language);
+      try {
+        const diag = await bisectProfileSaveDiagnostic(profileSettings);
+        showMessage('error', `${baseError} — ${diag.summary}`);
+      } catch {
+        showMessage('error', baseError);
+      }
     }
   };
 
@@ -743,7 +750,7 @@ export const AdminDashboard: React.FC = () => {
             type="button"
             onClick={loadAdminData}
             disabled={dataLoading}
-            className="p-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-[var(--color-text-muted)] cursor-pointer transition-colors"
+            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-[var(--color-text-muted)] cursor-pointer transition-colors"
             title={t('adminRefreshTooltip')}
             aria-label={t('adminRefreshTooltip')}
           >
@@ -752,7 +759,7 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={signOut}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono cursor-pointer transition-colors"
+            className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono cursor-pointer transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{t('adminSignOut')}</span>
@@ -826,7 +833,7 @@ export const AdminDashboard: React.FC = () => {
             key={tab.id}
             type="button"
             onClick={() => handleSelectTab(tab.id)}
-            className={`pb-3 px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap inline-flex items-center gap-1.5 tabular-nums ${
+            className={`pb-3 pt-2 min-h-[44px] px-1 border-b-2 transition-colors cursor-pointer whitespace-nowrap inline-flex items-center gap-1.5 tabular-nums ${
               activeTab === tab.id
                 ? 'border-[var(--color-primary)] text-[var(--color-text)] font-semibold'
                 : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -979,12 +986,28 @@ export const AdminDashboard: React.FC = () => {
           />
         )}
 
-        {activeTab === 'profile' && profileSettings && (
-          <LazyAdminProfileTab
-            profileSettings={profileSettings}
-            onChange={setProfileSettings}
-            onSubmit={handleSaveProfile}
-          />
+        {activeTab === 'profile' && (
+          profileSettings ? (
+            <LazyAdminProfileTab
+              profileSettings={profileSettings}
+              onChange={setProfileSettings}
+              onSubmit={handleSaveProfile}
+            />
+          ) : dataLoading ? (
+            <AdminTabLoader />
+          ) : (
+            <div className="na-mineral-card p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <p className="text-xs text-[var(--color-text-muted)]">{t('adminLoadError')}</p>
+              <button
+                type="button"
+                onClick={loadAdminData}
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-semibold cursor-pointer shrink-0"
+              >
+                <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>{t('retryAction')}</span>
+              </button>
+            </div>
+          )
         )}
 
         {activeTab === 'diagnostics' && (

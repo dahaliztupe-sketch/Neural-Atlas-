@@ -82,7 +82,7 @@ When Firestore collections are empty/unseeded, public pages render the verified 
 
 1. Navigate to `/admin` and sign in with the authorized owner Google account (`abdalrahman32008@gmail.com`).
 2. Open the **Overview** tab:
-   - Run **Import Existing Site Content** once on an empty database to seed `9` projects (`3` main showcase + `6` archive entries including `LOCAL AI AGENT` marked `Discontinued / Archived`), `7` first-year subjects, `8` learning notes, `6` milestones, and `settings/profile` (`CS50x: Week 3`, Elzero C++, GKS-U 2027, operational Excel experience).
+   - Run **Import Existing Site Content** once on an empty database to seed `9` projects (`4` main showcase including live `WANASBRAND` + `5` archive entries including `LOCAL AI AGENT` marked `Discontinued / Archived`), `7` first-year subjects, `8` learning notes, `6` milestones, and `settings/profile` (`CS50x: Week 3`, Elzero C++, GKS-U 2027, Microsoft Excel record organization).
    - Run **Sync Baseline Updates** after codebase updates to reconcile baseline project records and `settings/profile` learning tracks (`CS50x: Week 3`) into live Firestore without overwriting `createdAt` timestamps, owner-edited notes, or visitor messages.
 3. Visit the **Diagnostics** tab to confirm per-collection status and export a baseline JSON backup.
 

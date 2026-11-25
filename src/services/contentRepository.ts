@@ -1137,18 +1137,8 @@ export async function deleteContactMessage(id: string): Promise<void> {
   }
 }
 
-export async function saveProfileSettings(settings: ProfileSettingsRecord): Promise<void> {
-  if (!settings.nameEn.trim() || !settings.nameAr.trim()) {
-    throw new Error('Name in English and Arabic is required.');
-  }
-  if (!isValidOptionalUrl(settings.githubUrl)) {
-    throw new Error('GitHub URL must be a valid http:// or https:// link.');
-  }
-  if (!isValidOptionalUrl(settings.linkedinUrl)) {
-    throw new Error('LinkedIn URL must be a valid http:// or https:// link.');
-  }
-
-  const payload = stripUndefined({
+export function buildProfileWritePayload(settings: ProfileSettingsRecord): Record<string, unknown> {
+  return stripUndefined({
     nameEn: sanitizeStringField(settings.nameEn, 128),
     nameAr: sanitizeStringField(settings.nameAr, 128),
     titleEn: sanitizeStringField(settings.titleEn, 200),
@@ -1175,6 +1165,20 @@ export async function saveProfileSettings(settings: ProfileSettingsRecord): Prom
     linkedinUrl: settings.linkedinUrl.trim(),
     updatedAt: new Date().toISOString(),
   });
+}
+
+export async function saveProfileSettings(settings: ProfileSettingsRecord): Promise<void> {
+  if (!settings.nameEn.trim() || !settings.nameAr.trim()) {
+    throw new Error('Name in English and Arabic is required.');
+  }
+  if (!isValidOptionalUrl(settings.githubUrl)) {
+    throw new Error('GitHub URL must be a valid http:// or https:// link.');
+  }
+  if (!isValidOptionalUrl(settings.linkedinUrl)) {
+    throw new Error('LinkedIn URL must be a valid http:// or https:// link.');
+  }
+
+  const payload = buildProfileWritePayload(settings);
 
   try {
     await setDoc(doc(db, 'settings', 'profile'), payload);
@@ -1182,6 +1186,64 @@ export async function saveProfileSettings(settings: ProfileSettingsRecord): Prom
   } catch (err) {
     handleFirestoreError(err, OperationType.WRITE, 'settings/profile');
   }
+}
+
+export interface ProfileSaveDiagnosticStep {
+  step: string;
+  ok: boolean;
+  code?: string;
+  error?: string;
+}
+
+export async function bisectProfileSaveDiagnostic(
+  settings: ProfileSettingsRecord,
+  writeFn: (payload: Record<string, unknown>) => Promise<void> = async (payload) => {
+    await setDoc(doc(db, 'settings', 'profile'), payload);
+  }
+): Promise<{ summary: string; steps: ProfileSaveDiagnosticStep[] }> {
+  const fullPayload = buildProfileWritePayload(settings);
+  const minimalPayload: Record<string, unknown> = {
+    nameEn: fullPayload.nameEn,
+    nameAr: fullPayload.nameAr,
+    updatedAt: fullPayload.updatedAt,
+  };
+  const withTracksPayload: Record<string, unknown> = stripUndefined({
+    ...minimalPayload,
+    learningTracks: fullPayload.learningTracks,
+  });
+  const withPracticalPayload: Record<string, unknown> = stripUndefined({
+    ...minimalPayload,
+    practicalExperience: fullPayload.practicalExperience,
+  });
+
+  const probes: Array<{ step: string; payload: Record<string, unknown> }> = [
+    { step: 'minimal(nameEn,nameAr,updatedAt)', payload: minimalPayload },
+    { step: '+learningTracks', payload: withTracksPayload },
+    { step: '+practicalExperience', payload: withPracticalPayload },
+    { step: 'fullPayload', payload: fullPayload },
+  ];
+
+  const steps: ProfileSaveDiagnosticStep[] = [];
+  for (const probe of probes) {
+    try {
+      await writeFn(probe.payload);
+      steps.push({ step: probe.step, ok: true });
+    } catch (err) {
+      const rawCode =
+        err && typeof err === 'object' && 'code' in err && typeof (err as { code?: unknown }).code === 'string'
+          ? String((err as { code?: unknown }).code)
+          : undefined;
+      const msg = err instanceof Error ? err.message : String(err);
+      steps.push({ step: probe.step, ok: false, ...(rawCode ? { code: rawCode } : {}), error: msg });
+    }
+  }
+
+  const failing = steps.filter((s) => !s.ok);
+  const summary =
+    failing.length === 0
+      ? 'All bisect steps passed.'
+      : failing.map((f) => `${f.step}: ${f.code || f.error}`).join(' | ');
+  return { summary, steps };
 }
 
 /* =====================================================================
@@ -1353,7 +1415,7 @@ export function reconcileProfileForBaselineSync(
     futureFocusEn: defaults.futureFocusEn,
     futureFocusAr: defaults.futureFocusAr,
     learningTracks: reconcileLearningTracks(existingProfile.learningTracks, LEARNING_TRACKS),
-    practicalExperience: existingProfile.practicalExperience || PRACTICAL_EXPERIENCE,
+    practicalExperience: PRACTICAL_EXPERIENCE,
     githubUrl: existingProfile.githubUrl?.trim() || defaults.githubUrl,
     linkedinUrl: existingProfile.linkedinUrl?.trim() || defaults.linkedinUrl,
     updatedAt: nowIso,

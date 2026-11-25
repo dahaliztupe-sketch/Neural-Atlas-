@@ -4,6 +4,8 @@ import { LearningTrackItem, LearningTrackStatus, PracticalExperienceSection, Pro
 import { useApp } from '../../context/AppContext';
 import { ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from './AdminShared';
 import { PRACTICAL_EXPERIENCE } from '../../data/portfolioData';
+import { getClientContactEmail, setClientContactEmail } from '../../lib/contactConfig';
+import { isValidOptionalEmail } from '../../lib/validation';
 
 interface AdminProfileTabProps {
   profileSettings: ProfileSettingsRecord;
@@ -18,10 +20,29 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
 }) => {
   const { t, isRtl } = useApp();
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>(isRtl ? 'ar' : 'en');
+  const [contactEmailInput, setContactEmailInput] = useState<string>(() => getClientContactEmail());
+  const [contactEmailError, setContactEmailError] = useState<string | null>(null);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedEmail = contactEmailInput.trim();
+    if (!isValidOptionalEmail(trimmedEmail)) {
+      setContactEmailError(
+        isRtl
+          ? 'يرجى إدخال بريد إلكتروني صحيح أو ترك الحقل فارغاً لاستخدام الافتراضي.'
+          : 'Please enter a valid email address or leave blank to use the default.'
+      );
+      return;
+    }
+    setContactEmailError(null);
+    const saved = setClientContactEmail(trimmedEmail);
+    setContactEmailInput(saved);
+    onSubmit(e);
+  };
 
   return (
     <div className="space-y-6">
-      <form onSubmit={onSubmit} className="space-y-6">
+      <form onSubmit={handleFormSubmit} className="space-y-6">
         <div className="na-mineral-card p-6 sm:p-8 rounded-2xl space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--color-border-subtle)]">
             <h2 className="text-base font-bold text-[var(--color-text)]">
@@ -335,6 +356,30 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
             </div>
           </div>
 
+          {/* Client-Only Optional Contact Email Field (Defaults to CONTACT_EMAIL; never written to Firestore) */}
+          <div className="space-y-1">
+            <label htmlFor="profile-contact-email" className={ADMIN_LABEL_CLASS}>
+              {t('adminContactEmailLabel')}
+            </label>
+            <input
+              id="profile-contact-email"
+              type="email"
+              dir="ltr"
+              value={contactEmailInput}
+              onChange={(e) => {
+                setContactEmailInput(e.target.value);
+                if (contactEmailError) setContactEmailError(null);
+              }}
+              placeholder="abdalrahman32008@gmail.com"
+              className={ADMIN_INPUT_CLASS}
+            />
+            {contactEmailError && (
+              <p className="text-xs text-red-400" role="alert">
+                {contactEmailError}
+              </p>
+            )}
+          </div>
+
           {/* Learning Tracks Structured Editor */}
           <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-solid)] space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -564,46 +609,30 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
             </div>
           </div>
 
-          {/* Practical Operational Experience Structured Editor */}
+          {/* Neutral Excel Skill Line Editor (no job/wage details or bullet list) */}
           {(() => {
             const exp: PracticalExperienceSection =
               profileSettings.practicalExperience || PRACTICAL_EXPERIENCE;
             const updateExp = (patch: Partial<PracticalExperienceSection>) =>
               onChange({
                 ...profileSettings,
-                practicalExperience: { ...exp, ...patch },
+                practicalExperience: {
+                  ...exp,
+                  ...patch,
+                  sectionTitleEn: 'Microsoft Excel',
+                  sectionTitleAr: 'Microsoft Excel',
+                  activitiesEn: [],
+                  activitiesAr: [],
+                },
               });
             return (
               <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-solid)] space-y-4">
                 <h3 className="text-xs font-mono font-bold text-[var(--color-text)]">
-                  Administrative & Operational Data Experience Section
+                  {t('aboutKickerExperience')}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label htmlFor="exp-title-en" className={ADMIN_LABEL_CLASS}>Section Title (EN)</label>
-                    <input
-                      id="exp-title-en"
-                      type="text"
-                      value={exp.sectionTitleEn}
-                      onChange={(e) => updateExp({ sectionTitleEn: e.target.value })}
-                      className={ADMIN_INPUT_CLASS}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="exp-title-ar" className={ADMIN_LABEL_CLASS}>عنوان القسم (AR)</label>
-                    <input
-                      id="exp-title-ar"
-                      type="text"
-                      dir="rtl"
-                      value={exp.sectionTitleAr}
-                      onChange={(e) => updateExp({ sectionTitleAr: e.target.value })}
-                      className={ADMIN_INPUT_CLASS}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label htmlFor="exp-summary-en" className={ADMIN_LABEL_CLASS}>Context Summary (EN)</label>
+                    <label htmlFor="exp-summary-en" className={ADMIN_LABEL_CLASS}>Neutral Skill Summary (EN)</label>
                     <textarea
                       id="exp-summary-en"
                       rows={2}
@@ -613,50 +642,13 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
                     />
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="exp-summary-ar" className={ADMIN_LABEL_CLASS}>الملخص العام (AR)</label>
+                    <label htmlFor="exp-summary-ar" className={ADMIN_LABEL_CLASS}>ملخص المهارة المحايد (AR)</label>
                     <textarea
                       id="exp-summary-ar"
                       rows={2}
                       dir="rtl"
                       value={exp.contextSummaryAr}
                       onChange={(e) => updateExp({ contextSummaryAr: e.target.value })}
-                      className={ADMIN_INPUT_CLASS}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label htmlFor="exp-act-en" className={ADMIN_LABEL_CLASS}>Activities (EN, one per line)</label>
-                    <textarea
-                      id="exp-act-en"
-                      rows={4}
-                      value={exp.activitiesEn.join('\n')}
-                      onChange={(e) =>
-                        updateExp({
-                          activitiesEn: e.target.value
-                            .split('\n')
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        })
-                      }
-                      className={ADMIN_INPUT_CLASS}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="exp-act-ar" className={ADMIN_LABEL_CLASS}>المهام والأنشطة (AR، سطر لكل مهمة)</label>
-                    <textarea
-                      id="exp-act-ar"
-                      rows={4}
-                      dir="rtl"
-                      value={exp.activitiesAr.join('\n')}
-                      onChange={(e) =>
-                        updateExp({
-                          activitiesAr: e.target.value
-                            .split('\n')
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        })
-                      }
                       className={ADMIN_INPUT_CLASS}
                     />
                   </div>
@@ -668,7 +660,7 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
           <div className="pt-2 flex justify-end">
             <button
               type="submit"
-              className="px-5 py-2.5 min-h-[42px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
               {t('adminActionSave')}
             </button>

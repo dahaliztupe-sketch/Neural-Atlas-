@@ -120,7 +120,7 @@ export const AcademicJourneyPage: React.FC = () => {
               href={ACADEMIC_PROGRAM.telegramBotUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--color-secondary)]/40 bg-[var(--color-secondary)]/10 hover:bg-[var(--color-secondary)]/20 text-[var(--color-secondary)] text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border border-[var(--color-secondary)]/40 bg-[var(--color-secondary)]/10 hover:bg-[var(--color-secondary)]/20 text-[var(--color-secondary)] text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
             >
               <span>{t('academicTelegramBot')}</span>
               <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -135,7 +135,7 @@ export const AcademicJourneyPage: React.FC = () => {
         <div className="pt-4 border-t border-[var(--color-border-subtle)] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[var(--color-text-subtle)]">
           <span className="flex items-center gap-1.5 text-[var(--color-text-muted)]">
             <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" aria-hidden="true" />
-            <span>{t('academicProgramBadge')}</span>
+            <span>{t('academicConciseNote')}</span>
           </span>
           <span>
             {isRtl
@@ -150,7 +150,7 @@ export const AcademicJourneyPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('current')}
-          className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 whitespace-nowrap cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-t-sm ${
+          className={`pb-3 pt-2 min-h-[44px] px-1 text-sm font-medium transition-colors border-b-2 whitespace-nowrap cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-t-sm ${
             activeTab === 'current'
               ? 'border-[var(--color-primary)] text-[var(--color-text)]'
               : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -161,7 +161,7 @@ export const AcademicJourneyPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('future')}
-          className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 whitespace-nowrap cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-t-sm ${
+          className={`pb-3 pt-2 min-h-[44px] px-1 text-sm font-medium transition-colors border-b-2 whitespace-nowrap cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-t-sm ${
             activeTab === 'future'
               ? 'border-[var(--color-primary)] text-[var(--color-text)]'
               : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -180,7 +180,7 @@ export const AcademicJourneyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('all')}
-                  className={`px-3 py-1.5 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                  className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'all'
                       ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -191,7 +191,7 @@ export const AcademicJourneyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('computational')}
-                  className={`px-3 py-1.5 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                  className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'computational'
                       ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -202,7 +202,7 @@ export const AcademicJourneyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('mathematical')}
-                  className={`px-3 py-1.5 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                  className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'mathematical'
                       ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -213,7 +213,7 @@ export const AcademicJourneyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('humanities')}
-                  className={`px-3 py-1.5 rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                  className={`px-3 py-2 min-h-[44px] rounded-lg border font-mono transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     selectedCategory === 'humanities'
                       ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
                       : 'border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -249,7 +249,7 @@ export const AcademicJourneyPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={loadCourses}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg border border-red-400/40 bg-red-500/10 text-xs font-medium text-[var(--color-text)] hover:bg-red-500/20 transition-colors cursor-pointer shrink-0"
                 >
                   <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>{t('retryAction')}</span>
@@ -262,7 +262,7 @@ export const AcademicJourneyPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedCategory('all')}
-                    className="px-4 py-2 rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-primary)] hover:border-[var(--color-primary)] cursor-pointer"
+                    className="px-4 py-2 min-h-[44px] rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-primary)] hover:border-[var(--color-primary)] cursor-pointer"
                   >
                     {t('clearFiltersBtn')}
                   </button>
@@ -302,7 +302,7 @@ export const AcademicJourneyPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('current')}
-              className="text-xs font-mono text-[var(--color-primary)] hover:underline cursor-pointer"
+              className="inline-flex items-center min-h-[44px] px-3 py-2 text-xs font-mono text-[var(--color-primary)] hover:underline cursor-pointer"
             >
               ← {t('academicReturnSem1')}
             </button>

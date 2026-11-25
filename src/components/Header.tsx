@@ -107,7 +107,7 @@ export const Header: React.FC = () => {
             e.preventDefault();
             navigate('/');
           }}
-          className="text-base sm:text-lg font-bold tracking-tight text-[var(--color-text)] hover:text-[var(--color-primary)] transition-colors whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg px-1 py-0.5"
+          className="inline-flex items-center min-h-[44px] text-base sm:text-lg font-bold tracking-tight text-[var(--color-text)] hover:text-[var(--color-primary)] transition-colors whitespace-nowrap shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg px-1"
           aria-label="Neural Atlas"
         >
           <BrandLogo size="sm" showWordmark />
@@ -115,7 +115,7 @@ export const Header: React.FC = () => {
 
         {/* Primary Navigation Links */}
         <nav
-          className="hidden lg:flex items-center gap-5 xl:gap-6 text-sm font-medium text-[var(--color-text-muted)]"
+          className="hidden lg:flex items-center gap-4 xl:gap-5 text-sm font-medium text-[var(--color-text-muted)]"
           aria-label={t('mainNavAria')}
         >
           {navItems.map((item) => {
@@ -128,9 +128,9 @@ export const Header: React.FC = () => {
                   e.preventDefault();
                   navigate(item.path);
                 }}
-                className={`transition-colors whitespace-nowrap shrink-0 relative py-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm ${
+                className={`inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-1 transition-colors whitespace-nowrap shrink-0 relative focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm ${
                   active
-                    ? 'text-[var(--color-text)] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[var(--color-primary)]'
+                    ? 'text-[var(--color-text)] font-semibold after:absolute after:bottom-1.5 after:left-0 after:right-0 after:h-0.5 after:bg-[var(--color-primary)]'
                     : 'hover:text-[var(--color-text)]'
                 }`}
                 aria-current={active ? 'page' : undefined}
@@ -146,7 +146,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] text-xs font-semibold rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             aria-label={t('langToggle')}
             title={t('langToggle')}
           >
@@ -157,7 +157,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             aria-label={theme === 'dark' ? t('themeToggleDark') : t('themeToggleLight')}
             title={theme === 'dark' ? t('themeToggleDark') : t('themeToggleLight')}
           >
@@ -172,7 +172,7 @@ export const Header: React.FC = () => {
             ref={menuButtonRef}
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="lg:hidden p-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="lg:hidden inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-drawer"
             aria-label={t('toggleMenuAria')}
@@ -201,7 +201,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="p-1.5 rounded-lg border border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] cursor-pointer"
+              className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2 rounded-lg border border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] cursor-pointer"
               aria-label={t('closeModal')}
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -220,7 +220,7 @@ export const Header: React.FC = () => {
                     navigate(item.path);
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
+                  className={`inline-flex items-center min-h-[44px] px-3 py-2.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                     active
                       ? 'bg-[var(--color-primary-muted)] text-[var(--color-primary)] font-semibold'
                       : 'text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'

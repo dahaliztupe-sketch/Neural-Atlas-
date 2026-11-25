@@ -13,6 +13,7 @@ import {
   isValidUrl,
   formatLocalizedDate,
 } from '../services/contentRepository';
+import { localizeProjectTech } from '../lib/validation';
 import {
   ArrowLeft,
   ArrowRight,
@@ -148,7 +149,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
           <button
             type="button"
             onClick={loadProject}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text)] hover:border-[var(--color-primary)] cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-solid)] text-[var(--color-text)] hover:border-[var(--color-primary)] cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{t('retryAction')}</span>
@@ -156,7 +157,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
           <button
             type="button"
             onClick={() => navigate('/projects')}
-            className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
+            className="px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
           >
             {t('backToProjects')}
           </button>
@@ -178,7 +179,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
         <button
           type="button"
           onClick={() => navigate('/projects')}
-          className="mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
+          className="mt-4 px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
         >
           {t('backToProjects')}
         </button>
@@ -221,7 +222,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
           <button
             type="button"
             onClick={() => navigate('/admin')}
-            className="px-3.5 py-2 rounded-xl border border-amber-500/40 bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono font-semibold cursor-pointer shrink-0"
+            className="px-3.5 py-2 min-h-[44px] rounded-xl border border-amber-500/40 bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono font-semibold cursor-pointer shrink-0"
           >
             {t('draftPreviewBackAdmin')}
           </button>
@@ -232,7 +233,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
         <button
           type="button"
           onClick={() => navigate('/projects')}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+          className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
           aria-label={t('backToProjects')}
         >
           {isRtl ? (
@@ -246,7 +247,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
         <button
           type="button"
           onClick={handleCopyShareLink}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-solid)] hover:border-[var(--color-primary)] text-xs font-mono text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
         >
           {linkCopied ? (
             <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
@@ -401,7 +402,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
               {project.technologies.map((tech, idx) => (
                 <React.Fragment key={tech}>
                   {idx > 0 && <span className="text-[var(--color-text-subtle)]" aria-hidden="true">·</span>}
-                  <span>{tech}</span>
+                  <span>{localizeProjectTech(tech, isRtl)}</span>
                 </React.Fragment>
               ))}
             </div>
@@ -429,7 +430,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[var(--color-secondary)] hover:underline"
+                className="inline-flex items-center gap-1 min-h-[44px] py-2 text-[var(--color-secondary)] hover:underline"
               >
                 <span>{t('projectRepoLabel')}</span>
                 <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -440,7 +441,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[var(--color-primary)] hover:underline"
+                className="inline-flex items-center gap-1 min-h-[44px] py-2 text-[var(--color-primary)] hover:underline"
               >
                 <span>{project.url}</span>
                 <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />

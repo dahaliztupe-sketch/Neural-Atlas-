@@ -24,6 +24,7 @@ import {
   isValidFirestoreDocId,
   sanitizeFirestoreDocId,
   formatFirestoreUserError,
+  localizeProjectTech,
 } from './validation';
 import {
   shouldEnableHero3D,
@@ -698,5 +699,115 @@ test('resolveNoteCategoryAndTags and filterNotesCatalog separate canonical categ
     'n2'
   );
 });
+
+test('formatFirestoreUserError preserves raw Firebase error codes in brackets', () => {
+  const sdkError = Object.assign(new Error('Missing or insufficient permissions.'), {
+    code: 'permission-denied',
+  });
+  assert.equal(
+    formatFirestoreUserError(sdkError, 'en'),
+    'Permission denied by Firestore security rules [permission-denied].'
+  );
+  assert.match(formatFirestoreUserError(sdkError, 'ar'), /\[permission-denied\]/);
+
+  const jsonWrapped = new Error(
+    JSON.stringify({
+      error: 'Network offline',
+      code: 'unavailable',
+      path: 'settings/profile',
+    })
+  );
+  assert.match(formatFirestoreUserError(jsonWrapped, 'en'), /\[unavailable\]/);
+});
+
+test('normalizeProfileRecord enforces baseline precedence for focus, tracks, and practicalExperience while preserving custom tracks and bio', () => {
+  const baselineWithDetails: ProfileSettingsRecord = {
+    ...FALLBACK_PROFILE,
+    learningTracks: [
+      {
+        id: 'harvard-cs50x',
+        titleEn: 'Harvard CS50x (CS50x: Week 3)',
+        titleAr: 'Harvard CS50x (الأسبوع 3)',
+        status: 'in_progress',
+        statusLabelEn: 'CS50x: Week 3 · In Progress',
+        statusLabelAr: 'CS50x: Week 3 · مستمر',
+        cadenceNoteEn: 'Ongoing',
+        cadenceNoteAr: 'مستمر',
+        summaryEn: 'Baseline summary',
+        summaryAr: 'ملخص',
+        highlightsEn: ['H1'],
+        highlightsAr: ['م1'],
+        showInActiveHighlights: true,
+      },
+    ],
+    practicalExperience: {
+      sectionTitleEn: 'Microsoft Excel',
+      sectionTitleAr: 'Microsoft Excel',
+      contextSummaryEn: 'Neutral Excel summary.',
+      contextSummaryAr: 'ملخص إكسل.',
+      activitiesEn: [],
+      activitiesAr: [],
+    },
+  };
+
+  const normalized = normalizeProfileRecord(
+    {
+      bioEn: 'Custom Firestore bio.',
+      currentFocusEn: 'Stale Firestore focus',
+      futureFocusEn: 'Stale Firestore future',
+      learningTracks: [
+        {
+          id: 'harvard-cs50x',
+          titleEn: 'Stale Week 0',
+          titleAr: 'قديم',
+          status: 'paused',
+          statusLabelEn: 'Old',
+          statusLabelAr: 'قديم',
+        },
+        {
+          id: 'owner-custom-track',
+          titleEn: 'Robotics Study',
+          titleAr: 'دراسة الروبوتات',
+          status: 'active',
+          statusLabelEn: 'Active',
+          statusLabelAr: 'نشط',
+          cadenceNoteEn: 'Weekly',
+          cadenceNoteAr: 'أسبوعي',
+          summaryEn: 'Exploring control systems.',
+          summaryAr: 'استكشاف أنظمة التحكم.',
+          highlightsEn: ['Lab'],
+          highlightsAr: ['مختبر'],
+          showInActiveHighlights: true,
+        },
+      ],
+      practicalExperience: {
+        sectionTitleEn: 'Old Section',
+        sectionTitleAr: 'قسم قديم',
+        contextSummaryEn: 'Old summary',
+        contextSummaryAr: 'ملخص قديم',
+        activitiesEn: ['Old activity'],
+        activitiesAr: ['نشاط قديم'],
+      },
+    },
+    baselineWithDetails
+  );
+
+  assert.equal(normalized.bioEn, 'Custom Firestore bio.');
+  assert.equal(normalized.currentFocusEn, FALLBACK_PROFILE.currentFocusEn);
+  assert.equal(normalized.futureFocusEn, FALLBACK_PROFILE.futureFocusEn);
+  assert.equal(normalized.learningTracks?.length, 2);
+  assert.equal(normalized.learningTracks?.[0].statusLabelEn, 'CS50x: Week 3 · In Progress');
+  assert.equal(normalized.learningTracks?.[1].id, 'owner-custom-track');
+  assert.equal(normalized.practicalExperience?.sectionTitleEn, 'Microsoft Excel');
+  assert.equal(normalized.practicalExperience?.activitiesEn.length, 0);
+});
+
+test('localizeProjectTech translates known tags in Arabic RTL and preserves English labels in LTR', () => {
+  assert.equal(localizeProjectTech('Data Structures', false), 'Data Structures');
+  assert.equal(localizeProjectTech('Data Structures', true), 'هياكل البيانات');
+  assert.equal(localizeProjectTech('Discontinued / Archived', true), 'متوقف / مؤرشف');
+  assert.equal(localizeProjectTech('C++', true), 'C++');
+});
+
 
 

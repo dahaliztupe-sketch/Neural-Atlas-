@@ -12,7 +12,6 @@ import {
   Terminal,
   Brain,
   Compass,
-  Briefcase,
   BookOpenCheck,
   Layers,
   Sparkles,
@@ -102,9 +101,6 @@ export const AboutPage: React.FC = () => {
             <span>{t('aboutKickerIdentity')}</span>
           </h2>
           <p>{t('aboutP1')}</p>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {isRtl ? publicProfile.bioAr : publicProfile.bioEn}
-          </p>
           <div className="pt-3 border-t border-[var(--color-border-subtle)] flex flex-wrap items-center gap-3 text-xs font-mono text-[var(--color-text-subtle)]">
             <span className="text-[var(--color-text)]">{facultyName}</span>
             {showSeparateUniversity && (
@@ -213,6 +209,10 @@ export const AboutPage: React.FC = () => {
               </ul>
             </div>
           </div>
+
+          <p className="text-sm text-[var(--color-text-muted)] leading-relaxed px-1">
+            {isRtl ? practicalExp.contextSummaryAr : practicalExp.contextSummaryEn}
+          </p>
         </section>
 
         {/* Verified Learning & Study Tracks */}
@@ -268,28 +268,6 @@ export const AboutPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Practical Administrative & Operational Data Experience */}
-        <section
-          className="na-mineral-card p-6 rounded-2xl space-y-4"
-          aria-labelledby="practical-experience-heading"
-        >
-          <h2
-            id="practical-experience-heading"
-            className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2"
-          >
-            <Briefcase className="w-4 h-4 text-[var(--color-secondary)] shrink-0" aria-hidden="true" />
-            <span>{isRtl ? practicalExp.sectionTitleAr : practicalExp.sectionTitleEn}</span>
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-            {isRtl ? practicalExp.contextSummaryAr : practicalExp.contextSummaryEn}
-          </p>
-          <ul className="space-y-2 text-sm text-[var(--color-text-muted)] list-disc list-inside pt-1">
-            {(isRtl ? practicalExp.activitiesAr : practicalExp.activitiesEn).map((activity, idx) => (
-              <li key={idx}>{activity}</li>
-            ))}
-          </ul>
-        </section>
-
         <section className="na-mineral-card p-6 rounded-2xl space-y-4">
           <h2 className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2">
             <Terminal className="w-4 h-4 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
@@ -309,7 +287,7 @@ export const AboutPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/projects/local-ai-agent')}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
+              className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
             >
               <span>{t('aboutInspectLocalAiLink')}</span>
               {isRtl ? (

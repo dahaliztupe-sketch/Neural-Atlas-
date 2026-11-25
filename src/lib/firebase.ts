@@ -61,6 +61,7 @@ export enum OperationType {
 
 export interface FirestoreErrorInfo {
   error: string;
+  code?: string;
   operationType: OperationType;
   path: string | null;
   authInfo: {
@@ -76,11 +77,23 @@ export interface FirestoreErrorInfo {
   };
 }
 
+export function extractFirebaseErrorCode(error: unknown): string | undefined {
+  if (error && typeof error === 'object' && 'code' in error) {
+    const raw = (error as { code?: unknown }).code;
+    if (typeof raw === 'string' && raw.trim()) {
+      return raw.trim();
+    }
+  }
+  return undefined;
+}
+
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): never {
   const currentUser = auth?.currentUser;
   const rawMessage = error instanceof Error ? error.message : String(error);
+  const rawCode = extractFirebaseErrorCode(error);
   const errInfo: FirestoreErrorInfo = {
     error: rawMessage,
+    ...(rawCode ? { code: rawCode } : {}),
     authInfo: {
       userId: currentUser?.uid,
       email: currentUser?.email,

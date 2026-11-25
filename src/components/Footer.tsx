@@ -40,14 +40,14 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Quick Internal Nav */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[var(--color-text-muted)]">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-[var(--color-text-muted)]">
           <a
             href="/academic"
             onClick={(e) => {
               e.preventDefault();
               navigate('/academic');
             }}
-            className="hover:text-[var(--color-text)] transition-colors"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors"
           >
             {t('navAcademic')}
           </a>
@@ -58,7 +58,7 @@ export const Footer: React.FC = () => {
               e.preventDefault();
               navigate('/projects');
             }}
-            className="hover:text-[var(--color-text)] transition-colors"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors"
           >
             {t('navProjects')}
           </a>
@@ -69,7 +69,7 @@ export const Footer: React.FC = () => {
               e.preventDefault();
               navigate('/notes');
             }}
-            className="hover:text-[var(--color-text)] transition-colors"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors"
           >
             {t('navNotes')}
           </a>
@@ -80,7 +80,7 @@ export const Footer: React.FC = () => {
               e.preventDefault();
               navigate('/connect');
             }}
-            className="hover:text-[var(--color-text)] transition-colors"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors"
           >
             {t('navConnect')}
           </a>
@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
               e.preventDefault();
               navigate('/admin');
             }}
-            className="hover:text-[var(--color-text)] transition-colors opacity-60 hover:opacity-100"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors opacity-60 hover:opacity-100"
             title={t('navAdmin')}
           >
             {t('navAdmin')}
@@ -107,7 +107,7 @@ export const Footer: React.FC = () => {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all"
+              className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all"
               aria-label={isRtl ? link.labelAr : link.labelEn}
               title={isRtl ? link.labelAr : link.labelEn}
             >

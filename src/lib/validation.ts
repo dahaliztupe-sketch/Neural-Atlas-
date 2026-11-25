@@ -466,11 +466,18 @@ export function normalizeProfileRecord(
   const nameEn = sanitizeStringField(r.nameEn, 128) || fallback.nameEn;
   const nameAr = sanitizeStringField(r.nameAr, 128) || fallback.nameAr;
 
-  const learningTracks = normalizeLearningTracks(r.learningTracks, fallback.learningTracks);
-  const practicalExperience = normalizePracticalExperience(
-    r.practicalExperience,
-    fallback.practicalExperience
-  );
+  const incomingTracks = normalizeLearningTracks(r.learningTracks);
+  const learningTracks =
+    fallback.learningTracks && fallback.learningTracks.length > 0
+      ? (() => {
+          const baselineIds = new Set(fallback.learningTracks.map((t) => t.id));
+          const customTracks = (incomingTracks || []).filter((t) => !baselineIds.has(t.id));
+          return [...fallback.learningTracks.map((t) => ({ ...t })), ...customTracks].slice(0, 10);
+        })()
+      : incomingTracks;
+
+  const practicalExperience =
+    fallback.practicalExperience || normalizePracticalExperience(r.practicalExperience);
 
   return stripUndefined({
     nameEn,
@@ -491,10 +498,10 @@ export function normalizeProfileRecord(
       sanitizeOptionalStringField(r.currentSemesterAr, 120) || fallback.currentSemesterAr,
     bioEn: sanitizeStringField(r.bioEn, 1500) || fallback.bioEn,
     bioAr: sanitizeStringField(r.bioAr, 1500) || fallback.bioAr,
-    currentFocusEn: sanitizeStringField(r.currentFocusEn, 500) || fallback.currentFocusEn,
-    currentFocusAr: sanitizeStringField(r.currentFocusAr, 500) || fallback.currentFocusAr,
-    futureFocusEn: sanitizeStringField(r.futureFocusEn, 500) || fallback.futureFocusEn,
-    futureFocusAr: sanitizeStringField(r.futureFocusAr, 500) || fallback.futureFocusAr,
+    currentFocusEn: fallback.currentFocusEn || sanitizeStringField(r.currentFocusEn, 500),
+    currentFocusAr: fallback.currentFocusAr || sanitizeStringField(r.currentFocusAr, 500),
+    futureFocusEn: fallback.futureFocusEn || sanitizeStringField(r.futureFocusEn, 500),
+    futureFocusAr: fallback.futureFocusAr || sanitizeStringField(r.futureFocusAr, 500),
     learningTracks,
     practicalExperience,
     githubUrl: sanitizeSafeUrl(r.githubUrl) || fallback.githubUrl,
@@ -508,16 +515,24 @@ export function formatFirestoreUserError(err: unknown, language: Language): stri
   const raw = err instanceof Error ? err.message : String(err || '');
   let extractedError = raw;
   let pathContext = '';
+  let codeContext =
+    err && typeof err === 'object' && 'code' in err && typeof (err as { code?: unknown }).code === 'string'
+      ? String((err as { code?: unknown }).code).trim()
+      : '';
 
   if (raw.trim().startsWith('{')) {
     try {
       const parsed = JSON.parse(raw) as {
         error?: unknown;
+        code?: unknown;
         operationType?: unknown;
         path?: unknown;
       };
       if (parsed && typeof parsed === 'object' && typeof parsed.error === 'string') {
         extractedError = parsed.error;
+        if (typeof parsed.code === 'string' && parsed.code.trim()) {
+          codeContext = parsed.code.trim();
+        }
         if (typeof parsed.path === 'string' && parsed.path) {
           pathContext = parsed.path;
         }
@@ -527,11 +542,12 @@ export function formatFirestoreUserError(err: unknown, language: Language): stri
     }
   }
 
-  const lower = extractedError.toLowerCase();
+  const lower = `${codeContext} ${extractedError}`.toLowerCase();
+  const codeSuffix = codeContext ? ` [${codeContext}]` : '';
   if (lower.includes('permission') || lower.includes('insufficient')) {
     return isAr
-      ? `تم رفض العملية لعدم توافر الصلاحية أو لمخالفة قواعد البيانات${pathContext ? ` (${pathContext})` : ''}.`
-      : `Permission denied by Firestore security rules${pathContext ? ` (${pathContext})` : ''}.`;
+      ? `تم رفض العملية لعدم توافر الصلاحية أو لمخالفة قواعد البيانات${pathContext ? ` (${pathContext})` : ''}${codeSuffix}.`
+      : `Permission denied by Firestore security rules${pathContext ? ` (${pathContext})` : ''}${codeSuffix}.`;
   }
   if (
     lower.includes('unavailable') ||
@@ -540,27 +556,27 @@ export function formatFirestoreUserError(err: unknown, language: Language): stri
     lower.includes('deadline-exceeded')
   ) {
     return isAr
-      ? 'تعذر الاتصال بخدمة قاعدة البيانات حالياً. يرجى التحقق من الشبكة والمحاولة مجدداً.'
-      : 'Database service is temporarily unavailable. Check your connection and retry.';
+      ? `تعذر الاتصال بخدمة قاعدة البيانات حالياً. يرجى التحقق من الشبكة والمحاولة مجدداً${codeSuffix}.`
+      : `Database service is temporarily unavailable. Check your connection and retry${codeSuffix}.`;
   }
   if (lower.includes('quota')) {
     return isAr
-      ? 'تم تجاوز حصة الاستخدام اليومية لقاعدة البيانات مؤقتاً.'
-      : 'Daily Firestore usage quota exceeded temporarily.';
+      ? `تم تجاوز حصة الاستخدام اليومية لقاعدة البيانات مؤقتاً${codeSuffix}.`
+      : `Daily Firestore usage quota exceeded temporarily${codeSuffix}.`;
   }
   if (lower.includes('not-found') || lower.includes('no document to update')) {
     return isAr
-      ? 'السجل المطلوب غير موجود أو تم حذفه مسبقاً.'
-      : 'The requested document could not be found.';
+      ? `السجل المطلوب غير موجود أو تم حذفه مسبقاً${codeSuffix}.`
+      : `The requested document could not be found${codeSuffix}.`;
   }
   if (lower.includes('unauthenticated')) {
     return isAr
-      ? 'انتهت جلسة المصادقة. يرجى إعادة تسجيل الدخول بحساب المالك.'
-      : 'Authentication session expired. Please sign in again as owner.';
+      ? `انتهت جلسة المصادقة. يرجى إعادة تسجيل الدخول بحساب المالك${codeSuffix}.`
+      : `Authentication session expired. Please sign in again as owner${codeSuffix}.`;
   }
 
   return (
-    extractedError.trim() ||
+    `${extractedError.trim()}${codeSuffix}`.trim() ||
     (isAr ? 'حدث خطأ غير متوقع أثناء تنفيذ العملية.' : 'An unexpected operation error occurred.')
   );
 }
@@ -948,4 +964,32 @@ export function filterNotesCatalog(
     return haystack.includes(q);
   });
 }
+
+const AR_PROJECT_TECH_LABELS: Record<string, string> = {
+  'local ai systems': 'أنظمة الذكاء الاصطناعي المحلية',
+  'privacy-first concepts': 'مفاهيم الأولوية للخصوصية',
+  'discontinued / archived': 'متوقف / مؤرشف',
+  'system design': 'تصميم الأنظمة',
+  'assistant workflows': 'مسارات المساعدات الذكية',
+  planning: 'التخطيط المنهجي',
+  'modular boundaries': 'الحدود المعيارية',
+  'data structures': 'هياكل البيانات',
+  algorithms: 'الخوارزميات',
+  'problem solving': 'حل المشكلات',
+  'digital exploration': 'استكشاف رقمي',
+  'archived concept': 'فكرة مؤرشفة',
+  'concept exploration': 'استكشاف مفاهيمي',
+  'archived venture': 'مشروع أولي مؤرشف',
+  'ai exploration': 'استكشاف الذكاء الاصطناعي',
+  'ai-directed': 'توجيه بأدوات الذكاء الاصطناعي',
+  'ai-directed experiment': 'تجربة موجّهة بالذكاء الاصطناعي',
+  'needs confirmation': 'قيد المراجعة',
+};
+
+export function localizeProjectTech(tech: string, isRtl: boolean): string {
+  const clean = String(tech || '').trim();
+  if (!clean || !isRtl) return clean;
+  return AR_PROJECT_TECH_LABELS[clean.toLowerCase()] || clean;
+}
+
 
