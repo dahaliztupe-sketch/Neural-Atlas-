@@ -1082,7 +1082,7 @@ export const PROJECTS: ProjectItem[] = [
     visibility: 'public',
     archiveGroup: 'showcase',
     featuredOnHome: true,
-    repoUrl: 'https://github.com/dahaliztupe-sketch/neural-atlas',
+    repoUrl: 'https://github.com/dahaliztupe-sketch/Neural-Atlas-',
     descriptionEn:
       'A personal digital identity and knowledge platform built to represent my academic journey at Al-Azhar University, technical interests, independent software projects, study notes, and evolving skills in both English and Arabic.',
     descriptionAr:
