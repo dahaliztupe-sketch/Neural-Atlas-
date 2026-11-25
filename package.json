@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@react-three/fiber": "^9.0.0",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.5",
     "@types/katex": "^0.16.8",
     "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.1.1",
