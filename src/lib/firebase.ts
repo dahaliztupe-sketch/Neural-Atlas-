@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth, GoogleAuthProvider } from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
 import {
   getFirestore,
   initializeFirestore,
@@ -20,7 +20,6 @@ export function getFirestoreTransportSettings(): FirestoreSettings {
 }
 
 let appInstance: FirebaseApp;
-let authInstance: Auth;
 let dbInstance: Firestore;
 
 try {
@@ -36,19 +35,26 @@ try {
       ? getFirestore(appInstance, databaseId)
       : getFirestore(appInstance);
   }
-  authInstance = getAuth(appInstance);
 } catch (err) {
   console.warn('Firebase initialization notice:', err);
   // Fallback mocks if needed in isolated non-browser test runs
   appInstance = {} as FirebaseApp;
-  authInstance = {} as Auth;
   dbInstance = {} as Firestore;
 }
 
 export const app = appInstance;
-export const auth = authInstance;
 export const db = dbInstance;
-export const googleProvider = new GoogleAuthProvider();
+
+// Firebase Auth is loaded on demand (see AuthContext) so public pages do not
+// pay for it at startup. Once loaded, the instance is kept here so error
+// reporting can include the signed-in user.
+let loadedAuth: Auth | null = null;
+
+export async function loadFirebaseAuth() {
+  const mod = await import('./firebaseAuth');
+  loadedAuth = mod.getFirebaseAuth(appInstance);
+  return { auth: loadedAuth, googleProvider: mod.googleProvider };
+}
 
 export enum OperationType {
   CREATE = 'create',
@@ -88,7 +94,7 @@ export function extractFirebaseErrorCode(error: unknown): string | undefined {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): never {
-  const currentUser = auth?.currentUser;
+  const currentUser = loadedAuth?.currentUser;
   const rawMessage = error instanceof Error ? error.message : String(error);
   const rawCode = extractFirebaseErrorCode(error);
   const errInfo: FirestoreErrorInfo = {
