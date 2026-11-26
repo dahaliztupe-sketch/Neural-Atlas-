@@ -57,7 +57,7 @@ export const AdminCoursesTab: React.FC<AdminCoursesTabProps> = ({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         >
           <Plus className="w-3.5 h-3.5" aria-hidden="true" />
           <span>{t('adminActionCreate')}</span>
