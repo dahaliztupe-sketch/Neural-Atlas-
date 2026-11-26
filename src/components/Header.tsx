@@ -94,7 +94,7 @@ export const Header: React.FC = () => {
       {/* Visible-on-focus Skip to Content link for keyboard accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--color-primary)] focus:text-white focus:text-xs focus:font-semibold focus:shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--color-primary-solid)] focus:text-white focus:text-xs focus:font-semibold focus:shadow-lg focus:outline-none"
       >
         {t('skipToContent')}
       </a>
