@@ -363,7 +363,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="w-full flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="w-full flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white font-semibold text-xs transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         >
           <LogIn className="w-4 h-4" aria-hidden="true" />
           <span>{t('adminSignInWithGoogle')}</span>
