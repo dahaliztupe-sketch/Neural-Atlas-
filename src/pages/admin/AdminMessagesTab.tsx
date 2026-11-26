@@ -72,7 +72,7 @@ export const AdminMessagesTab: React.FC<AdminMessagesTabProps> = ({
                 onClick={() => setFilter(key)}
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer tabular-nums focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === key
-                    ? 'bg-[var(--color-primary)] text-white font-semibold'
+                    ? 'bg-[var(--color-primary-solid)] text-white font-semibold'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
