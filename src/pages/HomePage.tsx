@@ -659,7 +659,7 @@ export const HomePage: React.FC = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => navigate('/projects/local-ai-agent')}
+                  onClick={() => navigate('/projects')}
                   className="inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-sm"
                 >
                   <span>{t('homeArchiveContextAction')}</span>
