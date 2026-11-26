@@ -305,7 +305,7 @@ export const AboutPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/academic')}
-          className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer"
+          className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer"
         >
           <span>{t('btnExploreCourses')}</span>
           {isRtl ? (

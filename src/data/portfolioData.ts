@@ -779,9 +779,9 @@ Good documentation doesn't mean turning every small realization into a ten-page 
     titleEn: 'The Difference Between Building Something and Understanding It',
     titleAr: 'الفارق بين أن يشتغل المشروع أمامك وأن تفهم كيف يعمل فعلاً',
     summaryEn:
-      'Reflections on why "it runs on my screen" is only half the story, and what discontinued explorations like LOCAL AI AGENT and paused prototypes taught me.',
+      'Reflections on why "it runs on my screen" is only half the story, and what discontinued explorations and paused prototypes taught me.',
     summaryAr:
-      'تأملات حول الفجوة بين تشغيل الفكرة على الشاشة وفهمها من الداخل، والدروس المستخلصة من إيقاف بعض التجارب مثل LOCAL AI AGENT.',
+      'تأملات حول الفجوة بين تشغيل الفكرة على الشاشة وفهمها من الداخل، والدروس المستخلصة من إيقاف بعض التجارب.',
     contentEn: `There is a sneaky moment in software experiments where everything *works* once—the screen updates, no red error shows up—and you feel tempted to close the laptop and call it a victory.
 
 Until one small assumption changes, everything breaks silently, and you realize you built something without deeply understanding why it worked in the first place.
@@ -798,7 +798,7 @@ Building something proves the pieces connected under *one* lucky path. Understan
 
 ## Lessons From Stopping Experiments Honestly
 
-Looking back at my own archive—from paused prototypes like *Kalmeron-Two* to discontinued earlier explorations such as *LOCAL AI AGENT*—closing a chapter used to feel a little uncomfortable. Nobody loves putting a "Discontinued" label next to an idea they were excited about.
+Looking back at my own archive—from paused prototypes like *Kalmeron-Two* to discontinued earlier explorations—closing a chapter used to feel a little uncomfortable. Nobody loves putting a "Discontinued" label next to an idea they were excited about.
 
 Yet discontinuing an experiment is often the clearest proof that you actually learned something from it:
 
@@ -825,7 +825,7 @@ I don't mind having discontinued experiments in my archive. What I care about no
 
 ## دروس الصدق مع التجارب المتوقفة
 
-عندما أنظر إلى أرشيف تجاربي السابقة — من نماذج متوقفة مثل *Kalmeron-Two* إلى محاولات سابقة انتهى العمل عليها مثل *LOCAL AI AGENT* — كان وضع كلمة «متوقف» يبدو ثقيلاً في البداية؛ فلا أحد يتحمس لإعلان نهاية فكرة تحمّس لها يوماً.
+عندما أنظر إلى أرشيف تجاربي السابقة — من نماذج متوقفة مثل *Kalmeron-Two* إلى محاولات سابقة انتهى العمل عليها — كان وضع كلمة «متوقف» يبدو ثقيلاً في البداية؛ فلا أحد يتحمس لإعلان نهاية فكرة تحمّس لها يوماً.
 
 لكن التوقف بوعي غالباً ما يكون الدليل الأوضح على أنك خرجت بدرس حقيقي:
 
@@ -1084,9 +1084,9 @@ export const PROJECTS: ProjectItem[] = [
     featuredOnHome: true,
     repoUrl: 'https://github.com/dahaliztupe-sketch/Neural-Atlas-',
     descriptionEn:
-      'A personal digital identity and knowledge platform built to represent my academic journey at Al-Azhar University, technical interests, independent software projects, study notes, and evolving skills in both English and Arabic.',
+      'Neural Atlas is my personal archive and digital gallery. I collect my path, my projects and what I am still learning in it. I built it with the help of AI tools, and I decide and review the content.',
     descriptionAr:
-      'منصة هوية رقمية ومعرفية شخصية صُمّمت لتمثيل رحلتي الأكاديمية في جامعة الأزهر، واهتماماتي التقنية، ومشاريعي المستقلة، ومذكرات التعلّم، ومهاراتي المتنامية باللغتين العربية والإنجليزية.',
+      'أطلس الشبكات العصبية هو أرشيفي الشخصي ومعرضي الرقمي، أجمع فيه مساري ومشاريعي وما زلت أتعلمه. بنيته بمساعدة أدوات الذكاء الاصطناعي، وأنا من يحدد المحتوى ويراجعه.',
     roleEn: 'Creator & System Architect · Personal Digital Identity & Portfolio',
     roleAr: 'المصمم والمطوّر · هوية رقمية ومحفظة معرفية شخصية',
     problemEn:
@@ -1119,16 +1119,16 @@ export const PROJECTS: ProjectItem[] = [
     id: 'jarvis-ai-assistant',
     titleEn: 'J.A.R.V.I.S.',
     titleAr: 'مشروع J.A.R.V.I.S. (استكشاف مساعد ذكاء اصطناعي)',
-    statusEn: 'Independent AI Exploration',
-    statusAr: 'مشروع ذكاء اصطناعي مستقل',
-    statusType: 'in_development',
+    statusEn: 'Concept Exploration',
+    statusAr: 'استكشاف مفاهيمي لمشروع مساعد ذكي',
+    statusType: 'experimental',
     visibility: 'public',
     archiveGroup: 'showcase',
     featuredOnHome: true,
     descriptionEn:
-      'An independent intelligent personal assistant concept focused on planning, structured interaction, and modular boundaries—documented strictly at a high level and kept completely separate from the discontinued LOCAL AI AGENT exploration.',
+      'An independent intelligent personal assistant concept focused on planning, structured interaction, and modular boundaries—documented strictly at a high level.',
     descriptionAr:
-      'مشروع مستقل لاستكشاف فكرة مساعد ذكي شخصي يركّز على التخطيط المنهجي، وتنظيم التفاعل، وتحديد حدود الوحدات بوضوح — موثّق على المستوى المفاهيمي العام فقط ومفصول كلياً عن تجربة LOCAL AI AGENT المتوقفة.',
+      'مشروع مستقل لاستكشاف فكرة مساعد ذكي شخصي يركّز على التخطيط المنهجي، وتنظيم التفاعل، وتحديد حدود الوحدات بوضوح — موثّق على المستوى المفاهيمي العام فقط.',
     roleEn: 'Independent Concept & System Thinking Exploration',
     roleAr: 'استكشاف مستقل لتصميم وتخطيط المساعدات الذكية',
     problemEn:
@@ -1140,59 +1140,17 @@ export const PROJECTS: ProjectItem[] = [
     approachAr:
       'استكشاف مفاهيمي وهيكلي يركز على التخطيط وتقسيم المسؤوليات والانضباط الهندسي مع إبقاء أي تفاصيل خاصة خارج النشر العام.',
     outcomeEn:
-      'Maintained strictly at a general conceptual level, completely independent from the discontinued LOCAL AI AGENT experiment.',
+      'Maintained strictly at a general conceptual level.',
     outcomeAr:
-      'موثّق بصفة عامة على مستوى التخطيط والتصميم، ومفصول تماماً عن مشروع LOCAL AI AGENT المتوقف.',
+      'موثّق بصفة عامة على مستوى التخطيط والتصميم.',
     technologies: ['System Design', 'Assistant Workflows', 'Planning', 'Modular Boundaries'],
     fullOverviewEn: [
       'Independent personal assistant exploration centered on planning, clear boundaries, and engineering discipline.',
-      'Maintains completely separate goals and history from the discontinued LOCAL AI AGENT experiment.',
       'Kept intentionally high-level publicly without exposing private architecture or implementation specifics.',
     ],
     fullOverviewAr: [
       'استكشاف مستقل لتصور مساعد شخصي يركّز على التخطيط وتحديد الحدود والانضباط الهندسي.',
-      'يحافظ على استقلالية تامة في التاريخ والأهداف عن تجربة LOCAL AI AGENT المتوقفة.',
       'تقتصر التغطية العامة على المبادئ والأفكار دون كشف أي تفاصيل داخلية خاصة.',
-    ],
-  },
-  {
-    id: 'local-ai-agent',
-    titleEn: 'LOCAL AI AGENT (Discontinued / Archived)',
-    titleAr: 'مشروع LOCAL AI AGENT (متوقف / مؤرشف)',
-    statusEn: 'Discontinued / Archived',
-    statusAr: 'متوقف / مؤرشف',
-    statusType: 'discontinued',
-    visibility: 'public',
-    archiveGroup: 'experiments_discontinued',
-    featuredOnHome: false,
-    descriptionEn:
-      'A discontinued/archived independent exploration into local-first AI workflows and offline constraints—listed transparently in the archive for historical context and kept strictly separate from J.A.R.V.I.S.',
-    descriptionAr:
-      'تجربة استكشافية سابقة (متوقفة ومؤرشفة) حول مسارات الذكاء الاصطناعي المحلية وقيود التشغيل دون اتصال — مُدرجة بشفافية في الأرشيف للسياق التاريخي ومفصولة كلياً عن J.A.R.V.I.S.',
-    roleEn: 'Discontinued / Archived Exploration (Historical Context)',
-    roleAr: 'استكشاف سابق متوقف / مؤرشف (سياق تاريخي)',
-    problemEn:
-      'Understanding at a conceptual level how local-first execution constraints, hardware limits, and offline considerations shape assistant ideas.',
-    problemAr:
-      'استكشاف كيف تؤثر قيود العتاد والتشغيل المحلي وعدم الاتصال بالإنترنت في أفكار الأنظمة الذكية.',
-    approachEn:
-      'Conducted as a self-contained early experiment before deciding to discontinue and archive the track in favor of core computer science and C++ foundations.',
-    approachAr:
-      'أُجريت كتجربة استكشافية مبكرة قبل اتخاذ قرار إيقاف المسار وأرشفته وتوجيه التركيز نحو ترسيخ أساسيات علوم الحاسب وC++.',
-    outcomeEn:
-      'Discontinued / Archived; kept listed in the archive for historical context without exposing private internals.',
-    outcomeAr:
-      'متوقف / مؤرشف؛ مُدرج بشفافية في أرشيف التجارب للسياق التاريخي دون كشف تفاصيل داخلية خاصة.',
-    technologies: ['Local AI Systems', 'Privacy-First Concepts', 'Discontinued / Archived'],
-    fullOverviewEn: [
-      'Discontinued / Archived exploration into local-first AI workflows and practical resource boundaries.',
-      'Preserved in the public archive strictly for chronological and historical context.',
-      'Strictly independent from J.A.R.V.I.S. in origin, goals, and lifecycle.',
-    ],
-    fullOverviewAr: [
-      'تجربة متوقفة ومؤرشفة استكشفت أفكار التشغيل المحلي وحدود الموارد والخصوصية.',
-      'محفوظة في الأرشيف العام لتوثيق السياق التاريخي لمسار التعلّم بصدق.',
-      'منفصلة كلياً عن J.A.R.V.I.S. من حيث النشأة والأهداف ودورة الحياة.',
     ],
   },
   {
@@ -1245,9 +1203,9 @@ export const PROJECTS: ProjectItem[] = [
     featuredOnHome: false,
     repoUrl: 'https://github.com/dahaliztupe-sketch/Kalmeron-Two',
     descriptionEn:
-      'Experimental prototype directed using AI tools, exploring a Next.js workspace UI, LangGraph orchestration, FastAPI sidecars, and a local DuckDB/dbt analytical pipeline. Paused pre-production with zero live SaaS deployment, billing, or active users.',
+      'Kalmeron is an experimental platform for Arabic-speaking company founders, built with the help of AI. Chat and sign-in work. Payments and other parts are not enabled yet. I am learning from it how a platform of this size is built.',
     descriptionAr:
-      'نموذج تجريبي جرى توجيه تطويره باستخدام أدوات الذكاء الاصطناعي لاستكشاف منصة تشغيلية تضم واجهة Next.js، ومنسق LangGraph، وخدمات FastAPI، ومخزن بيانات محلي بـ DuckDB وdbt. المشروع متوقف قبل الإطلاق الإنتاجي دون مستخدمين فعليين أو تشغيل تجاري.',
+      'كالمرون مشروع تجريبي لمنصة عربية لمؤسسي الشركات، بنيته بمساعدة الذكاء الاصطناعي. المحادثة وتسجيل الدخول تعمل، أما الدفع وأجزاء أخرى فلم تُفعّل بعد. أتعلم منه كيف تُبنى منصة بهذا الحجم.',
     roleEn: 'Directed prototype development using AI tools (paused pre-launch experiment)',
     roleAr: 'توجيه التطوير باستخدام أدوات الذكاء الاصطناعي (تجربة متوقفة قبل الإطلاق)',
     problemEn:
@@ -1275,88 +1233,6 @@ export const PROJECTS: ProjectItem[] = [
     ],
   },
   {
-    id: 'sanad',
-    titleEn: 'Sanad (Archived Experiment)',
-    titleAr: 'سند — Sanad (تجربة سابقة متوقفة)',
-    statusEn: 'Discontinued',
-    statusAr: 'تجربة متوقفة',
-    statusType: 'discontinued',
-    visibility: 'public',
-    archiveGroup: 'experiments_discontinued',
-    featuredOnHome: false,
-    descriptionEn:
-      'Early exploratory digital initiative (Sanad) archived under discontinued experiments. Maintained transparently in the archive without claims of active deployment or production outcomes.',
-    descriptionAr:
-      'مبادرة وتجربة رقمية سابقة (سند) مدرجة ضمن أرشيف التجارب المتوقفة، تُوثّق بشفافية كمحاولة استكشافية سابقة دون ادعاء استمرارها أو إطلاقها.',
-    roleEn: 'Early exploratory ideation & prototyping (Discontinued)',
-    roleAr: 'استكشاف وفكرة أولية سابقة (متوقفة)',
-    outcomeEn: 'Discontinued; preserved strictly as part of chronological exploration history.',
-    outcomeAr: 'توقّف العمل عليها، ومحفوظة فقط ضمن السجل التاريخي للتجارب.',
-    technologies: ['Digital Exploration', 'Archived Concept'],
-    fullOverviewEn: [
-      'Archived exploratory venture idea preserved to keep the portfolio chronologically honest.',
-      'No active codebase deployment or operational service is claimed.',
-    ],
-    fullOverviewAr: [
-      'تجربة استكشافية سابقة محفوظة في الأرشيف لضمان المصداقية التاريخية لمحفظة الأعمال.',
-      'لا توجد أي خدمة تشغيلية قائمة أو ادعاءات إنتاجية مرتبطة بها حالياً.',
-    ],
-  },
-  {
-    id: 'ruwadverse',
-    titleEn: 'Ruwadverse (Archived Experiment)',
-    titleAr: 'Ruwadverse (تجربة سابقة متوقفة)',
-    statusEn: 'Discontinued',
-    statusAr: 'تجربة متوقفة',
-    statusType: 'discontinued',
-    visibility: 'public',
-    archiveGroup: 'experiments_discontinued',
-    featuredOnHome: false,
-    descriptionEn:
-      'Past exploratory venture concept (Ruwadverse) that has been discontinued and separated into the experiments archive without invented scope or traction claims.',
-    descriptionAr:
-      'تصور وتجربة رقمية سابقة (Ruwadverse) متوقفة حالياً ومفصولة ضمن أرشيف التجارب دون اختلاق تفاصيل تقنية أو نتائج تشغيلية.',
-    roleEn: 'Early experimental concept exploration (Discontinued)',
-    roleAr: 'استكشاف مبكر لفكرة مشروع رقمي (متوقف)',
-    outcomeEn: 'Discontinued prior to sustained engineering development.',
-    outcomeAr: 'توقفت التجربة قبل الانتقال إلى مرحلة بناء مستدامة.',
-    technologies: ['Concept Exploration', 'Archived Venture'],
-    fullOverviewEn: [
-      'Previous exploratory project concept recorded transparently as discontinued.',
-      'Separated cleanly from active academic and software study work.',
-    ],
-    fullOverviewAr: [
-      'تصور سابق لمشروع تجريبي موثّق بشفافية تحت بند التجارب المتوقفة.',
-      'مفصول بوضوح عن المسار الأكاديمي والتدريب البرمجي الحالي.',
-    ],
-  },
-  {
-    id: 'smartlifeai',
-    titleEn: 'SmartLifeAI (Archived Experiment)',
-    titleAr: 'SmartLifeAI (تجربة سابقة متوقفة)',
-    statusEn: 'Discontinued',
-    statusAr: 'تجربة متوقفة',
-    statusType: 'discontinued',
-    visibility: 'public',
-    archiveGroup: 'experiments_discontinued',
-    featuredOnHome: false,
-    descriptionEn:
-      'Early AI-themed experimental concept exploration (SmartLifeAI), archived under discontinued trials to separate exploratory curiosity from active work.',
-    descriptionAr:
-      'تجربة استكشافية مبكرة مرتبطة بفكرة تطبيق ذكاء اصطناعي (SmartLifeAI)، محفوظة في أرشيف التجارب المتوقفة لتمييز المحاولات الأولية عن الأعمال الحالية.',
-    roleEn: 'Initial concept exploration (Discontinued)',
-    roleAr: 'تجربة فكرة أولية (متوقفة)',
-    outcomeEn: 'Discontinued exploratory concept; no active product or repository.',
-    outcomeAr: 'محاولة استكشافية متوقفة دون منتج فعلي أو مستودع مستمر.',
-    technologies: ['AI Exploration', 'Archived Concept'],
-    fullOverviewEn: [
-      'Archived AI concept trial documented plainly without overstated capabilities.',
-    ],
-    fullOverviewAr: [
-      'تجربة استكشافية سابقة موثقة ببساطة ودون أي تضخيم تقني.',
-    ],
-  },
-  {
     id: 'wanasbrand',
     titleEn: 'WANASBRAND',
     titleAr: 'WANASBRAND — متجر إلكتروني',
@@ -1368,9 +1244,9 @@ export const PROJECTS: ProjectItem[] = [
     featuredOnHome: true,
     url: 'https://wanasbrand.vercel.app',
     descriptionEn:
-      'WANASBRAND: an online storefront for handcrafted fashion, built by directing AI tools (Next.js, Firebase, Vercel). The store is live.',
+      'WANASBRAND is my attempt at building an online store in Arabic and English: collections, a cart and cash on delivery. The code started with Google AI Studio, then I fixed and improved it. I learned how a full store works and how to review code I did not write myself. It has no real products and is a template for practice.',
     descriptionAr:
-      'WANASBRAND: متجر إلكتروني للأزياء المصنوعة يدوياً، بُني بتوجيه أدوات الذكاء الاصطناعي (Next.js وFirebase وVercel). المتجر منشور حالياً.',
+      'واناس براند تجربتي في بناء متجر إلكتروني بالعربية والإنجليزية: مجموعات وسلة ودفع عند الاستلام. بدأ الكود بمساعدة Google AI Studio ثم أصلحته وحسنته. تعلمت منه كيف يعمل متجر كامل وكيف أراجع كودًا لم أكتبه بنفسي. لا يحتوي منتجات حقيقية، وهو قالب للتجربة.',
     roleEn: 'AI-Directed Storefront Builder & Product Owner',
     roleAr: 'توجيه البناء بأدوات الذكاء الاصطناعي وإدارة المتجر',
     problemEn:
@@ -1454,15 +1330,15 @@ export const INITIAL_MILESTONES: MilestoneItem[] = [
   },
   {
     id: 'independent-ai-explorations',
-    titleEn: 'Independent AI Explorations — J.A.R.V.I.S. & Discontinued LOCAL AI AGENT',
-    titleAr: 'استكشافات مستقلة في الذكاء الاصطناعي — J.A.R.V.I.S. وLOCAL AI AGENT المتوقف',
-    dateEn: 'Independent Project Tracks',
-    dateAr: 'مسارات مشاريع مستقلة',
+    titleEn: 'Independent AI Exploration — J.A.R.V.I.S.',
+    titleAr: 'استكشاف مستقل في الذكاء الاصطناعي — J.A.R.V.I.S.',
+    dateEn: 'Independent Project Track',
+    dateAr: 'مسار مشروع مستقل',
     category: 'technical',
     descriptionEn:
-      'Explored two strictly separate AI initiatives: general planning and boundary concepts around J.A.R.V.I.S., and an earlier LOCAL AI AGENT experiment now marked Discontinued.',
+      'Explored general planning and boundary concepts around J.A.R.V.I.S., kept at a conceptual level.',
     descriptionAr:
-      'خوض مسارين منفصلين تماماً في استكشاف الذكاء الاصطناعي: التخطيط المفاهيمي لمشروع J.A.R.V.I.S. على المستوى العام، وتجربة LOCAL AI AGENT السابقة التي توقّف العمل عليها.',
+      'استكشاف التخطيط المفاهيمي وحدود الوحدات في مشروع J.A.R.V.I.S. على المستوى العام فقط.',
     publicationStatus: 'published',
   },
   {

@@ -54,7 +54,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect 
         type="button"
         onClick={() => onSelect(course)}
         className="w-full min-h-[44px] group relative na-mineral-card na-mineral-card-interactive p-5 rounded-xl text-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] flex flex-col justify-between"
-        aria-label={`${isRtl ? course.nameAr : course.nameEn} - ${t('academicInspectCourse')}`}
       >
         {content}
       </button>

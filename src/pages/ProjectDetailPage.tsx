@@ -157,7 +157,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
           <button
             type="button"
             onClick={() => navigate('/projects')}
-            className="px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
+            className="px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary-solid)] text-white hover:opacity-90 transition-opacity cursor-pointer"
           >
             {t('backToProjects')}
           </button>
@@ -179,7 +179,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({ projectId 
         <button
           type="button"
           onClick={() => navigate('/projects')}
-          className="mt-4 px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity cursor-pointer"
+          className="mt-4 px-4 py-2 min-h-[44px] text-xs font-semibold rounded-lg bg-[var(--color-primary-solid)] text-white hover:opacity-90 transition-opacity cursor-pointer"
         >
           {t('backToProjects')}
         </button>

@@ -146,7 +146,7 @@ export const MarkdownEditorField: React.FC<MarkdownEditorFieldProps> = ({
               onClick={() => setMode('write')}
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
                 mode === 'write'
-                  ? 'bg-[var(--color-primary)] text-white font-semibold'
+                  ? 'bg-[var(--color-primary-solid)] text-white font-semibold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
               }`}
             >
@@ -158,7 +158,7 @@ export const MarkdownEditorField: React.FC<MarkdownEditorFieldProps> = ({
               onClick={() => setMode('split')}
               className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
                 mode === 'split'
-                  ? 'bg-[var(--color-primary)] text-white font-semibold'
+                  ? 'bg-[var(--color-primary-solid)] text-white font-semibold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
               }`}
             >
@@ -170,7 +170,7 @@ export const MarkdownEditorField: React.FC<MarkdownEditorFieldProps> = ({
               onClick={() => setMode('preview')}
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
                 mode === 'preview'
-                  ? 'bg-[var(--color-primary)] text-white font-semibold'
+                  ? 'bg-[var(--color-primary-solid)] text-white font-semibold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
               }`}
             >

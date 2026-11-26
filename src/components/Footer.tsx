@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
               e.preventDefault();
               navigate('/admin');
             }}
-            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors opacity-60 hover:opacity-100"
+            className="inline-flex items-center min-h-[44px] px-1 hover:text-[var(--color-text)] transition-colors"
             title={t('navAdmin')}
           >
             {t('navAdmin')}

@@ -43,7 +43,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           <button
             type="button"
             onClick={onAction}
-            className="px-4 py-2 min-h-[40px] text-xs font-semibold rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors cursor-pointer"
+            className="px-4 py-2 min-h-[40px] text-xs font-semibold rounded-lg bg-[var(--color-primary-solid)] text-white hover:bg-[var(--color-primary-hover)] transition-colors cursor-pointer"
           >
             {actionText}
           </button>

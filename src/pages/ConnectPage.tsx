@@ -356,7 +356,7 @@ export const ConnectPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] text-white text-xs sm:text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] text-white text-xs sm:text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
               >
                 {submitting ? (
                   <>

@@ -386,7 +386,7 @@ export const AdminDiagnosticsTab: React.FC<AdminDiagnosticsTabProps> = ({
           <button
             type="button"
             onClick={handleExportJson}
-            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[42px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[42px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer transition-colors shrink-0"
           >
             <Download className="w-4 h-4" aria-hidden="true" />
             <span>{t('adminBackupExportBtn')}</span>
@@ -510,7 +510,7 @@ export const AdminDiagnosticsTab: React.FC<AdminDiagnosticsTabProps> = ({
                 type="button"
                 disabled={!restoreConfirmed || restoring}
                 onClick={handleApplyRestore}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold disabled:opacity-45 cursor-pointer transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white font-semibold disabled:opacity-45 cursor-pointer transition-colors"
               >
                 <Upload className="w-4 h-4" aria-hidden="true" />
                 <span>{restoring ? t('adminRestoreRestoring') : t('adminRestoreBtn')}</span>

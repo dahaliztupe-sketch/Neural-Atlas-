@@ -306,7 +306,7 @@ export const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/projects')}
-                className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] text-white font-semibold text-sm hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
+                className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] text-white font-semibold text-sm hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
               >
                 <span>{t('btnExploreProjects')}</span>
                 <DirectionalArrow className="w-4 h-4" aria-hidden="true" />
@@ -832,7 +832,7 @@ export const HomePage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/connect')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
               <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{t('homeConnectBtn')}</span>

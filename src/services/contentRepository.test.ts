@@ -106,7 +106,7 @@ test('stripUndefined removes undefined keys so Firestore setDoc draft saves do n
 
 test('getImportPreview accurately counts existing real items and 8 learning notes', () => {
   const preview = getImportPreview();
-  assert.equal(preview.projectsCount, 9, 'Should reflect 4 showcase + 5 archive projects');
+  assert.equal(preview.projectsCount, 5, 'Should reflect 4 showcase + 1 archive projects');
   assert.equal(preview.coursesCount, 7, 'Should reflect the 7 owner-provided first-year subjects');
   assert.equal(preview.notesCount, 8, 'Should reflect the 8 published learning notes');
   assert.equal(preview.milestonesCount, 6, 'Should reflect the 6 factual timeline milestones');
@@ -203,16 +203,16 @@ test('REGRESSION: Local Firestore rules harden read, write schema, URL protocol,
   );
 });
 
-test('REGRESSION: Owner provided course data, 9 public projects, 8 notes, baseline fallbacks, and social links remain factual', () => {
+test('REGRESSION: Owner provided course data, 5 public projects, 8 notes, baseline fallbacks, and social links remain factual', () => {
   assert.equal(COURSES.length, 7, 'Must maintain exactly 7 owner-provided first-year course titles');
-  assert.equal(PROJECTS.length, 9, 'Must maintain 4 main showcase entries + 5 archive entries');
-  assert.equal(PROJECTS.filter((p) => p.visibility === 'public').length, 9);
+  assert.equal(PROJECTS.length, 5, 'Must maintain 4 main showcase entries + 1 archive entry');
+  assert.equal(PROJECTS.filter((p) => p.visibility === 'public').length, 5);
 
   const baselineProjects = getLocalPublicProjectsBaseline();
   const baselineCourses = getLocalPublicCoursesBaseline();
   const baselineMilestones = getLocalPublicMilestonesBaseline();
   const baselineNotes = getLocalPublicNotesBaseline();
-  assert.equal(baselineProjects.length, 9);
+  assert.equal(baselineProjects.length, 5);
   assert.equal(baselineCourses.length, 7);
   assert.equal(baselineMilestones.length, 6);
   assert.equal(baselineNotes.length, 8);
@@ -257,14 +257,14 @@ test('REGRESSION: resolvePublicCoursesCatchResult never falls back to local COUR
   assert.deepEqual(offline.items, []);
 });
 
-test('Baseline sync reconciles CS50x Week 3 and LOCAL AI AGENT while preserving createdAt and owner customizations', () => {
-  const localAi = PROJECTS.find((p) => p.id === 'local-ai-agent');
+test('Baseline sync reconciles CS50x Week 3 and Kalmeron-Two while preserving createdAt and owner customizations', () => {
+  const localAi = PROJECTS.find((p) => p.id === 'kalmeron-two');
   assert.ok(localAi);
 
   const legacyRemoteLocalAi = {
-    id: 'local-ai-agent',
-    slug: 'local-ai-agent',
-    titleEn: 'LOCAL AI AGENT (Old)',
+    id: 'kalmeron-two',
+    slug: 'kalmeron-two',
+    titleEn: 'Kalmeron-Two (Old)',
     titleAr: 'قديم',
     statusEn: 'Discontinued',
     statusAr: 'متوقف',
@@ -292,8 +292,8 @@ test('Baseline sync reconciles CS50x Week 3 and LOCAL AI AGENT while preserving 
   assert.equal(syncedProject.visibility, 'public');
   assert.equal(syncedProject.archiveGroup, 'experiments_discontinued');
   assert.equal(syncedProject.featuredOnHome, false);
-  assert.equal(syncedProject.statusEn, 'Discontinued / Archived');
-  assert.equal(syncedProject.statusAr, 'متوقف / مؤرشف');
+  assert.equal(syncedProject.statusEn, 'Experimental · Stopped Pre-Production');
+  assert.equal(syncedProject.statusAr, 'تجريبي · متوقف قبل التشغيل الإنتاجي');
 
   const defaults = buildDefaultProfileSettings();
   const customTrack = {

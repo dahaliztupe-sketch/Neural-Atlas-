@@ -26,7 +26,7 @@ export const NotFoundPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="px-4 py-2 min-h-[44px] rounded-xl bg-[var(--color-primary)] text-white text-xs font-semibold hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer"
+          className="px-4 py-2 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] text-white text-xs font-semibold hover:bg-[var(--color-primary-hover)] transition-colors inline-flex items-center gap-2 cursor-pointer"
         >
           <Home className="w-4 h-4" aria-hidden="true" />
           <span>{t('btnBackHome')}</span>

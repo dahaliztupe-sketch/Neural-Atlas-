@@ -75,15 +75,15 @@ test('academic program contains owner-provided Al-Azhar context and Semester 1 a
   assert.ok(ACADEMIC_PROGRAM.verificationDisclaimerAr.includes('مُدخلة من قِبل صاحب الموقع'));
 });
 
-test('projects expose 4 main showcase entries plus 5 archive entries with LOCAL AI AGENT discontinued and separated from J.A.R.V.I.S.', () => {
-  assert.equal(PROJECTS.length, 9, 'Must have 4 main showcase entries + 5 archive entries');
+test('projects expose 4 main showcase entries plus 1 archive entry (only projects with real evidence)', () => {
+  assert.equal(PROJECTS.length, 5, 'Must have 4 main showcase entries + 1 archive entry');
 
   const publicProjects = PROJECTS.filter((p) => p.visibility === 'public');
   const showcaseProjects = PROJECTS.filter((p) => p.archiveGroup === 'showcase');
   const archiveProjects = PROJECTS.filter((p) => p.archiveGroup === 'experiments_discontinued');
-  assert.equal(publicProjects.length, 9);
+  assert.equal(publicProjects.length, 5);
   assert.equal(showcaseProjects.length, 4);
-  assert.equal(archiveProjects.length, 5);
+  assert.equal(archiveProjects.length, 1);
 
   assert.deepEqual(
     showcaseProjects.map((p) => p.id),
@@ -91,18 +91,12 @@ test('projects expose 4 main showcase entries plus 5 archive entries with LOCAL 
   );
 
   const jarvis = PROJECTS.find((p) => p.id === 'jarvis-ai-assistant');
-  const localAi = PROJECTS.find((p) => p.id === 'local-ai-agent');
-  assert.ok(jarvis && localAi, 'Both J.A.R.V.I.S. and LOCAL AI AGENT must exist');
+  assert.ok(jarvis, 'J.A.R.V.I.S. must exist');
   assert.equal(jarvis.featuredOnHome, true);
+  assert.equal(jarvis.statusType, 'experimental', 'J.A.R.V.I.S. is a concept exploration, not in development');
   assert.equal(jarvis.technologies.includes('Python'), false, 'Python is a planned next step, not yet active stack');
-  assert.equal(localAi.featuredOnHome, false);
-  assert.equal(localAi.archiveGroup, 'experiments_discontinued');
-  assert.equal(localAi.statusType, 'discontinued');
-  assert.equal(localAi.statusEn, 'Discontinued / Archived');
-  assert.equal(localAi.statusAr, 'متوقف / مؤرشف');
-  assert.ok(localAi.titleEn.includes('Discontinued / Archived'));
-  assert.ok(jarvis.descriptionEn.includes('LOCAL AI AGENT'));
-  assert.ok(localAi.descriptionEn.includes('J.A.R.V.I.S.'));
+  assert.equal(jarvis.descriptionEn.includes('LOCAL AI AGENT'), false);
+  assert.equal(PROJECTS.some((p) => p.id === 'local-ai-agent'), false, 'LOCAL AI AGENT has no repo evidence and is removed');
 
   const cppProject = PROJECTS.find((p) => p.id === 'cpp-problem-solving');
   assert.ok(cppProject, 'C++ project must exist');
@@ -131,15 +125,8 @@ test('projects expose 4 main showcase entries plus 5 archive entries with LOCAL 
   assert.equal(wanasbrand.statusAr, 'منشور');
   assert.equal(wanasbrand.url, 'https://wanasbrand.vercel.app');
 
-  for (const slug of ['sanad', 'ruwadverse', 'smartlifeai']) {
-    const entry = PROJECTS.find((p) => p.id === slug);
-    assert.ok(entry, `${slug} archive entry must exist`);
-    assert.equal(entry.visibility, 'public');
-    assert.equal(entry.archiveGroup, 'experiments_discontinued');
-    assert.equal(entry.featuredOnHome, false);
-    assert.equal(entry.statusType, 'discontinued');
-    assert.equal(entry.url, undefined);
-    assert.equal(entry.repoUrl, undefined);
+  for (const slug of ['sanad', 'ruwadverse', 'smartlifeai', 'local-ai-agent']) {
+    assert.equal(PROJECTS.some((p) => p.id === slug), false, `${slug} has no repo evidence and is removed`);
   }
 });
 

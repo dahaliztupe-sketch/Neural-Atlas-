@@ -1,5 +1,6 @@
 import { Language, ProfileSettingsRecord, SeoOverride } from '../types/index.ts';
 import { RouteName } from '../router/router.ts';
+import { PROJECTS } from '../data/portfolioData.ts';
 
 export interface StructuredSeoInput {
   routeName: RouteName;
@@ -273,7 +274,12 @@ export const PUBLIC_STATIC_SITEMAP_ROUTES: ReadonlyArray<{
 
 export function generateSitemapXml(siteUrl?: string | null): string {
   const base = normalizeSiteUrl(siteUrl);
-  const urlEntries = PUBLIC_STATIC_SITEMAP_ROUTES.map((route) => {
+  const projectRoutes = PROJECTS.filter((p) => p.visibility === 'public').map((p) => ({
+    path: `/projects/${p.id}`,
+    changefreq: 'monthly',
+    priority: '0.6',
+  }));
+  const urlEntries = [...PUBLIC_STATIC_SITEMAP_ROUTES, ...projectRoutes].map((route) => {
     const loc = base ? `${base}${route.path}` : route.path;
     return [
       '  <url>',

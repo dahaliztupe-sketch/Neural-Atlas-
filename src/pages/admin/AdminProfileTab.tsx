@@ -53,7 +53,7 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
                 type="button"
                 onClick={() => setPreviewLang('en')}
                 className={`px-2.5 py-1 rounded-lg cursor-pointer ${
-                  previewLang === 'en' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                  previewLang === 'en' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 EN
@@ -62,7 +62,7 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
                 type="button"
                 onClick={() => setPreviewLang('ar')}
                 className={`px-2.5 py-1 rounded-lg cursor-pointer ${
-                  previewLang === 'ar' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                  previewLang === 'ar' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 AR
@@ -660,7 +660,7 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
           <div className="pt-2 flex justify-end">
             <button
               type="submit"
-              className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="px-5 py-2.5 min-h-[44px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
               {t('adminActionSave')}
             </button>

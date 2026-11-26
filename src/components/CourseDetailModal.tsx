@@ -179,7 +179,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             href={program.telegramBotUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--color-primary-solid)] text-white hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] shrink-0"
           >
             <span>{t('academicTelegramBot')}</span>
             <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
