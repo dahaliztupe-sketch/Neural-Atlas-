@@ -20,6 +20,8 @@
 
     /* Primary Accent: Refined Amethyst Violet */
     --color-primary: #8b5cf6;
+    /* Solid fill for buttons with white text: 5.7:1 on white (the text accent #8b5cf6 is only 4.2:1) */
+    --color-primary-solid: #7c3aed;
     --color-primary-hover: #a78bfa;
     --color-primary-muted: rgba(139, 92, 246, 0.14);
 
@@ -59,6 +61,7 @@
 
     /* Primary Accent: Deep Amethyst Violet */
     --color-primary: #6d28d9;
+    --color-primary-solid: #6d28d9;
     --color-primary-hover: #5b21b6;
     --color-primary-muted: rgba(109, 40, 217, 0.09);
 
