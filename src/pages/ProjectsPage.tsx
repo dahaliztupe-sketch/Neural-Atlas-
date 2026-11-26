@@ -142,7 +142,7 @@ export const ProjectsPage: React.FC = () => {
                 onClick={() => setFilter('all')}
                 className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'all'
-                    ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                    ? 'bg-[var(--color-primary-solid)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
@@ -153,7 +153,7 @@ export const ProjectsPage: React.FC = () => {
                 onClick={() => setFilter('active_practice')}
                 className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'active_practice'
-                    ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                    ? 'bg-[var(--color-primary-solid)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
@@ -164,7 +164,7 @@ export const ProjectsPage: React.FC = () => {
                 onClick={() => setFilter('archive_group')}
                 className={`px-3 py-2 min-h-[44px] rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] ${
                   filter === 'archive_group'
-                    ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                    ? 'bg-[var(--color-primary-solid)] text-white shadow-xs'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
