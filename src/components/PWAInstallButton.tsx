@@ -32,7 +32,6 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ compact = fa
           compact ? 'px-3 py-2 text-xs' : 'px-3 py-2 text-xs font-medium'
         }`}
         title={t('pwaInstallTitle')}
-        aria-label={t('pwaInstallTitle')}
       >
         <Download className="w-3.5 h-3.5 text-[var(--color-secondary)] shrink-0" aria-hidden="true" />
         <span>{t('pwaInstallBtn')}</span>
