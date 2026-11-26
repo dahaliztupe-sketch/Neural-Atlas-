@@ -1,6 +1,6 @@
 import React from 'react';
 import { LogOut, UserCheck } from 'lucide-react';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { useApp } from '../../context/AppContext';
 
 interface AdminAccountTabProps {
