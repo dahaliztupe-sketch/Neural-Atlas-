@@ -125,7 +125,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             type="button"
             onClick={() => setSeedConfirmOpen(true)}
             disabled={importing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[40px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[40px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
           >
             <UploadCloud className={`w-4 h-4 ${importing ? 'animate-bounce' : ''}`} aria-hidden="true" />
             <span>{importing ? t('adminImporting') : t('adminQuickSeedBtn')}</span>
@@ -194,7 +194,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
               <button
                 type="button"
                 onClick={handleConfirmSeed}
-                className="px-4 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer"
               >
                 {t('adminQuickSeedConfirmBtn')}
               </button>
@@ -331,7 +331,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
             type="button"
             onClick={onImport}
             disabled={importing}
-            className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[42px] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[42px] rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
           >
             <UploadCloud className={`w-4 h-4 ${importing ? 'animate-bounce' : ''}`} aria-hidden="true" />
             <span>{importing ? t('adminImporting') : t('adminImportBtn')}</span>
@@ -471,7 +471,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
               <button
                 type="button"
                 onClick={handleConfirmSync}
-                className="px-4 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-semibold cursor-pointer"
               >
                 {t('adminSyncBaselineConfirmBtn')}
               </button>
