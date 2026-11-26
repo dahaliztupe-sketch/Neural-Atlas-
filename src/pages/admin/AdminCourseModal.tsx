@@ -58,7 +58,7 @@ export const AdminCourseModal: React.FC<AdminCourseModalProps> = ({
                 type="button"
                 onClick={() => setModalView('edit')}
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg cursor-pointer ${
-                  modalView === 'edit' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                  modalView === 'edit' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 <Edit3 className="w-3 h-3" aria-hidden="true" />
@@ -68,7 +68,7 @@ export const AdminCourseModal: React.FC<AdminCourseModalProps> = ({
                 type="button"
                 onClick={() => setModalView('preview')}
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg cursor-pointer ${
-                  modalView === 'preview' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                  modalView === 'preview' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 <Eye className="w-3 h-3" aria-hidden="true" />
@@ -98,7 +98,7 @@ export const AdminCourseModal: React.FC<AdminCourseModalProps> = ({
                   type="button"
                   onClick={() => setPreviewLang('en')}
                   className={`px-2.5 py-1 rounded-lg cursor-pointer ${
-                    previewLang === 'en' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                    previewLang === 'en' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                   }`}
                 >
                   EN
@@ -107,7 +107,7 @@ export const AdminCourseModal: React.FC<AdminCourseModalProps> = ({
                   type="button"
                   onClick={() => setPreviewLang('ar')}
                   className={`px-2.5 py-1 rounded-lg cursor-pointer ${
-                    previewLang === 'ar' ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
+                    previewLang === 'ar' ? 'bg-[var(--color-primary-solid)] text-white font-semibold' : 'text-[var(--color-text-muted)]'
                   }`}
                 >
                   AR
@@ -346,7 +346,7 @@ export const AdminCourseModal: React.FC<AdminCourseModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[var(--color-primary-solid)] hover:bg-[var(--color-primary-hover)] text-white font-semibold cursor-pointer"
               >
                 {t('adminActionSave')}
               </button>
