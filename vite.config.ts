@@ -187,8 +187,16 @@ export default defineConfig(({ mode }) => {
                 priority: 24,
               },
               {
+                name: 'vendor-firebase-auth',
+                test: /[\\/]node_modules[\\/](@firebase[\\/]auth|firebase[\\/]auth)[\\/]/,
+                priority: 23,
+                includeDependenciesRecursively: false,
+              },
+              {
+                // Everything else from Firebase, including the shared util/app/component
+                // packages, so the auth chunk can stay a lazy, on-demand download.
                 name: 'vendor-firebase',
-                test: /[\\/]node_modules[\\/]firebase[\\/]/,
+                test: /[\\/]node_modules[\\/](firebase|@firebase|idb)[\\/]/,
                 priority: 22,
               },
               {
