@@ -172,7 +172,7 @@ export class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorB
                   type="button"
                   onClick={this.handleReturnHome}
                   aria-label={dict.btnBackHome}
-                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[var(--color-primary,#8b5cf6)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover,#a78bfa)] transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-solid,#0c1222)] focus-visible:ring-[var(--color-primary,#8b5cf6)]"
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[var(--color-primary-solid,#7c3aed)] text-white text-sm font-medium hover:bg-[var(--color-primary-hover,#a78bfa)] transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-solid,#0c1222)] focus-visible:ring-[var(--color-primary,#8b5cf6)]"
                 >
                   <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{dict.btnBackHome}</span>
