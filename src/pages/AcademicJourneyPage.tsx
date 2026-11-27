@@ -275,6 +275,7 @@ export const AcademicJourneyPage: React.FC = () => {
                     key={course.id}
                     course={course}
                     index={idx}
+                    headingLevel="h2"
                     onSelect={(c) => setSelectedCourse(c)}
                   />
                 ))}

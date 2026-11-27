@@ -12,9 +12,12 @@ interface CourseCardProps {
   course: CourseDisplayItem;
   index: number;
   onSelect?: (course: CourseDisplayItem) => void;
+  /** Heading level for the course title. Use 'h2' where no h2 precedes the cards. */
+  headingLevel?: 'h2' | 'h3';
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect, headingLevel = 'h3' }) => {
+  const Heading = headingLevel;
   const { isRtl, t } = useApp();
   const courseNumber = (course.latticeNodeIndex ?? index) + 1;
 
@@ -31,9 +34,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, index, onSelect 
         </span>
       </div>
 
-      <h3 className="text-base font-semibold text-[var(--color-text)] mb-1 group-hover:text-[var(--color-primary)] transition-colors">
+      <Heading className="text-base font-semibold text-[var(--color-text)] mb-1 group-hover:text-[var(--color-primary)] transition-colors">
         {isRtl ? course.nameAr : course.nameEn}
-      </h3>
+      </Heading>
 
       <p className="text-xs text-[var(--color-text-muted)] font-mono mb-4" dir={isRtl ? 'ltr' : 'rtl'}>
         {isRtl ? course.nameEn : course.nameAr}
