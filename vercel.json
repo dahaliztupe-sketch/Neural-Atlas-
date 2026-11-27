@@ -1,8 +1,6 @@
 {
   "git": {
-    "deploymentEnabled": {
-      "wip-*": false
-    }
+    "deploymentEnabled": false
   },
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
